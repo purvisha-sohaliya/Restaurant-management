@@ -1,5 +1,3 @@
-
-
 export const AUTH_ROUTE = {
     LOGIN: "/login",
     REGISTER: "/register",

@@ -1,4 +1,3 @@
-
 export const ROLES = {
     SUPER_ADMIN: "super_admin",
     OWNER: "owner",      
@@ -8,8 +7,6 @@ export const ROLES = {
 };
 
 // export const CURRENT_ROLE = ROLES.OWNER;
-
-
 export const DEFAULT_ADMIN = {
     NAME: "admin",
     EMAIL: "admin@gmail.com",
@@ -17,4 +14,3 @@ export const DEFAULT_ADMIN = {
     CONFIRMPASSWORD: "123456",
     ROLE: ROLES.SUPER_ADMIN
 }
-

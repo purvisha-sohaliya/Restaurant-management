@@ -10,9 +10,11 @@ const INDEX_ROUTE = require("./routes/indexRoutes");
 const errorHandler = require("./middleware/error.middleware");
 const notFound = require("./middleware/notFound");
 const path = require("path");
+const { defaultAdmin } = require("./utils/default.admin");
 
 const app = express();
 connectDB();
+defaultAdmin();
 app.use(helmet());
 
 app.use(cors({

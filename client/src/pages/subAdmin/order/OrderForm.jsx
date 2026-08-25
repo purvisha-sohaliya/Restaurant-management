@@ -143,7 +143,7 @@ function OrderForm() {
           }
 
           toast.success("Order sent to kitchen!");
-          navigate(SUB_ADMIN_ROUTE.ACTIVE_ORDERS);
+          // navigate(SUB_ADMIN_ROUTE.ACTIVE_ORDERS);
         }
       } catch (err) {
         console.log("ORDER ERROR:", err);

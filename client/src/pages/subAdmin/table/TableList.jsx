@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrash, FaPlus, FaEyeSlash, FaUndo, FaEye, FaChair } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 import { SUB_ADMIN_ROUTE, WAITER_ROUTE } from "../../../Constant/RoutesConstant";
 import { deleteTable, getAllTables, restoreTable, updateTableStatus } from "../../../services/tableservice";
 import { getWaitingList } from "../../../services/waitingService";
 import { useAuth } from "../../../context/AuthContext";
-
 
 function TableList() {
   const { user } = useAuth();
@@ -63,16 +63,20 @@ function TableList() {
     }
   };
 
-
   const handleTableClick = (table) => {
-    console.log("HANDLE CLICK", table);
+    const status = table.status?.toLowerCase();
+
+    if (status === "cleaning") {
+      toast.warning("Table is currently under cleaning");
+      return;
+    }
+
     navigate(SUB_ADMIN_ROUTE.ORDER_ADD, {
       state: {
         table: table,
         table_id: table._id,
         tableNumber: table.tableNumber,
         customer_name: table.customer_name,
-        // waiting_entry_id: null,
         phone: table.phone,
         party_size: table.party_size,
         order_type: "Dine In",
@@ -358,8 +362,8 @@ function TableList() {
                           ) : (
                             <button
                               className={`btn btn-sm text-nowrap ${table.status === "cleaning"
-                                  ? "btn-outline-success"
-                                  : "btn-outline-warning"
+                                ? "btn-outline-success"
+                                : "btn-outline-warning"
                                 }`}
                               onClick={(e) => {
                                 e.stopPropagation();

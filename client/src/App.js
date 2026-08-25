@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Form } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Form, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PrivateRoute from './routes/PrivateRoute';
@@ -37,9 +37,8 @@ function App(props) {
     <>
       <ToastContainer />
       <BrowserRouter>
-        {/* <Route > */}
-        {/* </Route> */}
         <Routes>
+          <Route path="/" element={<Navigate to={COMMON_ROUTE.DASHBOARD} replace />} />
           <Route path={AUTH_ROUTE.LOGIN} element={<Login />} />
           <Route path={AUTH_ROUTE.REGISTER} element={<Register />} />
 

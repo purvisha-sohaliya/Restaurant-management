@@ -26,6 +26,14 @@ exports.createOrder = async (req, res, next) => {
             error.statusCode = 404;
         }
 
+        if (table.status === "cleaning") {
+            const error = new Error(
+                "Cannot create order. Table is currently under cleaning."
+            );
+            error.statusCode = 400;
+            throw error;
+        }
+
         if (!items || !Array.isArray(items) || items.length === 0) {
             const error = new Error("At least one order item is required");
             error.statusCode = 400;
