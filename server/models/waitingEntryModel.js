@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 
 const waitingEntrySchema = new mongoose.Schema(
     {
+        restaurant_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Restaurant",
+            required: true
+        },
+        
         customer_name: {
             type: String,
             required: true,

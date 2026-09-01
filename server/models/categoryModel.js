@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 
-const categorySchema = new mongoose.Schema({    
+const categorySchema = new mongoose.Schema({
+    restaurant_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Restaurant",
+        required: true
+    },
+
     category_name: {
         type: String,
         required: true,
@@ -35,6 +41,7 @@ const categorySchema = new mongoose.Schema({
 
 categorySchema.index(
     {
+        restaurant_id: 1,
         category_name: 1
     },
     {

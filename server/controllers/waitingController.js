@@ -1,7 +1,6 @@
 const waitingEntryModel = require("../models/waitingEntryModel");
 const tableModel = require("../models/tableModel");
 const customerModel = require("../models/customerModel");
-const orderModel = require("../models/orderModel");
 const { generateToken } = require("../utils/counter");
 
 // Add to Waiting List
@@ -17,12 +16,14 @@ exports.addToWaiting = async (req, res, next) => {
 
         let customer = await customerModel.findOne({
             phone,
+            restaurant_id: req.user.restaurant_id,
             is_deleted: false
         });
 
         if (!customer) {
             customer = await customerModel.create({
                 name: customer_name,
+                restaurant_id: req.user.restaurant_id,
                 phone
             });
         }
@@ -47,7 +48,8 @@ exports.addToWaiting = async (req, res, next) => {
             party_size,
             token_number,
             estimated_wait_minutes: estimated_wait_minutes || 30,
-            notes: notes || ""
+            notes: notes || "",
+            restaurant_id: req.user.restaurant_id
         });
 
         res.status(201).json({
@@ -64,7 +66,7 @@ exports.addToWaiting = async (req, res, next) => {
 exports.getWaitingList = async (req, res, next) => {
     try {
         const { status } = req.query;
-        const filter = { is_deleted: false };
+        const filter = { is_deleted: false, restaurant_id: req.user.restaurant_id };
 
         if (status) {
             filter.status = status;
@@ -91,7 +93,7 @@ exports.getWaitingList = async (req, res, next) => {
 exports.getWaitingEntryById = async (req, res, next) => {
     try {
         const entry = await waitingEntryModel
-            .findById(req.params.id)
+            .findOne({ _id: req.params.id, restaurant_id: req.user.restaurant_id, })
             .populate("table_id", "tableNumber capacity");
 
         if (!entry || entry.is_deleted) {
@@ -116,7 +118,10 @@ exports.seatCustomer = async (req, res, next) => {
         const { table_id } = req.body;
 
         // Find waiting entry
-        const entry = await waitingEntryModel.findById(req.params.id);
+        const entry = await waitingEntryModel.findOne({
+            _id: req.params.id,
+            restaurant_id: req.user.restaurant_id
+        });
 
         if (!entry || entry.is_deleted) {
             return res.status(404).json({
@@ -142,7 +147,10 @@ exports.seatCustomer = async (req, res, next) => {
         }
 
         // Find table
-        const table = await tableModel.findById(table_id);
+        const table = await tableModel.findOne({
+            _id: req.params.id,
+            restaurant_id: req.user.restaurant_id
+        });
 
         if (!table) {
             return res.status(404).json({
@@ -168,8 +176,11 @@ exports.seatCustomer = async (req, res, next) => {
         }
 
         // Occupy table and save customer name
-        await tableModel.findByIdAndUpdate(
-            table_id,
+        await tableModel.findOneAndUpdate(
+            {
+                _id: table_id,
+                restaurant_id: req.user.restaurant_id
+            },
             {
                 status: "occupied",
                 customer_name: entry.customer_name
@@ -206,8 +217,11 @@ exports.updateWaitingStatus = async (req, res, next) => {
     try {
         const { status } = req.body;
 
-        const entry = await waitingEntryModel.findByIdAndUpdate(
-            req.params.id,
+        const entry = await waitingEntryModel.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
             { status },
             { new: true }
         );
@@ -234,8 +248,11 @@ exports.updateWaitTime = async (req, res, next) => {
     try {
         const { estimated_wait_minutes } = req.body;
 
-        const entry = await waitingEntryModel.findByIdAndUpdate(
-            req.params.id,
+        const entry = await waitingEntryModel.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
             { estimated_wait_minutes },
             { new: true }
         );
@@ -260,7 +277,10 @@ exports.updateWaitTime = async (req, res, next) => {
 // Delete Waiting Entry (Soft)
 exports.deleteWaitingEntry = async (req, res, next) => {
     try {
-        const entry = await waitingEntryModel.findById(req.params.id);
+        const entry = await waitingEntryModel.findById({
+            _id: req.params.id,
+            restaurant_id: req.user.restaurant_id
+        });
 
         if (!entry) {
             return res.status(404).json({
@@ -271,8 +291,12 @@ exports.deleteWaitingEntry = async (req, res, next) => {
 
         // If customer was seated and had a table assigned
         if (entry.table_id) {
-            await tableModel.findByIdAndUpdate(entry.table_id, {
-                status: "Available"
+            await tableModel.findOneAndUpdate(
+                {
+                    _id: entry.table_id,
+                    restaurant_id: req.user.restaurant_id
+                }, {
+                status: "available"
             });
         }
 

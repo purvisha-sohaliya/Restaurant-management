@@ -5,6 +5,7 @@ exports.getKitchenOrders = async (req, res, next) => {
     try {
         const kitchenOrders = await kitchenModel
             .find({
+                restaurant_id: req.user.restaurant_id,
                 kitchen_status: {
                     $ne: "Served"
                 }
@@ -31,7 +32,10 @@ exports.getKitchenOrderById = async (req, res, next) => {
     try {
 
         const kitchenOrder = await kitchenModel
-            .findById(req.params.id)
+            .findOne({
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            })
             .populate("order_id")
             .populate("table_id")
             .populate("waiter_id", "name");
@@ -54,7 +58,10 @@ exports.getKitchenOrderById = async (req, res, next) => {
 
 exports.acceptKitchenOrder = async (req, res, next) => {
     try {
-        const kitchenOrder = await kitchenModel.findById(req.params.id);
+        const kitchenOrder = await kitchenModel.findOne({
+            _id: req.params.id,
+            restaurant_id: req.user.restaurant_id
+        });
 
         if (!kitchenOrder) {
             const error = new Error("Kitchen order not found");
@@ -108,7 +115,10 @@ exports.acceptKitchenOrder = async (req, res, next) => {
 
 exports.readyKitchenOrder = async (req, res, next) => {
     try {
-        const kitchenOrder = await kitchenModel.findById(req.params.id);
+        const kitchenOrder = await kitchenModel.findOne({
+            _id: req.params.id,
+            restaurant_id: req.user.restaurant_id
+        });
 
         if (!kitchenOrder) {
             const error = new Error("Kitchen order not found");
@@ -163,7 +173,10 @@ exports.readyKitchenOrder = async (req, res, next) => {
 
 exports.servedKitchenOrder = async (req, res, next) => {
     try {
-        const kitchenOrder = await kitchenModel.findById(req.params.id);
+        const kitchenOrder = await kitchenModel.findOne({
+            _id: req.params.id,
+            restaurant_id: req.user.restaurant_id
+        });
 
         if (!kitchenOrder) {
             const error = new Error("Kitchen order not found");
@@ -220,6 +233,7 @@ exports.getDisplayScreen = async (req, res, next) => {
     try {
         const kitchenOrders = await kitchenModel
             .find({
+                restaurant_id: req.user.restaurant_id,
                 kitchen_status: {
                     $in: ["Pending", "Preparing", "Ready"]
                 }

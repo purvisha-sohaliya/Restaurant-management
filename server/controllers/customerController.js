@@ -14,6 +14,7 @@ exports.createCustomer = async (req, res, next) => {
         // Check for duplicate phone per restaurant
         const existing = await customerModel.findOne({
             phone,
+            restaurant_id: req.user.restaurant_id,
             is_deleted: false
         });
 
@@ -28,7 +29,8 @@ exports.createCustomer = async (req, res, next) => {
             name,
             phone,
             date_of_birth: date_of_birth || undefined,
-            notes: notes || ""
+            notes: notes || "",
+            restaurant_id: user.restaurant_id
         });
 
         res.status(201).json({
@@ -44,8 +46,8 @@ exports.createCustomer = async (req, res, next) => {
 // Get All Customers
 exports.getCustomers = async (req, res, next) => {
     try {
-        const {search } = req.query;
-        const filter = { is_deleted: false };
+        const { search } = req.query;
+        const filter = { restaurant_id: user.restaurant_id, is_deleted: false };
 
         if (search) {
             filter.$or = [
@@ -71,7 +73,10 @@ exports.getCustomers = async (req, res, next) => {
 // Get Customer By ID
 exports.getCustomerById = async (req, res, next) => {
     try {
-        const customer = await customerModel.findById(req.params.id);
+        const customer = await customerModel.findOne({
+            _id: req.params.id,
+            restaurant_id: req.user.restaurant_id
+        });
 
         if (!customer || customer.is_deleted) {
             return res.status(404).json({
@@ -93,7 +98,7 @@ exports.getCustomerById = async (req, res, next) => {
 exports.searchByPhone = async (req, res, next) => {
     try {
         const { phone } = req.query;
-        const filter = { phone, is_deleted: false };
+        const filter = { phone, restaurant_id: user.restaurant_id, is_deleted: false };
 
         const customer = await customerModel.findOne(filter);
 
@@ -117,8 +122,10 @@ exports.searchByPhone = async (req, res, next) => {
 exports.updateCustomer = async (req, res, next) => {
     try {
         const customer = await customerModel.findByIdAndUpdate(
-            req.params.id,
-            req.body,
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
             { new: true, runValidators: true }
         );
 
@@ -139,33 +146,14 @@ exports.updateCustomer = async (req, res, next) => {
     }
 };
 
-// Get Customer Bill History
-exports.getCustomerBillHistory = async (req, res, next) => {
-    try {
-        const bills = await billModel
-            .find({
-                customer_id: req.params.id,
-                is_deleted: false,
-                payment_status: "Paid"
-            })
-            .populate("order_id", "order_number order_type")
-            .sort({ createdAt: -1 });
-
-        res.status(200).json({
-            success: true,
-            count: bills.length,
-            data: bills
-        });
-    } catch (err) {
-        next(err);
-    }
-};
-
 // Delete Customer (Soft)
 exports.deleteCustomer = async (req, res, next) => {
     try {
         const customer = await customerModel.findByIdAndUpdate(
-            req.params.id,
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
             { is_deleted: true, status: "inactive" },
             { new: true }
         );

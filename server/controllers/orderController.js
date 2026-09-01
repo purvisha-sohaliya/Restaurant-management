@@ -128,6 +128,7 @@ exports.createOrder = async (req, res, next) => {
 
         const orderNumber = await getNextNumber("order");
         const order = await orderModel.create({
+            restaurant_id: req.user.restaurant_id,
             table_id,
             waiting_entry_id: waiting_entry_id || null,
             waiter_id,
@@ -162,7 +163,10 @@ exports.createOrder = async (req, res, next) => {
 exports.getOrders = async (req, res, next) => {
     try {
         const orders = await orderModel
-            .find()
+            .find({
+                restaurant_id: req.user.restaurant_id,
+                is_deleted: false
+            })
             .populate("table_id", "tableNumber")
             .populate("waiter_id", "name");
 
@@ -179,7 +183,10 @@ exports.getOrders = async (req, res, next) => {
 exports.getOrderById = async (req, res, next) => {
     try {
         const orders = await orderModel
-            .findById(req.params.id)
+            .findById(req.params.id).findOne({
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            })
             .populate("table_id", "tableNumber")
             .populate("waiter_id", "name");
 
@@ -202,7 +209,10 @@ exports.getOrderById = async (req, res, next) => {
 exports.changeOrderStatus = async (req, res, next) => {
     try {
         const order = await orderModel.findByIdAndUpdate(
-            req.params.id,
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
             {
                 order_status: req.body.order_status
             },
@@ -237,7 +247,10 @@ exports.addItemsToOrder = async (req, res, next) => {
             throw error;
         }
 
-        const order = await orderModel.findById(req.params.id);
+        const order = await orderModel.findOne({
+            _id: req.params.id,
+            restaurant_id: req.user.restaurant_id
+        });
 
         if (!order || order.is_deleted) {
             const error = new Error("Order not found");
@@ -300,7 +313,10 @@ exports.addItemsToOrder = async (req, res, next) => {
 
 exports.deleteOrder = async (req, res, next) => {
     try {
-        const order = await orderModel.findById(req.params.id);
+        const order = await orderModel.findOne({
+            _id: req.params.id,
+            restaurant_id: req.user.restaurant_id
+        });
 
         if (!order || order.is_deleted) {
             throw error = new Error("Order not found");
@@ -331,6 +347,7 @@ exports.getOrdersByTable = async (req, res, next) => {
         const orders = await orderModel
             .find({
                 table_id: req.params.id,
+                restaurant_id: req.user.restaurant_id,
                 is_deleted: false,
                 order_status: {
                     $nin: ["Completed", "Cancelled"]
@@ -353,6 +370,7 @@ exports.getPendingOrders = async (req, res, next) => {
     try {
         const orders = await orderModel
             .find({
+                restaurant_id: req.user.restaurant_id,
                 order_status: "Pending",
                 is_deleted: false
             })
@@ -371,7 +389,7 @@ exports.getPendingOrders = async (req, res, next) => {
 
 exports.getCompletedOrders = async (req, res, next) => {
     try {
-        const orders = await orderModel.find({ order_status: "Completed", is_deleted: false })
+        const orders = await orderModel.find({ restaurant_id: req.user.restaurant_id, order_status: "Completed", is_deleted: false })
             .populate("table_id", "tableNumber")
             .populate("waiter_id", "name");
 
@@ -387,7 +405,10 @@ exports.getCompletedOrders = async (req, res, next) => {
 
 exports.sendToKitchen = async (req, res, next) => {
     try {
-        const order = await orderModel.findById(req.params.id);
+        const order = await orderModel.findOne({
+            _id: req.params.id,
+            restaurant_id: req.user.restaurant_id
+        });
 
         if (!order || order.is_deleted) {
             const error = new Error("Order not found");

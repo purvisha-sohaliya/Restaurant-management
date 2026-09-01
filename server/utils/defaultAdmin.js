@@ -1,18 +1,21 @@
 const userModel = require("../models/userModel");
+const { hashPassword } = require("./bcryptHelper");
 
 exports.defaultAdmin = async () => {
     try {
         const adminExists = await userModel.findOne({
-            email: "admin@gmail.com",
+            role: "super_admin",
         });
 
         if (!adminExists) {
+            const hashedPassword = await hashPassword("123456");
+
             await userModel.create({
                 name: "Super Admin",
                 email: "admin@gmail.com",
-                password: "123456",
+                password: hashedPassword,
                 phone: 1324612345,
-                role: "super_admin", // remove if role field doesn't exist
+                role: "super_admin",
             });
 
             console.log("Default Admin Created");

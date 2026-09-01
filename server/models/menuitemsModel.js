@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 
 const menuItemSchema = new mongoose.Schema(
     {
+        restaurant_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Restaurant",
+            required: true
+        },
+
         category_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Category",
@@ -45,13 +51,14 @@ const menuItemSchema = new mongoose.Schema(
     });
 
 menuItemSchema.index(
-  {
-    category_id: 1,
-    item_name: 1
-  },
-  {
-    unique: true
-  }
+    {
+        restaurant_id: 1,
+        category_id: 1,
+        item_name: 1
+    },
+    {
+        unique: true
+    }
 );
 
 module.exports = mongoose.model("MenuItem", menuItemSchema);

@@ -7,8 +7,10 @@ const {
     servedKitchenOrder,
     getDisplayScreen
 } = require("../controllers/kitchenController");
+const isAuth = require("../middleware/auth.middleware");
+const authorizeRoles = require("../middleware/role.middleware");
 
-router.get("/orders", getKitchenOrders);
+router.get("/orders", isAuth, authorizeRoles("owner", "manager", "kitchen"), getKitchenOrders);
 router.get("/orders/:id", getKitchenOrderById);
 router.put("/accept/:id", acceptKitchenOrder);
 router.put("/ready/:id", readyKitchenOrder);

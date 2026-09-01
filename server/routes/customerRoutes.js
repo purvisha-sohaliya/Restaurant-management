@@ -5,17 +5,17 @@ const {
     getCustomerById,
     searchByPhone,
     updateCustomer,
-    getCustomerBillHistory,
     deleteCustomer
 } = require("../controllers/customerController");
+const isAuth = require("../middleware/auth.middleware");
+const authorizeRoles = require("../middleware/role.middleware");
 
 // Customer routes
-router.post("/", createCustomer);
-router.get("/", getCustomers);
+router.post("/", isAuth, authorizeRoles("owner", "manager", "waiter", "cashier"), createCustomer);
+router.get("/", isAuth, authorizeRoles("owner", "manager", "waiter", "cashier"), getCustomers);
 router.get("/search", searchByPhone);
 router.get("/:id", getCustomerById);
 router.put("/:id", updateCustomer);
-router.get("/:id/bills", getCustomerBillHistory);
 router.delete("/:id", deleteCustomer);
 
 module.exports = router;

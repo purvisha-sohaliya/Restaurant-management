@@ -4,15 +4,14 @@ const {
     confirmPayment,
     getBills,
     getBillById,
-    refundBill,
-    getKOT,
-    deleteBill
 } = require("../controllers/billingController");
+const isAuth = require("../middleware/auth.middleware");
+const authorizeRoles = require("../middleware/role.middleware");
 
 // Bill routes
-router.post("/", generateBill);
-router.get("/", getBills);
-router.get("/:id", getBillById);
-router.patch("/:id/pay", confirmPayment);
+router.post("/", isAuth, authorizeRoles("owner", "manager", "cashier"), generateBill);
+router.get("/", isAuth, authorizeRoles("owner", "manager", "cashier"), getBills);
+router.get("/:id", isAuth, authorizeRoles("owner", "manager", "cashier"), getBillById);
+router.patch("/:id/pay", isAuth, authorizeRoles("owner", "manager", "cashier"), confirmPayment);
 
 module.exports = router;

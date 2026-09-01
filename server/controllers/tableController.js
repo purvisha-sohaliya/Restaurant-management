@@ -2,7 +2,7 @@ const tableModel = require("../models/tableModel");
 
 exports.createTable = async (req, res, next) => {
     try {
-        const table = await tableModel.create(req.body);
+        const table = await tableModel.create({ ...req.body, restaurant_id: req.user.restaurant_id });
 
         res.status(201).json({
             success: true,
@@ -15,7 +15,7 @@ exports.createTable = async (req, res, next) => {
 
 exports.getAllTables = async (req, res, next) => {
     try {
-        const tables = await tableModel.find().sort({ tableNumber: 1 });
+        const tables = await tableModel.find({ restaurant_id: req.user.restaurant_id }).sort({ tableNumber: 1 });
 
         res.status(200).json({
             success: true,
@@ -29,7 +29,10 @@ exports.getAllTables = async (req, res, next) => {
 
 exports.getTableById = async (req, res, next) => {
     try {
-        const table = await tableModel.findById(req.params.id);
+        const table = await tableModel.findOne({
+            _id: req.params.id,
+            restaurant_id: req.user.restaurant_id
+        });
 
         if (!table) {
             return res.status(404).json({
@@ -48,7 +51,10 @@ exports.getTableById = async (req, res, next) => {
 
 exports.updateTable = async (req, res, next) => {
     try {
-        const table = await tableModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const table = await tableModel.findByIdAndUpdate({
+            _id: req.params.id,
+            restaurant_id: req.user.restaurant_id
+        }, req.body, { new: true });
 
         if (!table) return res.status(404).json({ success: false, message: 'Table not found' });
 
@@ -64,7 +70,10 @@ exports.updateTable = async (req, res, next) => {
 exports.deleteTable = async (req, res, next) => {
     try {
         const table = await tableModel.findByIdAndUpdate(
-            req.params.id,
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
             {
                 isDeleted: true
             },
@@ -92,7 +101,10 @@ exports.deleteTable = async (req, res, next) => {
 exports.restoreTable = async (req, res, next) => {
     try {
         const table = await tableModel.findByIdAndUpdate(
-            req.params.id,
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
             {
                 isDeleted: false,
             },
@@ -111,7 +123,10 @@ exports.restoreTable = async (req, res, next) => {
 exports.updateTableStatus = async (req, res, next) => {
     try {
         const table = await tableModel.findByIdAndUpdate(
-            req.params.id,
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
             { status: req.body.status },
             { new: true }
         );

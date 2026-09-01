@@ -2,13 +2,18 @@ const mongoose = require("mongoose");
 
 const tableSchema = new mongoose.Schema(
     {
+        restaurant_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Restaurant",
+            required: true
+        },
+
         tableNumber: {
             type: String,
             required: true,
             trim: true,
-            unique: true,
         },
-        
+
         customer_name: {
             type: String,
             default: ""
@@ -39,6 +44,11 @@ const tableSchema = new mongoose.Schema(
     {
         timestamps: true,
     }
+);
+
+tableSchema.index(
+    { restaurant_id: 1, tableNumber: 1 },
+    { unique: true }
 );
 
 module.exports = mongoose.model("Table", tableSchema);

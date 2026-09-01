@@ -2,12 +2,18 @@ const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema(
   {
+    restaurant_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Restaurant",
+      required: true
+    },
+
     table_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Table",
       required: true
     },
-    
+
     waiting_entry_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "WaitingEntry",

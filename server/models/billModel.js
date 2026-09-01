@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 
 const billSchema = new mongoose.Schema(
     {
+        restaurant_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Restaurant",
+            required: true
+        },
+        
         order_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Order",

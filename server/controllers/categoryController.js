@@ -21,6 +21,7 @@ exports.createCategory = async (req, res, next) => {
             category_name,
             description,
             image: imageUrl,
+            restaurant_id: req.user.restaurant_id
         });
 
         res.status(201).json({
@@ -36,7 +37,7 @@ exports.createCategory = async (req, res, next) => {
 // Get All Category
 exports.getCategories = async (req, res, next) => {
     try {
-        const categories = await categoryModel.find().sort({ createdAt: -1 });
+        const categories = await categoryModel.find({ restaurant_id: req.user.restaurant_id }).sort({ createdAt: -1 });
 
         res.status(200).json({
             success: true,
@@ -51,7 +52,10 @@ exports.getCategories = async (req, res, next) => {
 // Get Category By Id
 exports.getCategoryById = async (req, res, next) => {
     try {
-        const category = await categoryModel.findById(req.params.id);
+        const category = await categoryModel.findOne({
+            _id: req.params.id,
+            restaurant_id: req.user.restaurant_id
+        });
 
         if (!category) {
             return res.status(404).json({
@@ -86,8 +90,11 @@ exports.updateCategory = async (req, res, next) => {
             updateData.image = result.secure_url;
         }
 
-        const category = await categoryModel.findByIdAndUpdate(
-            req.params.id,
+        const category = await categoryModel.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
             updateData,
             { new: true }
         );
@@ -113,8 +120,11 @@ exports.updateCategory = async (req, res, next) => {
 // Change Status
 exports.changeCategoryStatus = async (req, res, next) => {
     try {
-        const category = await categoryModel.findByIdAndUpdate(
-            req.params.id,
+        const category = await categoryModel.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
             {
                 status:
                     req.body.status
@@ -147,7 +157,11 @@ exports.changeCategoryStatus = async (req, res, next) => {
 // Delete Category (Soft Delete)
 exports.deleteCategory = async (req, res, next) => {
     try {
-        const category = await categoryModel.findByIdAndUpdate(req.params.id,
+        const category = await categoryModel.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
             {
                 isDeleted: true,
                 status: "inactive"
@@ -177,8 +191,11 @@ exports.deleteCategory = async (req, res, next) => {
 // Restore Category
 exports.restoreCategory = async (req, res, next) => {
     try {
-        const category = await categoryModel.findByIdAndUpdate(
-            req.params.id,
+        const category = await categoryModel.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
             {
                 isDeleted: false,
                 status: "active"

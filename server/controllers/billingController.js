@@ -11,7 +11,10 @@ exports.generateBill = async (req, res, next) => {
             payment_method = "Cash"
         } = req.body;
 
-        const order = await orderModel.findById(order_id);
+        const order = await orderModel.findOne({
+            _id: order_id,
+            restaurant_id: req.user.restaurant_id
+        });
 
         if (!order || order.is_deleted) {
             const error = new Error("Order not found");
@@ -61,6 +64,7 @@ exports.generateBill = async (req, res, next) => {
 
         const billNumber = await getNextNumber("bill");
         const bill = await billModel.create({
+            restaurant_id: req.user.restaurant_id,
             order_id,
             bill_number: `BILL-${billNumber}`,
             items: order.items,
@@ -90,7 +94,10 @@ exports.confirmPayment = async (req, res, next) => {
     try {
         const { payment_method } = req.body;
 
-        const bill = await billModel.findById(req.params.id);
+        const bill = await billModel.findOne({
+            _id: req.params.id,
+            restaurant_id: req.user.restaurant_id
+        });
 
         if (!bill || bill.is_deleted) {
             return res.status(404).json({
@@ -156,7 +163,7 @@ exports.getBills = async (req, res, next) => {
     try {
         const { payment_status, from, to } = req.query;
 
-        const filter = { is_deleted: false };
+        const filter = { is_deleted: false, restaurant_id: req.user.restaurant_id };
 
         if (payment_status) filter.payment_status = payment_status;
 
@@ -186,7 +193,10 @@ exports.getBills = async (req, res, next) => {
 exports.getBillById = async (req, res, next) => {
     try {
         const bill = await billModel
-            .findById(req.params.id)
+            .findOne({
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            })
             .populate("order_id")
             .populate("customer_id", "name phone email")
 

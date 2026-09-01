@@ -1,15 +1,19 @@
 const userModel = require("../models/userModel");
+const { hashPassword } = require("../utils/bcryptHelper");
 
 exports.createStaff = async (req, res, next) => {
     try {
-        const { name, email, password, phone, role, restaurant_id } = req.body;
+        const { name, email, password, phone, role } = req.body;
+
+        const hashedPassword = await hashPassword(password);
+
         const staff = await userModel.create({
             name,
             email,
-            password,
+            password: hashedPassword,
             phone,
             role,
-            restaurant_id
+            restaurant_id: req.user.restaurant_id
         });
 
         res.status(201).json({
@@ -26,8 +30,9 @@ exports.getStaff = async (req, res, next) => {
     try {
         const staff = await userModel
             .find({
+                restaurant_id: req.user.restaurant_id,
                 role: {
-                    $in: ["manager", "cashier", "waiter"]
+                    $in: ["manager", "cashier", "waiter", "kitchen"]
                 }
             })
             .populate("restaurant_id", "restaurant_name");
@@ -46,7 +51,13 @@ exports.getStaff = async (req, res, next) => {
 exports.getStaffById = async (req, res, next) => {
     try {
         const staff = await userModel
-            .findById(req.params.id)
+            .findOne({
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id,
+                role: {
+                    $in: ["manager", "cashier", "waiter", "kitchen"]
+                }
+            })
             .populate("restaurant_id", "restaurant_name");
 
         res.status(200).json({
@@ -63,7 +74,7 @@ exports.getStaffByRestaurant = async (req, res, next) => {
     try {
         const staff = await userModel
             .find({
-                restaurant_id: req.params.id,
+                restaurant_id: req.user.restaurant_id,
                 role: {
                     $in: ["manager", "cashier", "waiter"]
                 }
@@ -81,8 +92,11 @@ exports.getStaffByRestaurant = async (req, res, next) => {
 
 exports.updateStaff = async (req, res, next) => {
     try {
-        const staff = await userModel.findByIdAndUpdate(
-            req.params.id,
+        const staff = await userModel.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
             req.body,
             { new: true }
         );
@@ -100,8 +114,11 @@ exports.updateStaff = async (req, res, next) => {
 
 exports.changeStaffStatus = async (req, res, next) => {
     try {
-        const staff = await userModel.findByIdAndUpdate(
-            req.params.id,
+        const staff = await userModel.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
             {
                 status: req.body.status
             },
@@ -123,8 +140,11 @@ exports.changeStaffStatus = async (req, res, next) => {
 
 exports.deleteStaff = async (req, res, next) => {
     try {
-        await userModel.findByIdAndUpdate(
-            req.params.id,
+        await userModel.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
             {
                 is_deleted: true
             }
@@ -142,8 +162,11 @@ exports.deleteStaff = async (req, res, next) => {
 
 exports.restoreStaff = async (req, res, next) => {
     try {
-        const staff = await userModel.findByIdAndUpdate(
-            req.params.id,
+        const staff = await userModel.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
             {
                 is_deleted: false
             },

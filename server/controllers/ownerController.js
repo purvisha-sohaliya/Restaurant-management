@@ -1,17 +1,21 @@
 const restaurantModel = require("../models/restaurantModel");
 const userModel = require("../models/userModel");
+const { hashPassword } = require("../utils/bcryptHelper");
 
 // Create Owner
 exports.createOwner = async (req, res, next) => {
     try {
-        const { name, email, password, phone } = req.body;
+        const { name, email, password, phone, restaurant_id } = req.body;
+
+        const hashedPassword = await hashPassword(password);
 
         const owner = await userModel.create({
             name,
             email,
-            password,
+            password: hashedPassword,
             phone,
-            role: "owner"
+            role: "owner",
+            restaurant_id
         });
 
         res.status(201).json({

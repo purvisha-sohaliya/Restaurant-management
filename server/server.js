@@ -10,7 +10,8 @@ const INDEX_ROUTE = require("./routes/indexRoutes");
 const errorHandler = require("./middleware/error.middleware");
 const notFound = require("./middleware/notFound");
 const path = require("path");
-const { defaultAdmin } = require("./utils/default.admin");
+const { defaultAdmin } = require("./utils/defaultAdmin");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 connectDB();
@@ -26,6 +27,7 @@ app.use(cors({
 app.use(morgan("dev"));
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(
     "/uploads",

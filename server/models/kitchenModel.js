@@ -2,20 +2,29 @@ const mongoose = require("mongoose");
 
 const kitchenSchema = new mongoose.Schema(
     {
+        restaurant_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Restaurant",
+            required: true
+        },
+
         order_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Order",
             required: true
         },
+
         waiter_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Users"
         },
+
         kot_no: {
             type: String,
             required: true,
             unique: true,
         },
+
         table_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Table",
@@ -39,6 +48,7 @@ const kitchenSchema = new mongoose.Schema(
                 },
             },
         ],
+        
         kitchen_status: {
             type: String,
             enum: ["Pending", "Preparing", "Ready", "Served", "Cancelled"],

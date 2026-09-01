@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
@@ -32,8 +31,10 @@ const userSchema = new mongoose.Schema(
                 "owner",
                 "manager",
                 "waiter",
+                "cashier",
                 "kitchen"
             ],
+            default: "owner",
             required: true
         },
 
@@ -52,20 +53,11 @@ const userSchema = new mongoose.Schema(
             type: Boolean,
             default: false
         },
-        // permissions: [
-        //     {
-        //         module: {
-        //             type: String
-        //         },
 
-        //         actions: [
-        //             {
-        //                 type: String
-        //             }
-        //         ]
-        //     }
-        // ]
-
+        refreshToken: {
+            type: String,
+            default: null
+        }
     },
     {
         timestamps: true,
