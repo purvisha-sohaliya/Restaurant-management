@@ -32,7 +32,7 @@ function StaffForm() {
       .required("Phone is required"),
 
     role: Yup.string().required("Role is required"),
-    restaurant_id: Yup.string().required("Restaurant is required"),
+    // restaurant_id: Yup.string().required("Restaurant is required"),
     status: Yup.string().required("Status is required"),
   });
 
@@ -44,7 +44,7 @@ function StaffForm() {
       password: "",
       phone: "",
       role: "",
-      restaurant_id: "",
+      // restaurant_id: "",
       status: "active"
     },
 
@@ -86,7 +86,7 @@ function StaffForm() {
         password: "",
         phone: res.data.phone || "",
         role: res.data.role || "",
-        restaurant_id: res.data.restaurant_id?._id || "",
+        // restaurant_id: res.data.restaurant_id?._id || "",
         status: res.data.status || "active",
       });
     } catch (err) {
@@ -190,7 +190,7 @@ function StaffForm() {
           </div>
 
           {/* Restaurant */}
-          <select
+          {/* <select
             name="restaurant_id"
             className={`form-select mb-3 ${formik.touched.restaurant_id &&
               formik.errors.restaurant_id
@@ -213,7 +213,7 @@ function StaffForm() {
           </select>
           <div className="invalid-feedback">
             {formik.errors.restaurant_id}
-          </div>
+          </div> */}
 
           {/* Role */}
           <select

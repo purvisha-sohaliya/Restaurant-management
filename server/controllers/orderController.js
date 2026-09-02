@@ -22,8 +22,9 @@ exports.createOrder = async (req, res, next) => {
         const table = await tableModel.findById(table_id);
 
         if (!table) {
-            throw error = new Error("Table not found");
+            const error = new Error("Table not found");
             error.statusCode = 404;
+            throw error;
         }
 
         if (table.status === "cleaning") {
@@ -206,37 +207,6 @@ exports.getOrderById = async (req, res, next) => {
     }
 }
 
-exports.changeOrderStatus = async (req, res, next) => {
-    try {
-        const order = await orderModel.findByIdAndUpdate(
-            {
-                _id: req.params.id,
-                restaurant_id: req.user.restaurant_id
-            },
-            {
-                order_status: req.body.order_status
-            },
-            {
-                new: true
-            }
-        );
-
-        if (!order) {
-            const error = new Error("Order not found");
-            error.statusCode = 404;
-            throw error;
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "Order status updated successfully",
-            data: order
-        });
-    } catch (err) {
-        next(err);
-    }
-};
-
 exports.addItemsToOrder = async (req, res, next) => {
     try {
         const { items } = req.body;
@@ -306,37 +276,6 @@ exports.addItemsToOrder = async (req, res, next) => {
             data: order
         });
 
-    } catch (err) {
-        next(err);
-    }
-};
-
-exports.deleteOrder = async (req, res, next) => {
-    try {
-        const order = await orderModel.findOne({
-            _id: req.params.id,
-            restaurant_id: req.user.restaurant_id
-        });
-
-        if (!order || order.is_deleted) {
-            throw error = new Error("Order not found");
-            error.statusCode = 404;
-        }
-
-        order.is_deleted = true;
-        await order.save();
-
-        await tableModel.findByIdAndUpdate(
-            order.table_id,
-            {
-                status: "Available"
-            }
-        );
-
-        res.status(200).json({
-            success: true,
-            message: "Order deleted successfully"
-        });
     } catch (err) {
         next(err);
     }
@@ -437,6 +376,7 @@ exports.sendToKitchen = async (req, res, next) => {
             order_id: order._id,
             table_id: order.table_id,
             waiter_id: order.waiter_id,
+            restaurant_id: req.user.restaurant_id,
             kot_no: `KOT-${kotNumber}`,
             kitchen_status: "Pending",
 

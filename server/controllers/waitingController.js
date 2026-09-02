@@ -148,7 +148,7 @@ exports.seatCustomer = async (req, res, next) => {
 
         // Find table
         const table = await tableModel.findOne({
-            _id: req.params.id,
+            _id: table_id,
             restaurant_id: req.user.restaurant_id
         });
 

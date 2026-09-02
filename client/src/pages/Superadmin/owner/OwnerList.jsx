@@ -14,9 +14,9 @@ function OwnerList() {
   const fetchOwners = async () => {
     try {
       const res = await getOwners();
-    console.log("OWNER API RESPONSE:", res.data);
+      console.log("OWNER API RESPONSE:", res.data);
 
-      setOwners(res.data); // 👈 array set કર
+      setOwners(res.data);
     } catch (err) {
       console.error(err);
     }
@@ -52,7 +52,7 @@ function OwnerList() {
       );
     }
   };
-  
+
   const handleRecover = async (id) => {
     const result = await Swal.fire({
       title: "Recover Restaurant?",
@@ -78,7 +78,7 @@ function OwnerList() {
       );
     }
   };
-  
+
   const handleToggleVisibility = async (id) => {
     try {
       const res = await toggleOwnerVisibility(id);

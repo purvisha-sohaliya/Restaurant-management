@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaUsers, FaChair, FaClock, FaPhoneAlt, FaUserFriends, } from "react-icons/fa";
-import { addToWaiting, getWaitingList, seatCustomer, } from "../../../services/waitingService";
+import { addToWaiting, deleteWaitingEntry, getWaitingList, seatCustomer, } from "../../../services/waitingService";
 import { getAllTables } from "../../../services/tableservice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -168,6 +168,39 @@ function WaitingQueue() {
     return `${hours}h ${mins}m`;
   };
 
+  const handleDeleteWaiting = async (customer) => {
+    if (!customer?._id) {
+      toast.error("Waiting customer ID not found");
+      return;
+    }
+    const confirmDelete = window.confirm(
+      `Remove ${customer.customer_name} from waiting list?`
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const res = await deleteWaitingEntry(customer._id);
+      if (res.success) {
+        toast.success("Customer removed from waiting list");
+
+        fetchData();
+      } else {
+        toast.error(res.message || "Unable to remove customer");
+      }
+    } catch (err) {
+      console.log(
+        "DELETE WAITING ERROR:",
+        err.response?.data || err.message
+      );
+
+      toast.error(
+        err.response?.data?.message ||
+        err.message ||
+        "Unable to remove customer"
+      );
+    }
+  };
+
   return (
     <div className="container-fluid py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -220,15 +253,24 @@ function WaitingQueue() {
                     Wait : {getWaitingTime(item.createdAt)}
                   </p>
 
-                  <button
-                    className="btn btn-primary w-100"
-                    data-bs-toggle="modal"
-                    data-bs-target="#assignTableModal"
-                    onClick={() => openAssignModal(item)}
-                  >
-                    <FaChair className="me-2" />
-                    Assign Table
-                  </button>
+                  <div className="d-flex gap-2">
+                    <button
+                      className="btn btn-primary flex-grow-1"
+                      data-bs-toggle="modal"
+                      data-bs-target="#assignTableModal"
+                      onClick={() => openAssignModal(item)}
+                    >
+                      <FaChair className="me-2" />
+                      Assign Table
+                    </button>
+
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => handleDeleteWaiting(item)}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

@@ -35,8 +35,8 @@ function Register() {
   });
 
   return (
-    <div className="register-page">
-      <div className="register-card">
+    <div className="register-page min-vh-100 d-flex justify-content-center align-items-center">
+      <div className="register-card ">
         <div className="register-header">
           <h2>Create Account</h2>
           <p>Add New Restaurant Owner</p>

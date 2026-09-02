@@ -31,6 +31,8 @@ import Bill from './pages/subAdmin/Bill/Bill';
 import BillList from './pages/subAdmin/Bill/BillList'
 import Kitchen from './pages/Kitchen/Kitchen';
 import LiveScreen from './pages/live-screen/LiveScreen';
+import PublicRoute from './routes/PublicRoute';
+import ErrorPage from './pages/ErrorPage';
 
 function App(props) {
   return (
@@ -38,43 +40,47 @@ function App(props) {
       <ToastContainer />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to={COMMON_ROUTE.DASHBOARD} replace />} />
-          <Route path={AUTH_ROUTE.LOGIN} element={<Login />} />
-          <Route path={AUTH_ROUTE.REGISTER} element={<Register />} />
-
-          <Route element={<AdminLayout />}>
-            <Route path={COMMON_ROUTE.DASHBOARD} element={<Dashboard />} />
-            <Route path={SUPER_ADMIN_ROUTE.RESTOURANTSLIST} element={<RestaurantsList />} />
-            <Route path={SUPER_ADMIN_ROUTE.RESTOURANTSADD} element={<RestaurantForm />} />
-            <Route path={SUPER_ADMIN_ROUTE.RESTOURANTSEDIT + "/:id"} element={<RestaurantForm />} />
-            <Route path={SUPER_ADMIN_ROUTE.OWNERLIST} element={<OwnerList />} />
-            <Route path={SUPER_ADMIN_ROUTE.OWNERADD} element={<OwnerForm />} />
-            <Route path={SUPER_ADMIN_ROUTE.OWNEREDIT + "/:id"} element={<OwnerForm />} />
-            <Route path={SUPER_ADMIN_ROUTE.REPORTS} element={<Reports />} />
-            <Route path={SUB_ADMIN_ROUTE.CATEGORYLIST} element={<CategoryList />} />
-            <Route path={SUB_ADMIN_ROUTE.CATEGORYADD} element={<CategoryForm />} />
-            <Route path={SUB_ADMIN_ROUTE.CATEGORYEDIT + "/:id"} element={<CategoryForm />} />
-            <Route path={SUB_ADMIN_ROUTE.MENULIST} element={<MenuList />} />
-            <Route path={SUB_ADMIN_ROUTE.MENUADD} element={<MenuForm />} />
-            <Route path={SUB_ADMIN_ROUTE.MENUEDIT + "/:id"} element={<MenuForm />} />
-            <Route path={SUB_ADMIN_ROUTE.TABLE_LIST} element={<TableList />} />
-            <Route path={SUB_ADMIN_ROUTE.TABLE_ADD} element={<TableForm />} />
-            <Route path={SUB_ADMIN_ROUTE.TABLE_EDIT + "/:id"} element={<TableForm />} />
-            <Route path={SUB_ADMIN_ROUTE.STAFFLIST} element={<StaffList />} />
-            <Route path={SUB_ADMIN_ROUTE.STAFFADD} element={<StaffForm />} />
-            <Route path={SUB_ADMIN_ROUTE.STAFFEDIT + "/:id"} element={<StaffForm />} />
-            <Route path={SUB_ADMIN_ROUTE.ORDER_ADD} element={<OrderForm />} />
-            <Route path={SUB_ADMIN_ROUTE.ORDER_EDIT + "/:id"} element={<OrderForm />} />
-            <Route path={SUB_ADMIN_ROUTE.ACTIVE_ORDERS} element={<ActiveOrders />} />
-            <Route path={SUB_ADMIN_ROUTE.WAITINGQUEUE} element={<WaitingQueue />} />
-            <Route path={SUB_ADMIN_ROUTE.ORDER_LIST} element={<OrderList />} />
-            <Route path={SUB_ADMIN_ROUTE.ORDER_ADD} element={<OrderForm />} />
-            {/* <Route path={SUB_ADMIN_ROUTE.BILL + "/:id"} element={<Bill />} />     */}
-            <Route path={SUB_ADMIN_ROUTE.BILL_LIST} element={<BillList />} />
-            <Route path={`${SUB_ADMIN_ROUTE.BILL}/:id`} element={<Bill />} />
-            <Route path={SUB_ADMIN_ROUTE.KITCHEN} element={<Kitchen />} />
-            <Route path={SUB_ADMIN_ROUTE.LIVESCREEN} element={<LiveScreen />} />
+          <Route element={<PublicRoute />}>
+            <Route path={AUTH_ROUTE.LOGIN} element={<Login />} />
+            <Route path={AUTH_ROUTE.REGISTER} element={<Register />} />
           </Route>
+          <Route element={<PrivateRoute  />}>
+            <Route element={<AdminLayout />}>
+              <Route path={COMMON_ROUTE.DASHBOARD} element={<Dashboard />} />
+              <Route path={SUPER_ADMIN_ROUTE.RESTOURANTSLIST} element={<RestaurantsList />} />
+              <Route path={SUPER_ADMIN_ROUTE.RESTOURANTSADD} element={<RestaurantForm />} />
+              <Route path={SUPER_ADMIN_ROUTE.RESTOURANTSEDIT + "/:id"} element={<RestaurantForm />} />
+              <Route path={SUPER_ADMIN_ROUTE.OWNERLIST} element={<OwnerList />} />
+              <Route path={SUPER_ADMIN_ROUTE.OWNERADD} element={<OwnerForm />} />
+              <Route path={SUPER_ADMIN_ROUTE.OWNEREDIT + "/:id"} element={<OwnerForm />} />
+              <Route path={SUPER_ADMIN_ROUTE.REPORTS} element={<Reports />} />
+              <Route path={SUB_ADMIN_ROUTE.CATEGORYLIST} element={<CategoryList />} />
+              <Route path={SUB_ADMIN_ROUTE.CATEGORYADD} element={<CategoryForm />} />
+              <Route path={SUB_ADMIN_ROUTE.CATEGORYEDIT + "/:id"} element={<CategoryForm />} />
+              <Route path={SUB_ADMIN_ROUTE.MENULIST} element={<MenuList />} />
+              <Route path={SUB_ADMIN_ROUTE.MENUADD} element={<MenuForm />} />
+              <Route path={SUB_ADMIN_ROUTE.MENUEDIT + "/:id"} element={<MenuForm />} />
+              <Route path={SUB_ADMIN_ROUTE.TABLE_LIST} element={<TableList />} />
+              <Route path={SUB_ADMIN_ROUTE.TABLE_ADD} element={<TableForm />} />
+              <Route path={SUB_ADMIN_ROUTE.TABLE_EDIT + "/:id"} element={<TableForm />} />
+              <Route path={SUB_ADMIN_ROUTE.STAFFLIST} element={<StaffList />} />
+              <Route path={SUB_ADMIN_ROUTE.STAFFADD} element={<StaffForm />} />
+              <Route path={SUB_ADMIN_ROUTE.STAFFEDIT + "/:id"} element={<StaffForm />} />
+              <Route path={SUB_ADMIN_ROUTE.ORDER_ADD} element={<OrderForm />} />
+              <Route path={SUB_ADMIN_ROUTE.ORDER_EDIT + "/:id"} element={<OrderForm />} />
+              <Route path={SUB_ADMIN_ROUTE.ACTIVE_ORDERS} element={<ActiveOrders />} />
+              <Route path={SUB_ADMIN_ROUTE.WAITINGQUEUE} element={<WaitingQueue />} />
+              <Route path={SUB_ADMIN_ROUTE.ORDER_LIST} element={<OrderList />} />
+              <Route path={SUB_ADMIN_ROUTE.ORDER_ADD} element={<OrderForm />} />
+              {/* <Route path={SUB_ADMIN_ROUTE.BILL + "/:id"} element={<Bill />} />     */}
+              <Route path={SUB_ADMIN_ROUTE.BILL_LIST} element={<BillList />} />
+              <Route path={`${SUB_ADMIN_ROUTE.BILL}/:id`} element={<Bill />} />
+              <Route path={SUB_ADMIN_ROUTE.KITCHEN} element={<Kitchen />} />
+              <Route path={SUB_ADMIN_ROUTE.LIVESCREEN} element={<LiveScreen />} />
+            </Route>
+          </Route>
+
+          <Route path={AUTH_ROUTE.ERROR} element={<ErrorPage />} />
         </Routes>
       </BrowserRouter>
     </>

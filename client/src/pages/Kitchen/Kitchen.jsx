@@ -182,9 +182,9 @@ useEffect(() => {
         className={`kds-card ${getStatusClass(status)}`}
       >
         {/* TOP */}
-        <div className="kds-top">
+        <div className="kds-top d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center gap-2">
-            <div className="kds-table">
+            <div className="kds-table fs-5 fw-bold">
               {getTableName(order)}
             </div>
             <div className="kds-order-number">
@@ -196,18 +196,15 @@ useEffect(() => {
             {getElapsedTime(order)}
           </div>
         </div>
-        {/* CUSTOMER */}
-        <div className="kds-customer">
-         
-        </div>
+        
         {/* ITEMS */}
-        <div className="kds-items">
+        <div className="kds-items mt-1">
           {order.items?.map((item, index) => (
             <div
               key={item._id || index}
-              className="kds-item">
+              className="kds-item d-flex justify-content-between align-items-center border-bottom">
               <div className="d-flex align-items-center">
-                <span className="kds-qty">
+                <span className="kds-qty d-inline-flex align-items-center justify-content-center rounded-circle border fw-semibold">
                   {getQuantity(item)}
                 </span>
                 <span className="fw-semibold">
@@ -224,7 +221,7 @@ useEffect(() => {
           ))}
         </div>
         {/* ACTION */}
-        <div className="kds-action">
+        <div className="kds-action ">
           {status === "Pending" && (
             <button
               className="kds-btn kds-btn-start"
@@ -345,7 +342,7 @@ useEffect(() => {
           </p>
         </div>
       ) : (
-        <div className="kds-grid">
+        <div className="kds-grid d-grid align-items-start">
           {kitchenOrders.map((order) =>
             renderOrderCard(order)
           )}

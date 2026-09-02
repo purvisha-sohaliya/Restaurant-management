@@ -17,7 +17,7 @@ export const SUPER_ADMIN_ROUTE = {
     OWNERLIST: "/ownersList",
     OWNERADD: "/ownersAdd",
     OWNEREDIT: "/ownersEdit",
-
+    
     REPORTS: "/Reportsa"
 }
 // sub admin
@@ -27,41 +27,43 @@ export const SUB_ADMIN_ROUTE = {
     CATEGORYEDIT: "/category/edit/:id",
 
     // Menu Item
-    MENULIST: "/subadmin/menu-item",
-    MENUADD: "/subadmin/menu-item/add",
-    MENUEDIT: "/subadmin/menu-item/edit/:id",
+    MENULIST: "/menu-item",
+    MENUADD: "/menu-item/add",
+    MENUEDIT: "/menu-item/edit/:id",
 
-    STAFFLIST: "/subadmin/staff/list",
-    STAFFADD: "/subadmin/staff/add",
-    STAFFEDIT: "/subadmin/staff/edit",
+    // Staff
+    STAFFLIST: "/staff/list",
+    STAFFADD: "/staff/add",
+    STAFFEDIT: "/staff/edit",
 
     // Table 
-    TABLE_LIST: "/sub-admin/table-list",
-    TABLE_ADD: "/sub-admin/table-add",
-    TABLE_EDIT: "/sub-admin/table-edit",
-    PROFILE: "/subadmin/profile",
+    TABLE_LIST: "/table-list",
+    TABLE_ADD: "/table-add",
+    TABLE_EDIT: "/table-edit",
+    PROFILE: "/profile",
 
     // Order
-    ORDER_ADD: "/sub-admin/Order-add",
-    ORDER_EDIT: "/sub-admin/Order-edit",
-    ORDER_LIST: "/sub-admin/Order-list",
+    ORDER_ADD: "/Order-add",
+    ORDER_EDIT: "/Order-edit",
+    ORDER_LIST: "/Order-list",
 
     // Activite
-    ACTIVE_ORDERS: "/sub-admin/active-orders",
+    ACTIVE_ORDERS: "/active-orders",
 
     // Bill
-    BILL: "/sub-admin/bill",
-    BILL_LIST: "/sub-admin/bill-list",
+    BILL: "/bill",
+    BILL_LIST: "/bill-list",
 
 
     // Waiting
-    WAITINGQUEUE: "/manager/waiting-queue",
-    WATINGORDERCARD: "/manager/waiting-order-card",
-    TABLEASSINGMODAL: "/manager/table-assign-modal",
+    WAITINGQUEUE: "/waiting-queue",
+    WATINGORDERCARD: "/waiting-order-card",
+    TABLEASSINGMODAL: "/table-assign-modal",
 
+    // Kitchen
     KITCHEN: "/kitchen",
 
     // LiveScreen
-    LIVESCREEN:"/sub-admin/Livescreen"
+    LIVESCREEN: "/Livescreen"
 
 };

@@ -1,87 +1,23 @@
-// import React, { useEffect, useState } from "react";
-// import { Navigate, Outlet } from "react-router-dom";
-// import api from "../api/axios";
 
-// function PublicRoute() {
-
-//     const [loading, setLoading] = useState(true);
-
-//     const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-//     useEffect(() => {
-
-//         checkAuth();
-
-//     }, []);
-
-//     const checkAuth = async () => {
-
-//         try {
-
-//             await api.get("/profile");
-
-//             setIsAuthenticated(true);
-
-//         } catch (error) {
-
-//             setIsAuthenticated(false);
-//         }
-
-//         setLoading(false);
-//     };
-
-//     if (loading) {
-
-//         return <h1>Loading...</h1>;
-//     }
-
-//     return isAuthenticated
-//         ? <Navigate to="/" replace />
-//         : <Outlet />;
-// }
-
-// export default PublicRoute;
-
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import api from "../api/axios";
-import { ROLES } from "../constant/CommonConstant";
+import { useAuth } from "../context/AuthContext";
 
 function PublicRoute() {
-    const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState(null);
-
-    useEffect(() => {
-        checkAuth();
-    }, []);
-
-    const checkAuth = async () => {
-        try {
-            const res = await api.get("/profile");
-
-            setUser(res.data.data);
-
-        } catch (error) {
-            setUser(null);
-        }
-
-        setLoading(false);
-    };
+    const { user, loading } = useAuth();
 
     if (loading) {
         return <h1>Loading...</h1>;
     }
 
+    // Already logged in → dashboard
     if (user) {
-
-        if (user.role === ROLES.ADMIN) {
-            return <Navigate to="/dashboard" replace />;
-        }
-
-        return <Navigate to="/" replace />;
+        return <Navigate to="/dashboard" replace />;
     }
 
+    // Not logged in → allow public pages
     return <Outlet />;
 }
 
-export default PublicRoute; 
+export default PublicRoute;
+

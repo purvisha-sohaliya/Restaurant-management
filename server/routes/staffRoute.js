@@ -5,11 +5,11 @@ const authorizeRoles = require("../middleware/role.middleware");
 
 router.post("/", isAuth, authorizeRoles("owner", "manager"), createStaff);
 router.get("/", isAuth, authorizeRoles("owner", "manager"), getStaff);
-router.get("/:id", getStaffById);
-router.get("/restaurant/:id", getStaffByRestaurant);
+router.get("/:id", isAuth, authorizeRoles("owner", "manager"), getStaffById);
+router.get("/restaurant/:id", isAuth, authorizeRoles("owner", "manager"), getStaffByRestaurant);
 router.put("/:id", isAuth, authorizeRoles("owner", "manager"), updateStaff);
-router.patch("/:id/status", changeStaffStatus);
+router.patch("/:id/status", isAuth, authorizeRoles("owner", "manager"), changeStaffStatus);
 router.delete("/:id", isAuth, authorizeRoles("owner", "manager"), deleteStaff);
-router.patch("/:id/restore", restoreStaff);
+router.patch("/:id/restore", isAuth, authorizeRoles("owner", "manager"), restoreStaff);
 
 module.exports = router;

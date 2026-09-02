@@ -11,6 +11,7 @@ import { getBills } from "../services/billService";
 import { getCategories } from "../services/categoryService";
 import { getMenuItems } from "../services/menuItemService";
 import { useAuth } from "../context/AuthContext";
+import { getOwners } from "../services/ownerService";
 
 function Dashboard() {
   const { user } = useAuth();
@@ -20,6 +21,7 @@ function Dashboard() {
     revenue: 0,
     availableTables: 0,
     totalStaff: 0,
+    totalOwners: 0,
     totalMenu: 0,
     totalCategories: 0,
     activeOrders: 0,
@@ -27,10 +29,16 @@ function Dashboard() {
     totalBills: 0,
   });
   useEffect(() => {
-    loadDashboard();
-  }, []);
+    if (user?.role) {
+      loadDashboard();
+    }
+  }, [user?.role]);
+
   const loadDashboard = async () => {
     try {
+      console.log("CURRENT ROLE:", CURRENT_ROLE);
+      console.log("SUPER ADMIN:", ROLES.SUPER_ADMIN);
+
       const [
         ordersRes,
         tablesRes,
@@ -40,7 +48,7 @@ function Dashboard() {
         billsRes,
         categoryRes,
         menuRes
-      ] = await Promise.all([
+      ] = await Promise.allSettled([
         getOrders(),
         getAllTables(),
         getWaitingList(),
@@ -51,15 +59,85 @@ function Dashboard() {
         getMenuItems()
       ]);
 
-      const orders = ordersRes.data || [];
-      const tables = tablesRes.data || [];
-      const waiting = waitingRes.data || [];
-      const staff = staffRes.data || [];
-      const restaurants = restaurantRes.data || [];
-      const bills = billsRes.data || [];
-      const menus = menuRes.data || [];
-      const categories = categoryRes.data || [];
 
+      // ORDERS
+
+      const orders =
+        ordersRes.status === "fulfilled"
+          ? ordersRes.value?.data || []
+          : [];
+
+      // TABLES
+      const tables =
+        tablesRes.status === "fulfilled"
+          ? tablesRes.value?.data || []
+          : [];
+
+
+      // WAITING    
+      const waiting =
+        waitingRes.status === "fulfilled"
+          ? waitingRes.value?.data || []
+          : [];
+
+
+      // STAFF
+      const staff =
+        staffRes.status === "fulfilled"
+          ? staffRes.value?.data || []
+          : [];
+
+
+      // RESTAURANTS
+      const restaurantData =
+        restaurantRes.status === "fulfilled"
+          ? restaurantRes.value
+          : [];
+
+      const restaurants = Array.isArray(restaurantData)
+        ? restaurantData
+        : restaurantData?.data || [];
+
+      // BILLS
+      const bills =
+        billsRes.status === "fulfilled"
+          ? billsRes.value?.data || []
+          : [];
+
+      // CATEGORIES
+      const categoriesData =
+        categoryRes.status === "fulfilled"
+          ? categoryRes.value?.data || []
+          : [];
+
+      const categories = categoriesData.filter(
+        (category) => !category.isDeleted
+      );
+
+      // MENU
+      const menusData =
+        menuRes.status === "fulfilled"
+          ? menuRes.value?.data || []
+          : [];
+
+      const menus = menusData.filter(
+        (item) => !item.is_deleted
+      );
+
+      // OWNERS
+      // OWNERS
+      let owners = [];
+
+      if (CURRENT_ROLE === ROLES.SUPER_ADMIN) {
+        try {
+          const ownersRes = await getOwners();
+          owners = ownersRes?.data || [];
+        } catch (error) {
+          console.error("OWNERS ERROR:", error);
+        }
+      }
+
+      // ORDER COUNTS
       const pendingOrders = orders.filter(
         (o) => o.status === "Pending"
       ).length;
@@ -67,20 +145,29 @@ function Dashboard() {
       const completedOrders = orders.filter(
         (o) => o.status === "Completed"
       ).length;
+
+      // BILLS
       const pendingBills = bills.filter(
         (bill) => bill.payment_status === "Pending"
       ).length;
+
+      // TABLES
       const availableTables = tables.filter(
-        (t) => t.status === "available"
+        (table) => table.status === "available"
       ).length;
 
+      // REVENUE
       const revenue = orders
         .filter((o) => o.status === "Completed")
         .reduce(
-          (sum, order) => sum + Number(order.total_amount || 0),
+          (sum, order) =>
+            sum + Number(order.total_amount || 0),
           0
         );
 
+
+
+      // SET DASHBOARD
       setDashboard({
         totalOrders: orders.length,
         pendingOrders,
@@ -89,15 +176,17 @@ function Dashboard() {
         pendingBills,
         waitingCustomers: waiting.length,
         totalStaff: staff.length,
+        totalOwners: owners.length,
         totalRestaurants: restaurants.length,
         revenue,
         totalMenu: menus.length,
         totalCategories: categories.length,
         totalBills: bills.length,
+        todayOrders: orders.length,
       });
 
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.error("DASHBOARD ERROR:", error);
     }
   };
   return (
@@ -135,20 +224,14 @@ function Dashboard() {
               />
             </div>
 
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Owners"
-                value={dashboard.totalStaff}
-                icon={<FaUserTie />}
-                color="success"
-              />            </div>
+
 
             <div className="col-lg-3 col-md-6">
               <StatCard
-                title="Staff"
-                value={dashboard.totalStaff}
-                icon={<FaUserFriends />}
-                color="warning"
+                title="Owners"
+                value={dashboard.totalOwners}
+                icon={<FaUserTie />}
+                color="success"
               />
             </div>
 
@@ -160,13 +243,13 @@ function Dashboard() {
                 color="danger" />
             </div>
 
-            <div className="col-lg-3 col-md-6">
+            {/* <div className="col-lg-3 col-md-6">
               <StatCard
                 title="Category"
-                value={dashboard.totalCategory}
+                value={dashboard.totalCategories}
                 icon={<FaStore />}
                 color="primary" />
-            </div>
+            </div> */}
           </div>
         </>
       )}

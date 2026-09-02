@@ -8,7 +8,7 @@ import {
   FaTrash,
   FaEye
 } from "react-icons/fa";
-import { getOrders, deleteOrder } from "../../../services/orderService";
+import { getOrders, } from "../../../services/orderService";
 import { useAuth } from "../../../context/AuthContext";
 import { SUB_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
 
@@ -58,27 +58,8 @@ function OrderList() {
       setLoading(false);
     }
   };
-  const handleDelete = async (id) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "Order deleted successfully.",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    });
+ 
 
-    if (result.isConfirmed) {
-      await deleteOrder(id);
-
-      setOrders((prev) =>
-        prev.map((o) =>
-          o._id === id ? { ...o, is_deleted: true } : o
-        )
-      );
-
-      Swal.fire("Deleted!", "Menu item deleted", "success");
-    }
-  };
   return (
     <div className="container-fluid py-4">
 

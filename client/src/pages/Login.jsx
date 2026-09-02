@@ -1,32 +1,20 @@
-import React, { useState } from "react";
+
+import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import api from "../api/axios";
-import { COMMON_ROUTE, SUB_ADMIN_ROUTE, SUPER_ADMIN_ROUTE } from "../Constant/RoutesConstant";
+
+import { COMMON_ROUTE, SUPER_ADMIN_ROUTE } from "../Constant/RoutesConstant";
 import { ROLES } from "../Constant/CommonConstant";
 import { login } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
 
 function Login() {
-
   const navigate = useNavigate();
   const { setUser } = useAuth();
 
-  const handleSuperAdmin = () => {
-    const user = {
-      role: ROLES.SUPER_ADMIN,
-      name: "Super Admin",
-    };
-
-    setUser(user);
-    localStorage.setItem("user", JSON.stringify(user));
-
-    navigate(SUPER_ADMIN_ROUTE.RESTOURANTSLIST);
-  };
-
   const formik = useFormik({
-    initialValues: {  
+    initialValues: {
       email: "",
       password: "",
     },
@@ -41,47 +29,68 @@ function Login() {
         .required("Password is required"),
     }),
 
-    onSubmit: async (values) => {
+    onSubmit: async (values, { setSubmitting }) => {
       try {
+        console.log("LOGIN VALUES:", values);
+
         const res = await login(values);
 
+        console.log("LOGIN RESPONSE:", res);
 
-        if (res.success) {
-          const user = res.data;
-          setUser(user);
-          localStorage.setItem("user", JSON.stringify(user));
-
-          // ROLE BASED REDIRECT
-          if (user.role === ROLES.SUPER_ADMIN) {
-            navigate(SUPER_ADMIN_ROUTE.RESTOURANTSLIST);
-          }
-          else if (
-            user.role === ROLES.OWNER ||
-            user.role === ROLES.MANAGER ||
-            user.role === ROLES.WAITER ||
-            user.role === ROLES.KITCHEN
-          ) {
-            navigate(COMMON_ROUTE.DASHBOARD);
-          }
+        if (!res.success) {
+          console.log("LOGIN FAILED:", res.message);
+          return;
         }
+
+        const user = res.data;
+
+        console.log("LOGGED USER:", user);
+
+        setUser(user);
+
+        if (user.role === ROLES.SUPER_ADMIN) {
+          navigate(SUPER_ADMIN_ROUTE.RESTOURANTSLIST, { replace: true });
+          return;
+        }
+
+        if (
+          user.role === ROLES.OWNER ||
+          user.role === ROLES.MANAGER ||
+          user.role === ROLES.WAITER ||
+          user.role === ROLES.CASHIER ||
+          user.role === ROLES.KITCHEN
+        ) {
+          navigate(COMMON_ROUTE.DASHBOARD, { replace: true });
+          return;
+        }
+
+        console.log("UNKNOWN ROLE:", user.role);
+
       } catch (err) {
-        console.log(err.response?.data?.message || "Login failed");
+        console.error(
+          "LOGIN ERROR:",
+          err.response?.data || err.message
+        );
+      } finally {
+        setSubmitting(false);
       }
-    }
+    },
   });
 
   return (
-    <div className="login-wrapper">
-      <div className="login-card">
+    <div className="login-wrapper min-vh-100 d-flex justify-content-center align-items-center">
 
-        {/* <div className="login-logo">🍽</div> */}
+      <div className="login-card bg-white text-center shadow">
 
         <h2>Restaurant POS</h2>
+
         <p>Sign in to continue</p>
 
         <form onSubmit={formik.handleSubmit}>
 
+          {/* EMAIL */}
           <div className="mb-3">
+
             <input
               type="email"
               name="email"
@@ -100,9 +109,12 @@ function Login() {
                 {formik.errors.email}
               </div>
             )}
+
           </div>
 
+          {/* PASSWORD */}
           <div className="mb-3">
+
             <input
               type="password"
               name="password"
@@ -121,28 +133,27 @@ function Login() {
                 {formik.errors.password}
               </div>
             )}
+
           </div>
 
+          {/* LOGIN BUTTON */}
           <button
             type="submit"
             className="btn btn-dark w-100"
+            disabled={formik.isSubmitting}
           >
-            Login
-          </button>
-
-          <button
-            type="button"
-            className="btn btn-primary w-100 mt-2"
-            onClick={handleSuperAdmin}
-          >
-            Open Super Admin
+            {formik.isSubmitting
+              ? "Logging in..."
+              : "Login"}
           </button>
 
         </form>
 
       </div>
+
     </div>
   );
 }
 
 export default Login;
+

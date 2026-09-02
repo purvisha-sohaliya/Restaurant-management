@@ -177,6 +177,7 @@ exports.getBills = async (req, res, next) => {
             .find(filter)
             .populate("order_id", "order_number order_type")
             .populate("customer_id", "name phone")
+            .populate("restaurant_id","restaurant_name address")
             .sort({ createdAt: -1 });
 
         res.status(200).json({
@@ -199,6 +200,7 @@ exports.getBillById = async (req, res, next) => {
             })
             .populate("order_id")
             .populate("customer_id", "name phone email")
+            .populate("restaurant_id","restaurant_name address")
 
         if (!bill || bill.is_deleted) {
             return res.status(404).json({

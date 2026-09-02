@@ -20,6 +20,7 @@ function OrderForm() {
   const { id } = useParams();
   const location = useLocation();
   const waitingData = location.state || {};
+  const navigationState = location.state || {};
 
   const [showTableModal, setShowTableModal] = useState(false);
   const [selectedTable, setSelectedTable] = useState(null);
@@ -731,11 +732,14 @@ function OrderForm() {
                             {/* DISCOUNT */}
                             <div className="d-flex justify-content-between align-items-center mt-2">
                               <span className="text-muted">
-                                Discount
+                                Discount ({Number(formik.values.discount || 0)}%)
                               </span>
 
-                              <strong>
-                                ₹{Number(formik.values.discount || 0).toFixed(2)}
+                              <strong className="">
+                                -₹{(
+                                  subtotal *
+                                  (Number(formik.values.discount || 0) / 100)
+                                ).toFixed(2)}
                               </strong>
                             </div>
 

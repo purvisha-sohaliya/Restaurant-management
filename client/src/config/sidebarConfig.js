@@ -223,7 +223,7 @@ export const sidebarConfig = [
         title: "Kitchen",
         icon: FaList,
         path: SUB_ADMIN_ROUTE.KITCHEN,
-        roles: [ROLES.OWNER, ROLES.MANAGER, ROLES.WAITER],
+        roles: [ROLES.OWNER, ROLES.MANAGER, ROLES.WAITER, ROLES.KITCHEN],
     },
 
 

@@ -43,8 +43,8 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar">
-      <div className="admin-sidebar">
-        <div className="sidebar-logo text-light">
+      <div className="admin-sidebar position-fixed top-0 start-0 overflow-hidden z-3 vh-100 p-3">
+        <div className="sidebar-logo text-light text-center mb-4 pb-3 ">
           <h4>{CURRENT_ROLE ? CURRENT_ROLE.toUpperCase() : ""}</h4>
         </div>
         <ul className="nav flex-column">

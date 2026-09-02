@@ -88,7 +88,6 @@ function TableList() {
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "This table will be deleted!",
-      icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       confirmButtonText: "Yes",
@@ -101,12 +100,7 @@ function TableList() {
 
       setTables((prev) =>
         prev.map((t) =>
-          t?._id === id
-            ? {
-              ...t,
-              isDeleted: true,
-            }
-            : t
+          t?._id === id? {...t,isDeleted: true,} : t
         )
       );
 
@@ -119,7 +113,6 @@ function TableList() {
   const handleRecover = async (id) => {
     const result = await Swal.fire({
       title: "Restore Table?",
-      icon: "question",
       showCancelButton: true,
     });
 
@@ -130,15 +123,9 @@ function TableList() {
 
       setTables((prev) =>
         prev.map((t) =>
-          t?._id === id
-            ? {
-              ...t,
-              isDeleted: false,
-            }
-            : t
+          t?._id === id ? { ...t,isDeleted: false,}: t
         )
       );
-
       Swal.fire("Restored!", "", "success");
     } catch (err) {
       console.log(err);
@@ -266,11 +253,16 @@ function TableList() {
               return (
                 <div
                   className="col-xl-3 col-lg-4 col-md-6 mb-4"
-                  key={table._id}>
+                  key={table._id}
+                  style={{
+                    backgroundColor: table.isDeleted ? "#ffebee" : "inherit",
+                    opacity: table.isDeleted ? 0.6 : 1,
+                  }}>
                   <div
                     className="card shadow border-0 h-100"
                     style={{
-                      cursor: "pointer",
+                      // cursor: "pointer",
+                      cursor: table.isDeleted ? "not-allowed" : "pointer",
                       transition: "0.3s",
                     }}
                     onClick={() => handleTableClick(table)}

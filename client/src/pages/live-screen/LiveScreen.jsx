@@ -138,13 +138,25 @@ const LiveScreen = () => {
           {/*  HEADER  */}
 
           <div className="token-header d-flex align-items-center justify-content-between bg-blue text-white px-3 py-3">
-            <h2 className="mb-0 fs-4 fw-bold">
-              LIVE TOKENS
-            </h2>
+            <div className="d-flex align-items-center gap-3">
+              <button
+                type="button"
+                className="btn text-white btn-sm fw-bold"
+                onClick={() => window.history.back()}
+              >
+                 Back
+              </button>
+
+              <h2 className="mb-0 fs-4 fw-bold">
+                LIVE TOKENS
+              </h2>
+            </div>
+
             <div className="live-status d-flex align-items-center gap-2 px-3 py-1 rounded-pill fw-bold">
               <span className="live-dot"></span>
               LIVE
             </div>
+
           </div>
           {/* CURRENT TOKEN */}
 
@@ -181,18 +193,6 @@ const LiveScreen = () => {
                   </span>
                 )}
 
-                {/* TABLE */}
-                {currentToken.table_number && (
-                  <p className="table-number mb-1 fw-semibold">
-                    Table {currentToken.table_number}
-                  </p>
-                )}
-                {/* CUSTOMER */}
-                {currentToken.customer_name && (
-                  <p className="customer-name mb-0 text-secondary">
-                    {currentToken.customer_name}
-                  </p>
-                )}
               </>
             ) : (
               <div className="no-token py-4 text-secondary">
