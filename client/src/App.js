@@ -1,11 +1,9 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Form, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PrivateRoute from './routes/PrivateRoute';
-import { ROLES } from './Constant/CommonConstant';
 import AdminLayout from './layouts/AdminLayout';
-// import Dashboard from './pages/Superadmin/Dashboard';
 import RestaurantForm from './pages/Superadmin/Restaurants/RestaurantForm';
 import RestaurantsList from './pages/Superadmin/Restaurants/RestaurantsList';
 import { SUPER_ADMIN_ROUTE, AUTH_ROUTE, COMMON_ROUTE, SUB_ADMIN_ROUTE } from './Constant/RoutesConstant';
@@ -41,15 +39,16 @@ function App(props) {
       <BrowserRouter>
         <Routes>
           <Route element={<PublicRoute />}>
+            <Route path="/" element={<Navigate to={COMMON_ROUTE.DASHBOARD} replace />} />
             <Route path={AUTH_ROUTE.LOGIN} element={<Login />} />
             <Route path={AUTH_ROUTE.REGISTER} element={<Register />} />
           </Route>
-          <Route element={<PrivateRoute  />}>
+          <Route element={<PrivateRoute />}>
             <Route element={<AdminLayout />}>
               <Route path={COMMON_ROUTE.DASHBOARD} element={<Dashboard />} />
-              <Route path={SUPER_ADMIN_ROUTE.RESTOURANTSLIST} element={<RestaurantsList />} />
-              <Route path={SUPER_ADMIN_ROUTE.RESTOURANTSADD} element={<RestaurantForm />} />
-              <Route path={SUPER_ADMIN_ROUTE.RESTOURANTSEDIT + "/:id"} element={<RestaurantForm />} />
+              <Route path={SUPER_ADMIN_ROUTE.RESTAURANTSLIST} element={<RestaurantsList />} />
+              <Route path={SUPER_ADMIN_ROUTE.RESTAURANTSADD} element={<RestaurantForm />} />
+              <Route path={SUPER_ADMIN_ROUTE.RESTAURANTSEDIT + "/:id"} element={<RestaurantForm />} />
               <Route path={SUPER_ADMIN_ROUTE.OWNERLIST} element={<OwnerList />} />
               <Route path={SUPER_ADMIN_ROUTE.OWNERADD} element={<OwnerForm />} />
               <Route path={SUPER_ADMIN_ROUTE.OWNEREDIT + "/:id"} element={<OwnerForm />} />
@@ -72,7 +71,6 @@ function App(props) {
               <Route path={SUB_ADMIN_ROUTE.WAITINGQUEUE} element={<WaitingQueue />} />
               <Route path={SUB_ADMIN_ROUTE.ORDER_LIST} element={<OrderList />} />
               <Route path={SUB_ADMIN_ROUTE.ORDER_ADD} element={<OrderForm />} />
-              {/* <Route path={SUB_ADMIN_ROUTE.BILL + "/:id"} element={<Bill />} />     */}
               <Route path={SUB_ADMIN_ROUTE.BILL_LIST} element={<BillList />} />
               <Route path={`${SUB_ADMIN_ROUTE.BILL}/:id`} element={<Bill />} />
               <Route path={SUB_ADMIN_ROUTE.KITCHEN} element={<Kitchen />} />

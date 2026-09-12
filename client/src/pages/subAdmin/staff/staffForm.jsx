@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { SUB_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
 import { createStaff, getStaffById, updateStaff } from "../../../services/staffService";
 import { getRestaurants } from "../../../services/restaurant.service";
+import { toast } from "react-toastify";
 
 function StaffForm() {
   const { id } = useParams();
@@ -62,6 +63,11 @@ function StaffForm() {
           res = await createStaff(payload);
         }
         if (res?.success) {
+          toast.success(
+            id
+              ? "staff updated successfully!"
+              : "staff created successfully!"
+          );
           navigate(SUB_ADMIN_ROUTE.STAFFLIST);
         }
       } catch (err) {
@@ -157,8 +163,8 @@ function StaffForm() {
             placeholder={
               id ? "Leave blank to keep same password" : "Password"}
             className={`form-control mb-3 ${formik.touched.password && formik.errors.password
-                ? "is-invalid"
-                : ""
+              ? "is-invalid"
+              : ""
               }`}
             value={formik.values.password}
             onChange={formik.handleChange}

@@ -41,13 +41,13 @@ export const sidebarConfig = [
             {
                 title: "Restaurant List",
                 icon: FaClipboardList,
-                path: SUPER_ADMIN_ROUTE.RESTOURANTSLIST,
+                path: SUPER_ADMIN_ROUTE.RESTAURANTSLIST,
             },
 
             {
                 title: "Add Restaurant",
                 icon: FaPlusCircle,
-                path: SUPER_ADMIN_ROUTE.RESTOURANTSADD,
+                path: SUPER_ADMIN_ROUTE.RESTAURANTSADD,
             },
         ],
 
@@ -72,22 +72,8 @@ export const sidebarConfig = [
             },
         ],
     },
+
     // Settings
-    {
-        title: " Settings",
-        icon: FaCog,
-        roles: [ROLES.SUPER_ADMIN],
-
-        children: [
-            {
-                title: "Settings",
-                icon: FaCog,
-                path: SUB_ADMIN_ROUTE.SETTINGS,
-            },
-
-
-        ],
-    },
 
     // ========================OWNER=========================
     // Category
@@ -234,5 +220,7 @@ export const sidebarConfig = [
         path: SUB_ADMIN_ROUTE.LIVESCREEN,
         roles: [ROLES.OWNER, ROLES.MANAGER, ROLES.WAITER],
     },
+
+    
 
 ];

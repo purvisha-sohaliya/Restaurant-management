@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {FaClock,FaUtensils,FaCheckCircle,FaUser,FaChair,} from "react-icons/fa";
-import { getKitchenOrders,acceptKitchenOrder,readyKitchenOrder,servedKitchenOrder,} from "../../services/kitchenService";
+import { FaClock, FaUtensils, FaCheckCircle } from "react-icons/fa";
+import { getKitchenOrders, acceptKitchenOrder, readyKitchenOrder, servedKitchenOrder, } from "../../services/kitchenService";
+import { toast } from "react-toastify";
 
 const Kitchen = () => {
   const [kitchenOrders, setKitchenOrders] = useState([]);
@@ -14,14 +15,11 @@ const Kitchen = () => {
       setLoading(true);
       setError("");
       const res = await getKitchenOrders();
-      console.log("Kitchen Orders:", res);
       setKitchenOrders(res?.data || []);
     } catch (err) {
-      console.error("Kitchen orders error:", err);
-
       setError(
         err?.response?.data?.message ||
-          "Failed to load kitchen orders"
+        "Failed to load kitchen orders"
       );
     } finally {
       setLoading(false);
@@ -32,45 +30,43 @@ const Kitchen = () => {
     fetchKitchenOrders();
   }, []);
 
-useEffect(() => {
-  const timer = setInterval(() => {
-    setCurrentTime(new Date());
-  }, 1000);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
 
-  return () => clearInterval(timer);
-}, []);
+    return () => clearInterval(timer);
+  }, []);
 
-  
+
   const handleStartCooking = async (id) => {
     try {
       setActionLoading(id);
       await acceptKitchenOrder(id);
       await fetchKitchenOrders();
+      toast.success("Order started cooking!");
     } catch (err) {
-      console.error("Start cooking error:", err);
-
-      alert(
+      toast.error(
         err?.response?.data?.message ||
-          "Failed to start cooking"
+        "Failed to start cooking"
       );
     } finally {
       setActionLoading(null);
     }
   };
 
- 
+
   const handleReady = async (id) => {
     try {
       setActionLoading(id);
 
       await readyKitchenOrder(id);
       await fetchKitchenOrders();
+      toast.success("Order marked as ready!");
     } catch (err) {
-      console.error("Ready order error:", err);
-
-      alert(
+      toast.error(
         err?.response?.data?.message ||
-          "Failed to mark order ready"
+        "Failed to mark order ready"
       );
     } finally {
       setActionLoading(null);
@@ -81,16 +77,13 @@ useEffect(() => {
   const handleServed = async (id) => {
     try {
       setActionLoading(id);
-
       await servedKitchenOrder(id);
-
       await fetchKitchenOrders();
+      toast.success("Order served successfully!");
     } catch (err) {
-      console.log("Served order error:", err);
-
-      alert(
+      toast.error(
         err?.response?.data?.message ||
-          "Failed to serve order"
+        "Failed to serve order"
       );
     } finally {
       setActionLoading(null);
@@ -105,10 +98,9 @@ useEffect(() => {
     if (order?.table_id?.table_number) {
       return `T${order.table_id.table_number}`;
     }
-
     return "T-NA";
   };
-  
+
   const getOrderNumber = (order) => {
     return (
       order?.order_id?.order_number ||
@@ -196,7 +188,7 @@ useEffect(() => {
             {getElapsedTime(order)}
           </div>
         </div>
-        
+
         {/* ITEMS */}
         <div className="kds-items mt-1">
           {order.items?.map((item, index) => (
@@ -306,7 +298,7 @@ useEffect(() => {
   return (
     <div className="container-fluid">
       {/* HEADER */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="d-flex justify-content-between align-items-center my-4">
         <div>
           <h3 className="fw-bold mb-1">
             <FaUtensils className="me-2" />

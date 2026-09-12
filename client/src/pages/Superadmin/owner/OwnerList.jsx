@@ -94,122 +94,182 @@ function OwnerList() {
       console.error(err);
     }
   };
+
   return (
-    <div className="container-fluid">
+    <div className="container-fluid py-3 py-md-4">
 
       {/* HEADER */}
-      <div className="d-flex justify-content-between mb-3">
-        <h3>Owner List</h3>
+      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+        <div>
+          <h3 className="fw-bold mb-1">
+            Owner List
+          </h3>
+
+          <p className="text-muted mb-0">
+            Manage restaurant owners
+          </p>
+        </div>
 
         <button
-          className="btn btn-primary"
-          onClick={() => navigate(SUPER_ADMIN_ROUTE.OWNERADD)}
+          className="btn btn-sm btn-primary d-flex align-items-center justify-content-center"
+          onClick={() =>
+            navigate(SUPER_ADMIN_ROUTE.OWNERADD)
+          }
         >
-          Add Owner
+          + Add Owner
         </button>
       </div>
 
       {/* TABLE */}
-      <table className="table table-bordered table-hover">
+      <div className="card border-0 shadow-sm">
+        <div className="card-body p-0">
+          <div className="table-responsive">
+            <table className="table table-hover align-middle mb-0">
 
-        <thead className="table-dark">
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Restaurants Name</th>
-            <th>Status</th>
-            <th className="text-center">Actions</th>
-          </tr>
-        </thead>
+              <thead className="table-dark">
+                <tr>
+                  <th className="px-3 py-3 text-nowrap">
+                    Name
+                  </th>
 
-        <tbody>
+                  <th className="py-3 text-nowrap">
+                    Email
+                  </th>
+                  <th className="py-3 text-nowrap">
+                    Phone
+                  </th>
 
-          {!Array.isArray(owners) || owners.length === 0 ? (
-            <tr>
-              <td colSpan="6" className="text-center">
-                No Owners Found
-              </td>
-            </tr>
-          ) : (
-            owners.map((owner) => (
-              <tr
-                key={owner._id}
-                style={{
-                  backgroundColor: owner.is_deleted ? "#ffebee" : "inherit",
-                  opacity: owner.is_deleted ? 0.6 : 1,
-                }}
-              >
-                <td>{owner.name}</td>
-                <td>{owner.email}</td>
-                <td>{owner.phone}</td>
-                <td>
-                  {owner.restaurant_id?.restaurant_name || "N/A"}
-                </td>
+                  <th className="py-3 text-nowrap">
+                    Restaurant Name
+                  </th>
 
-                {/* STATUS */}
-                <td>
-                  {owner.status === "active" ? (
-                    <span className="badge bg-success">Active</span>
-                  ) : (
-                    <span className="badge bg-danger">Inactive</span>
-                  )}
-                </td>
+                  <th className="py-3 text-center text-nowrap">
+                    Status
+                  </th>
 
-                {/* ACTIONS */}
-                <td className="text-center">
+                  <th className="py-3 text-center text-nowrap">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
 
-                  {/* EDIT */}
-                  <button
-                    className="btn btn-sm text-primary border-0 bg-transparent"
-                    onClick={() =>
-                      navigate(`${SUPER_ADMIN_ROUTE.OWNEREDIT}/${owner._id}`)
-                    }
-                    disabled={owner.is_deleted}
-                    title="Edit"
-                  >
-                    <FaEdit />
-                  </button>
+              <tbody>
+                {!Array.isArray(owners) || owners.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center">
+                      No Owners Found
+                    </td>
+                  </tr>
+                ) : (
+                  owners.map((owner) => (
+                    <tr
+                      key={owner._id}
+                      className={
+                        owner.is_deleted
+                          ? "table-danger"
+                          : ""}
+                      style={{
+                        opacity: owner.is_deleted
+                          ? 0.6
+                          : 1
+                      }} >
+                      <td className="px-3 text-nowrap">{owner.name}</td>
+                      <td className="text-nowrap">{owner.email}</td>
+                      <td className="text-nowrap">{owner.phone}</td>
+                      <td className="text-nowrap">
+                        {owner.restaurant_id?.restaurant_name || "N/A"}
+                      </td>
 
-                  {/* DELETE / RECOVER */}
-                  {owner.is_deleted ? (
-                    <button
-                      className="btn btn-sm text-success border-0 bg-transparent"
-                      onClick={() => handleRecover(owner._id)}
-                    >
-                      <FaUndo />
-                    </button>
-                  ) : (
-                    <button
-                      className="btn btn-sm text-danger border-0 bg-transparent"
-                      onClick={() => handleDelete(owner._id)}
-                    >
-                      <FaTrash />
-                    </button>
-                  )}
+                      {/* STATUS */}
+                      <td className="text-center">
+                        {owner.status === "active" ? (
+                          <span className="badge bg-success">Active</span>
+                        ) : (
+                          <span className="badge bg-danger">Inactive</span>
+                        )}
+                      </td>
 
-                  {/* VISIBILITY */}
-                  <button
-                    className="btn btn-sm text-warning border-0 bg-transparent"
-                    onClick={() => handleToggleVisibility(owner._id)}
-                    disabled={owner.is_deleted}
-                  >
-                    {owner.status === "active" ? (
-                      <FaEyeSlash />
-                    ) : (
-                      <FaEye />
-                    )}
-                  </button>
+                      {/* ACTIONS */}
+                      <td className="text-center text-nowrap">
 
-                </td>
+                        {/* EDIT */}
+                        <div className="d-flex justify-content-center align-items-center gap-1">
 
-              </tr>
-            ))
-          )}
+                          {/* EDIT */}
+                          <button
+                            type="button"
+                            className="btn btn-sm text-primary border-0 bg-transparent"
+                            onClick={() =>
+                              navigate(
+                                `${SUPER_ADMIN_ROUTE.OWNEREDIT}/${owner._id}`
+                              )
+                            }
+                            disabled={owner.is_deleted}
+                            title="Edit"
+                          >
+                            <FaEdit />
+                          </button>
 
-        </tbody>
 
-      </table>
+                          {/* DELETE / RECOVER */}
+                          {owner.is_deleted ? (
+
+                            <button
+                              type="button"
+                              className="btn btn-sm text-success border-0 bg-transparent"
+                              onClick={() =>
+                                handleRecover(owner._id)
+                              }
+                              title="Recover"
+                            >
+                              <FaUndo />
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              className="btn btn-sm text-danger border-0 bg-transparent"
+                              onClick={() =>
+                                handleDelete(owner._id)
+                              }
+                              title="Delete"
+                            >
+                              <FaTrash />
+                            </button>
+                          )}
+
+                          {/* VISIBILITY */}
+                          <button
+                            type="button"
+                            className="btn btn-sm text-warning border-0 bg-transparent"
+                            onClick={() =>
+                              handleToggleVisibility(
+                                owner._id
+                              )
+                            }
+                            disabled={owner.is_deleted}
+                            title={
+                              owner.status === "active"
+                                ? "Deactivate"
+                                : "Activate"
+                            }
+                          >
+
+                            {owner.status === "active" ? (
+                              <FaEyeSlash />
+                            ) : (
+                              <FaEye />
+                            )}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

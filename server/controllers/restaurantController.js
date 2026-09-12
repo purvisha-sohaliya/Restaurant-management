@@ -20,9 +20,8 @@ exports.getRestaurants = async (req, res, next) => {
     try {
         const restaurant = await restaurantModel.find().sort({ createdAt: -1 });
 
-        res.status(201).json({
+        res.status(200).json({
             success: true,
-            message: "Restaurant created successfully",
             count: restaurant.length,
             data: restaurant,
         });

@@ -117,7 +117,7 @@ exports.refreshAccessToken = async (req, res, next) => {
 
         if (!user || user.refreshToken !== token) return res.status(401).json({ success: false, data: null, message: "Invalid Token" });
 
-        const accessToken = generateAccessToken({ id: user._id, role: user.role });
+        const accessToken = generateAccessToken({ id: user._id, role: user.role, restaurant_id: user.restaurant_id });
 
         return res.status(200)
             .cookie("accessToken", accessToken, {

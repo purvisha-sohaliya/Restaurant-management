@@ -1,499 +1,547 @@
 import React, { useEffect, useState } from "react";
-import { FaUtensils, FaChair, FaUsers, FaMoneyBillWave, FaClock, FaCheckCircle, FaStore, FaUserTie, FaUserFriends, FaClipboardList, FaListAlt, FaFileInvoiceDollar } from "react-icons/fa";
-import { ROLES } from "../Constant/CommonConstant";
-import StatCard from "../components/admin/StatCard";
-import { getOrders } from "../services/orderService";
-import { getAllTables } from "../services/tableservice";
-import { getWaitingList } from "../services/waitingService";
-import { getStaff } from "../services/staffService";
-import { getRestaurants } from "../services/restaurant.service";
-import { getBills } from "../services/billService";
-import { getCategories } from "../services/categoryService";
-import { getMenuItems } from "../services/menuItemService";
+import {
+  FaMoneyBillWave, FaClipboardList, FaChair, FaUsers, FaClock, FaCheckCircle, FaUtensils,
+  FaStore, FaUserTie, FaUserFriends, FaListAlt, FaFileInvoiceDollar,
+} from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
-import { getOwners } from "../services/ownerService";
+import { ROLES } from "../Constant/CommonConstant";
+import { getDashboard } from "../services/dashboardService";
 
-function Dashboard() {
+const Dashboard = () => {
   const { user } = useAuth();
   const CURRENT_ROLE = user?.role;
+  const [loading, setLoading] = useState(true);
   const [dashboard, setDashboard] = useState({
-    totalOrders: 0,
     revenue: 0,
+    totalOrders: 0,
     availableTables: 0,
+    occupiedTables: 0,
+    reservedTables: 0,
+    cleaningTables: 0,
+    waitingCustomers: 0,
+    pendingOrders: 0,
+    preparingOrders: 0,
+    readyOrders: 0,
+    completedOrders: 0,
     totalStaff: 0,
+    totalRestaurants: 0,
     totalOwners: 0,
     totalMenu: 0,
     totalCategories: 0,
-    activeOrders: 0,
-    waitingCustomers: 0,
     totalBills: 0,
+    pendingBills: 0,
+    recentOrders: [],
   });
+
   useEffect(() => {
-    if (user?.role) {
+    if (CURRENT_ROLE) {
       loadDashboard();
     }
-  }, [user?.role]);
+  }, [CURRENT_ROLE]);
 
   const loadDashboard = async () => {
     try {
-      console.log("CURRENT ROLE:", CURRENT_ROLE);
-      console.log("SUPER ADMIN:", ROLES.SUPER_ADMIN);
-
-      const [
-        ordersRes,
-        tablesRes,
-        waitingRes,
-        staffRes,
-        restaurantRes,
-        billsRes,
-        categoryRes,
-        menuRes
-      ] = await Promise.allSettled([
-        getOrders(),
-        getAllTables(),
-        getWaitingList(),
-        getStaff(),
-        getRestaurants(),
-        getBills(),
-        getCategories(),
-        getMenuItems()
-      ]);
-
-
-      // ORDERS
-
-      const orders =
-        ordersRes.status === "fulfilled"
-          ? ordersRes.value?.data || []
-          : [];
-
-      // TABLES
-      const tables =
-        tablesRes.status === "fulfilled"
-          ? tablesRes.value?.data || []
-          : [];
-
-
-      // WAITING    
-      const waiting =
-        waitingRes.status === "fulfilled"
-          ? waitingRes.value?.data || []
-          : [];
-
-
-      // STAFF
-      const staff =
-        staffRes.status === "fulfilled"
-          ? staffRes.value?.data || []
-          : [];
-
-
-      // RESTAURANTS
-      const restaurantData =
-        restaurantRes.status === "fulfilled"
-          ? restaurantRes.value
-          : [];
-
-      const restaurants = Array.isArray(restaurantData)
-        ? restaurantData
-        : restaurantData?.data || [];
-
-      // BILLS
-      const bills =
-        billsRes.status === "fulfilled"
-          ? billsRes.value?.data || []
-          : [];
-
-      // CATEGORIES
-      const categoriesData =
-        categoryRes.status === "fulfilled"
-          ? categoryRes.value?.data || []
-          : [];
-
-      const categories = categoriesData.filter(
-        (category) => !category.isDeleted
-      );
-
-      // MENU
-      const menusData =
-        menuRes.status === "fulfilled"
-          ? menuRes.value?.data || []
-          : [];
-
-      const menus = menusData.filter(
-        (item) => !item.is_deleted
-      );
-
-      // OWNERS
-      // OWNERS
-      let owners = [];
-
-      if (CURRENT_ROLE === ROLES.SUPER_ADMIN) {
-        try {
-          const ownersRes = await getOwners();
-          owners = ownersRes?.data || [];
-        } catch (error) {
-          console.error("OWNERS ERROR:", error);
-        }
+      setLoading(true);
+      const res = await getDashboard();
+      if (res?.success) {
+        setDashboard(res.data);
       }
-
-      // ORDER COUNTS
-      const pendingOrders = orders.filter(
-        (o) => o.status === "Pending"
-      ).length;
-
-      const completedOrders = orders.filter(
-        (o) => o.status === "Completed"
-      ).length;
-
-      // BILLS
-      const pendingBills = bills.filter(
-        (bill) => bill.payment_status === "Pending"
-      ).length;
-
-      // TABLES
-      const availableTables = tables.filter(
-        (table) => table.status === "available"
-      ).length;
-
-      // REVENUE
-      const revenue = orders
-        .filter((o) => o.status === "Completed")
-        .reduce(
-          (sum, order) =>
-            sum + Number(order.total_amount || 0),
-          0
-        );
-
-
-
-      // SET DASHBOARD
-      setDashboard({
-        totalOrders: orders.length,
-        pendingOrders,
-        completedOrders,
-        availableTables,
-        pendingBills,
-        waitingCustomers: waiting.length,
-        totalStaff: staff.length,
-        totalOwners: owners.length,
-        totalRestaurants: restaurants.length,
-        revenue,
-        totalMenu: menus.length,
-        totalCategories: categories.length,
-        totalBills: bills.length,
-        todayOrders: orders.length,
-      });
-
     } catch (error) {
-      console.error("DASHBOARD ERROR:", error);
+      console.error("Dashboard Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
-  return (
-    <div className="container-fluid py-4">
 
-      <div className="card border-0 shadow mb-4 bg-blue text-white">
-        <div className="card-body d-flex justify-content-between align-items-center">
-          <div>
-            <h2 className="fw-bold mb-1">
-              Welcome Back 👋
-            </h2>
-            <p className="mb-0">
-              Restaurant Management Dashboard
-            </p>
-          </div>
+  // ================= LOADING =================
+  if (loading) {
+    return (
+      <div className="container-fluid min-vh-100 bg-light d-flex justify-content-center align-items-center">
+        <div className="text-center">
+          <div
+            className="spinner-border text-primary mb-3"
+            role="status"
+          />
 
-          <div className="text-end">
-            <h5>{new Date().toDateString()}</h5>
-            <small>Today's Overview</small>
+          <p className="text-muted mb-0">
+            Loading dashboard...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // ================= CARD COMPONENT =================
+
+  const Card = ({ title, value, icon, color,
+  }) => (
+    <div className="col-12 col-sm-6 col-xl-3">
+      <div className="card border-0 shadow-sm h-100">
+        <div className="card-body p-3">
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              <p className="text-muted small mb-1">
+                {title}
+              </p>
+
+              <h4 className="fw-bold mb-0">
+                {value}
+              </h4>
+            </div>
+            <div
+              className={`bg-${color}-subtle text-${color} rounded-3 p-2`}>
+              {React.cloneElement(icon, {
+                size: 18,
+              })}
+            </div>
           </div>
         </div>
       </div>
-      {/* SUPER ADMIN */}
+    </div>
+  );
+
+  // ================= TITLE =================
+  const getDashboardTitle = () => {
+    switch (CURRENT_ROLE) {
+      case ROLES.SUPER_ADMIN:
+        return "Super Admin Dashboard";
+
+      case ROLES.OWNER:
+        return "Owner Dashboard";
+
+      case ROLES.MANAGER:
+        return "Manager Dashboard";
+
+      case ROLES.WAITER:
+        return "Waiter Dashboard";
+
+      case ROLES.KITCHEN:
+        return "Kitchen Dashboard";
+
+      default:
+        return "Dashboard";
+    }
+  };
+
+  return (
+    <div className="container-fluid bg-light min-vh-100 p-3 p-md-4">
+      {/* ================= HEADER ================= */}
+      <div className="mb-4">
+        <h4 className="fw-bold mb-1">
+          {getDashboardTitle()}
+        </h4>
+
+        <p className="text-muted small mb-0">
+          Overview of today's restaurant activity
+        </p>
+      </div>
+
+      {/* ================= SUPER ADMIN =================== */}
       {CURRENT_ROLE === ROLES.SUPER_ADMIN && (
-        <>
-          <h3 className="fw-bold mb-4">Super Admin Dashboard</h3>
+        <div className="row g-3">
+          <Card
+            title="Total Restaurants"
+            value={dashboard.totalRestaurants}
+            icon={<FaStore />}
+            color="primary"
+          />
 
-          <div className="row g-4">
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Restaurants"
-                value={dashboard.totalRestaurants}
-                icon={<FaStore />}
-                color="primary"
-              />
-            </div>
+          <Card
+            title="Total Owners"
+            value={dashboard.totalOwners}
+            icon={<FaUserTie />}
+            color="success"
+          />
 
+          <Card
+            title="Total Orders"
+            value={dashboard.totalOrders}
+            icon={<FaClipboardList />}
+            color="warning"
+          />
 
-
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Owners"
-                value={dashboard.totalOwners}
-                icon={<FaUserTie />}
-                color="success"
-              />
-            </div>
-
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Revenue"
-                value={`₹${dashboard.revenue.toLocaleString()}`}
-                icon={<FaMoneyBillWave />}
-                color="danger" />
-            </div>
-
-            {/* <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Category"
-                value={dashboard.totalCategories}
-                icon={<FaStore />}
-                color="primary" />
-            </div> */}
-          </div>
-        </>
+          <Card
+            title="Total Revenue"
+            value={`₹${dashboard.revenue.toLocaleString(
+              "en-IN"
+            )}`}
+            icon={<FaMoneyBillWave />}
+            color="danger"
+          />
+        </div>
       )}
 
-      {/* OWNER */}
+      {/* ================= OWNER ========================= */}
+
       {CURRENT_ROLE === ROLES.OWNER && (
         <>
-          <h3 className="fw-bold mb-4">Owner Dashboard</h3>
+          <div className="row g-3">
+            <Card
+              title="Total Orders"
+              value={dashboard.totalOrders}
+              icon={<FaClipboardList />}
+              color="primary"
+            />
 
-          <div className="row g-4">
+            <Card
+              title="Total Revenue"
+              value={`₹${dashboard.revenue.toLocaleString(
+                "en-IN")}`}
+              icon={<FaMoneyBillWave />}
+              color="success"
+            />
 
-            {/* Orders */}
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Orders"
-                value={dashboard.totalOrders}
-                icon={<FaClipboardList />}
-                color="primary"
-              />
-            </div>
+            <Card
+              title="Available Tables"
+              value={dashboard.availableTables}
+              icon={<FaChair />}
+              color="warning"
+            />
 
-            {/* Revenue */}
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Revenue"
-                value={`₹${dashboard.revenue}`}
-                icon={<FaMoneyBillWave />}
-                color="success"
-              />
-            </div>
+            <Card
+              title="Total Staff"
+              value={dashboard.totalStaff}
+              icon={<FaUserFriends />}
+              color="danger"
+            />
 
-            {/* Tables */}
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Tables"
-                value={dashboard.availableTables}
-                icon={<FaChair />}
-                color="warning"
-              />
-            </div>
+            <Card
+              title="Menu Items"
+              value={dashboard.totalMenu}
+              icon={<FaUtensils />}
+              color="info"
+            />
 
-            {/* Staff */}
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Staff"
-                value={dashboard.totalStaff}
-                icon={<FaUserFriends />}
-                color="danger"
-              />
-            </div>
+            <Card
+              title="Categories"
+              value={dashboard.totalCategories}
+              icon={<FaListAlt />}
+              color="secondary"
+            />
 
-            {/* Menu */}
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Menu"
-                value={dashboard.totalMenu}
-                icon={<FaUtensils />}
-                color="info"
-              />
-            </div>
+            <Card
+              title="Waiting Customers"
+              value={dashboard.waitingCustomers}
+              icon={<FaUsers />}
+              color="warning"
+            />
 
-            {/* Categories */}
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Categories"
-                value={dashboard.totalCategories}
-                icon={<FaListAlt />}
-                color="secondary"
-              />
-            </div>
-
-
-            {/* Waiting List */}
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Waiting List"
-                value={dashboard.waitingCustomers}
-                icon={<FaUsers />}
-                color="warning"
-              />
-            </div>
-
-            {/* Bill List */}
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Bill List"
-                value={dashboard.totalBills}
-                icon={<FaFileInvoiceDollar />}
-                color="success"
-              />
-            </div>
-
+            <Card
+              title="Total Bills"
+              value={dashboard.totalBills}
+              icon={<FaFileInvoiceDollar />}
+              color="success"
+            />
           </div>
+          <DashboardBottom
+            dashboard={dashboard}
+          />
         </>
       )}
 
-      {/* MANAGER */}
+      {/* ================= MANAGER ======================= */}
+
       {CURRENT_ROLE === ROLES.MANAGER && (
         <>
-          <h3 className="fw-bold mb-4">Manager Dashboard</h3>
+          <div className="row g-3">
+            <Card
+              title="Total Orders"
+              value={dashboard.totalOrders}
+              icon={<FaClipboardList />}
+              color="primary"
+            />
 
-          <div className="row g-4">
+            <Card
+              title="Available Tables"
+              value={dashboard.availableTables}
+              icon={<FaChair />}
+              color="success"
+            />
 
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Total Orders"
-                value={dashboard.totalOrders}
-                icon={<FaUtensils />}
-                color="primary"
-              />            </div>
+            <Card
+              title="Waiting Customers"
+              value={dashboard.waitingCustomers}
+              icon={<FaUsers />}
+              color="warning"
+            />
 
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Available Tables"
-                value={dashboard.availableTables}
-                icon={<FaChair />}
-                color="success"
-              />
-            </div>
+            <Card
+              title="Revenue"
+              value={`₹${dashboard.revenue.toLocaleString(
+                "en-IN")}`}
+              icon={<FaMoneyBillWave />}
+              color="danger"
+            />
 
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Waiting Customers"
-                value={dashboard.waitingCustomers}
-                icon={<FaUsers />}
-                color="warning"
-              />
-            </div>
+            <Card
+              title="Pending Orders"
+              value={dashboard.pendingOrders}
+              icon={<FaClock />}
+              color="warning"
+            />
 
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Revenue"
-                value={`₹${dashboard.revenue}`}
-                icon={<FaMoneyBillWave />}
-                color="danger"
-              />
-            </div>
+            <Card
+              title="Preparing Orders"
+              value={dashboard.preparingOrders}
+              icon={<FaUtensils />}
+              color="primary"
+            />
 
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Pending Orders"
-                value={dashboard.pendingOrders}
-                icon={<FaClock />}
-                color="warning"
-              />
-            </div>
+            <Card
+              title="Ready Orders"
+              value={dashboard.readyOrders}
+              icon={<FaCheckCircle />}
+              color="info"
+            />
 
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Completed Orders"
-                value={dashboard.completedOrders}
-                icon={<FaCheckCircle />}
-                color="success"
-              />
-            </div>
-
+            <Card
+              title="Completed Orders"
+              value={dashboard.completedOrders}
+              icon={<FaCheckCircle />}
+              color="success"
+            />
           </div>
+          <DashboardBottom
+            dashboard={dashboard}
+          />
         </>
       )}
 
-      {/* WAITER */}
+      {/* ================= WAITER ======================== */}
+
       {CURRENT_ROLE === ROLES.WAITER && (
-        <>
-          <h3 className="fw-bold mb-4">Waiter Dashboard</h3>
+        <div className="row g-3">
+          <Card
+            title="My Orders"
+            value={dashboard.totalOrders}
+            icon={<FaClipboardList />}
+            color="primary"
+          />
 
-          <div className="row g-4">
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="My Orders"
-                value={dashboard.totalOrders}
-                icon={<FaUtensils />}
-                color="primary" />
-            </div>
+          <Card
+            title="Available Tables"
+            value={dashboard.availableTables}
+            icon={<FaChair />}
+            color="success"
+          />
 
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Assigned Tables"
-                value={dashboard.availableTables}
-                icon={<FaChair />}
-                color="success"
-              />            </div>
+          <Card
+            title="Pending Bills"
+            value={dashboard.pendingBills}
+            icon={<FaMoneyBillWave />}
+            color="warning"
+          />
 
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Pending Bills"
-                value={dashboard.pendingBills}
-                icon={<FaMoneyBillWave />}
-                color="warning"
-              />           </div>
-
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Completed Orders"
-                value={dashboard.completedOrders}
-                icon={<FaCheckCircle />}
-                color="danger"
-              />            </div>
-          </div>
-        </>
+          <Card
+            title="Completed Orders"
+            value={dashboard.completedOrders}
+            icon={<FaCheckCircle />}
+            color="success"
+          />
+        </div>
       )}
 
-      {/* KITCHEN */}
+      {/* ================= KITCHEN ======================= */}
+
       {CURRENT_ROLE === ROLES.KITCHEN && (
         <>
-          <h3 className="fw-bold mb-4">Kitchen Dashboard</h3>
+          <div className="row g-3">
+            <Card
+              title="Pending Orders"
+              value={dashboard.pendingOrders}
+              icon={<FaClock />}
+              color="warning"
+            />
 
-          <div className="row g-4">
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Pending Orders"
-                value={dashboard.pendingOrders}
-                icon={<FaClock />}
-                color="warning"
-              />            </div>
+            <Card
+              title="Preparing Orders"
+              value={dashboard.preparingOrders}
+              icon={<FaUtensils />}
+              color="primary"
+            />
 
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Preparing"
-                value={dashboard.pendingOrders}
-                icon={<FaUtensils />}
-                color="primary" />
-            </div>
+            <Card
+              title="Ready Orders"
+              value={dashboard.readyOrders}
+              icon={<FaCheckCircle />}
+              color="success"
+            />
 
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Ready Orders"
-                value={dashboard.completedOrders}
-                icon={<FaCheckCircle />}
-                color="success" />
-            </div>
-
-            <div className="col-lg-3 col-md-6">
-              <StatCard
-                title="Today's Orders"
-                value={dashboard.todayOrders}
-                icon={<FaClipboardList />}
-                color="danger" />
-            </div>
+            <Card
+              title="Total Orders"
+              value={dashboard.totalOrders}
+              icon={<FaClipboardList />}
+              color="danger"
+            />
           </div>
+          <DashboardBottom
+            dashboard={dashboard}
+          />
         </>
       )}
 
     </div>
   );
-}
+};
+
+// RECENT ORDERS + TABLE STATUS
+const DashboardBottom = ({ dashboard }) => {
+  return (
+    <div className="row g-3 mt-1">
+      {/* ================= RECENT ORDERS ================= */}
+      <div className="col-12 col-xl-8">
+        <div className="card border-0 shadow-sm h-100">
+          <div className="card-header bg-white border-0 p-3">
+            <h6 className="fw-bold mb-1">
+              Recent Orders
+            </h6>
+
+            <p className="text-muted small mb-0">
+              Latest restaurant orders
+            </p>
+
+          </div>
+          <div className="table-responsive">
+            <table className="table table-hover align-middle mb-0">
+              <thead className="table-light">
+                <tr>
+                  <th>Order</th>
+                  <th>Table</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {dashboard.recentOrders.length > 0 ? (
+                  dashboard.recentOrders.map(
+                    (order) => (
+                      <tr key={order._id}>
+                        <td className="fw-semibold">
+                          {order.order_number}
+                        </td>
+
+                        <td>
+                          {order.table_id?.tableNumber
+                            ? `T${order.table_id.tableNumber}`
+                            : "-"}
+                        </td>
+
+                        <td className="fw-semibold">
+                          ₹
+                          {Number(
+                            order.grand_total ||
+                            order.total_amount ||
+                            0
+                          ).toLocaleString(
+                            "en-IN"
+                          )}
+                        </td>
+
+                        <td>
+                          <span
+                            className={`badge ${order.order_status ===
+                              "Completed"
+                              ? "bg-success"
+                              : order.order_status ===
+                                "Preparing"
+                                ? "bg-warning text-dark"
+                                : order.order_status ===
+                                  "Ready"
+                                  ? "bg-info"
+                                  : "bg-secondary"
+                              }`}
+                          >
+                            {order.order_status}
+                          </span>
+                        </td>
+                      </tr>
+                    )
+                  )
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="text-center text-muted py-4"
+                    >
+                      No recent orders found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* ================= TABLE STATUS ================= */}
+      <div className="col-12 col-xl-4">
+        <div className="card border-0 shadow-sm h-100">
+          <div className="card-body p-3">
+            <h6 className="fw-bold mb-1">
+              Table Status
+            </h6>
+
+            <p className="text-muted small mb-3">
+              Current table availability
+            </p>
+
+            <div className="row g-2">
+              <TableStatus
+                value={dashboard.availableTables}
+                label="Available"
+                color="success"
+              />
+
+              <TableStatus
+                value={dashboard.occupiedTables}
+                label="Occupied"
+                color="danger"
+              />
+
+              <TableStatus
+                value={dashboard.reservedTables}
+                label="Reserved"
+                color="warning"
+              />
+
+              <TableStatus
+                value={dashboard.cleaningTables}
+                label="Cleaning"
+                color="info"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// TABLE STATUS CARD
+const TableStatus = ({
+  value,
+  label,
+  color,
+}) => {
+  return (
+    <div className="col-6">
+      <div className="border rounded-3 p-3 text-center">
+        <FaChair
+          className={`text-${color} mb-2`}
+          size={18}
+        />
+
+        <h5 className="fw-bold mb-0">
+          {value}
+        </h5>
+
+        <small className="text-muted">
+          {label}
+        </small>
+      </div>
+    </div>
+  );
+};
 
 export default Dashboard;

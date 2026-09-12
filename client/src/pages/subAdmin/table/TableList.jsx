@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { FaEdit, FaTrash, FaPlus, FaEyeSlash, FaUndo, FaEye, FaChair } from "react-icons/fa";
+import { FaEdit, FaTrash, FaPlus, FaUndo, FaChair } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
-import { SUB_ADMIN_ROUTE, WAITER_ROUTE } from "../../../Constant/RoutesConstant";
+import { SUB_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
 import { deleteTable, getAllTables, restoreTable, updateTableStatus } from "../../../services/tableservice";
 import { getWaitingList } from "../../../services/waitingService";
 import { useAuth } from "../../../context/AuthContext";
@@ -139,44 +139,20 @@ function TableList() {
       let newStatus;
       if (selectedStatus) {
         newStatus = selectedStatus;
-      }
-      else {
+      } else {
         switch (item.status?.toLowerCase()) {
           case "available":
             newStatus = "occupied";
             break;
-
           case "occupied":
             newStatus = "reserved";
             break;
-
           case "reserved":
             newStatus = "cleaning";
-            setTimeout(async () => {
-              try {
-                await updateTableStatus(id, "available");
-
-                setTables((prev) =>
-                  prev.map((t) =>
-                    t._id === id
-                      ? {
-                        ...t,
-                        status: "available",
-                      }
-                      : t
-                  )
-                );
-              } catch (err) {
-                console.log("Auto available error:", err);
-              }
-            }, 10 * 60 * 1000);
-
             break;
-
           case "cleaning":
             newStatus = "available";
             break;
-
           default:
             newStatus = "available";
         }
@@ -193,11 +169,45 @@ function TableList() {
             : t
         )
       );
+      if (newStatus === "cleaning") {
+
+        setTimeout(async () => {
+          try {
+            const availableRes = await updateTableStatus(
+              id,
+              "available"
+            );
+
+            setTables((prev) =>
+              prev.map((t) =>
+                t?._id === id
+                  ? {
+                    ...t,
+                    status:
+                      availableRes?.data?.status ||
+                      "available",
+                  }
+                  : t
+              )
+            );
+
+          } catch (err) {
+            console.log(
+              "Auto available error:",
+              err
+            );
+          }
+        }, 10 * 60 * 1000);
+      }
 
     } catch (err) {
-      console.log("STATUS UPDATE ERROR:", err);
+      console.log(
+        "STATUS UPDATE ERROR:",
+        err.response?.data || err.message
+      );
     }
   };
+
   return (
     <div className="container-fluid py-4">
       {/* Header */}
@@ -252,7 +262,7 @@ function TableList() {
 
               return (
                 <div
-                  className="col-xl-3 col-lg-4 col-md-6 mb-4"
+                  className="col-xl-3 col-lg-4 col-md-6 col-6 mb-3"
                   key={table._id}
                   style={{
                     backgroundColor: table.isDeleted ? "#ffebee" : "inherit",

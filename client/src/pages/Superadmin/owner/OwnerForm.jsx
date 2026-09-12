@@ -124,14 +124,11 @@ function OwnerForm() {
         fetchOwner();
     }, [id]);
 
-  
-
     return (
         <div className="container py-4">
             {/* HEADER */}
             <div className="mb-4">
-                <h3 className="fw-bold d-flex align-items-center gap-2">
-                    {id ? <FaEdit /> : <FaUserTie />}
+                <h3 className="fw-bold d-flex align-items-center">
                     {id ? "Edit Owner" : "Create Owner"}
                 </h3>
 

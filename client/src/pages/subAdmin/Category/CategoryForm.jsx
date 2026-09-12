@@ -3,9 +3,10 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { createCategory,getCategoryById,updateCategory} from "../../../services/categoryService";
+import { createCategory, getCategoryById, updateCategory } from "../../../services/categoryService";
 import { SUB_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
 import { FaTags, FaImage, FaSave } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 function CategoryForm() {
   const { id } = useParams();
@@ -51,10 +52,18 @@ function CategoryForm() {
           res = await createCategory(formData);
         }
         if (res?.success) {
+          toast.success(
+            id
+              ? "Category updated successfully!"
+              : "Category created successfully!"
+          );
           navigate(SUB_ADMIN_ROUTE.CATEGORYLIST);
         }
       } catch (err) {
-        console.log(err.response?.data || err.message);
+        toast.error(
+          err?.response?.data?.message ||
+          "Category already exists!"
+        );
       }
     }
   });
@@ -103,33 +112,33 @@ function CategoryForm() {
         {/* FORM */}
         <form onSubmit={formik.handleSubmit}>
           {/* Name */}
-          <input name="category_name" className="form-control mb-2"  placeholder="Category Name"
+          <input name="category_name" className="form-control mb-2" placeholder="Category Name"
             value={formik.values.category_name}
-            onChange={formik.handleChange}/>
+            onChange={formik.handleChange} />
 
           {/* Description */}
-          <textarea  name="description" className="form-control mb-2" placeholder="Description"
+          <textarea name="description" className="form-control mb-2" placeholder="Description"
             value={formik.values.description} onChange={formik.handleChange} />
 
           {/* Image */}
           <div className="input-group mb-2">
             <label htmlFor="image" className="btn btn-outline-secondary">  Choose File</label>
 
-            <input id="image"  type="file" hidden
+            <input id="image" type="file" hidden
               onChange={(e) => {
                 const file = e.target.files[0];
                 if (file) {
                   formik.setFieldValue("image", file);
                   setImageName(file.name);
                 }
-              }}/>
+              }} />
 
-            <input  type="text" className="form-control" value={imageName}
+            <input type="text" className="form-control" value={imageName}
               readOnly />
           </div>
 
           {/* Status */}
-          <select  name="status" className="form-select mb-3"
+          <select name="status" className="form-select mb-3"
             value={formik.values.status} onChange={formik.handleChange} >
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>

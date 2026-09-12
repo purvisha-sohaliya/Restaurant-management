@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaMoneyBillWave, FaCheckCircle,FaEye } from "react-icons/fa";
+import { FaCheckCircle, FaEye } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { confirmPayment, getBills } from "../../../services/billService";
 import { SUB_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
@@ -42,7 +42,19 @@ function BillList() {
 
   return (
     <div className="container-fluid py-4">
-      <h3 className="mb-4">Bill List</h3>
+      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4">
+        <div>
+          <h3 className="fw-bold mb-1">Bill List</h3>
+          <p className="text-muted mb-0">
+            Manage and track all restaurant bills
+          </p>
+        </div>
+
+        <div className="text-muted small">
+          Total Bills: <strong>{bills.length}</strong>
+        </div>
+      </div>
+
       <div className="card shadow">
         <div className="table-responsive">
           <table className="table table-bordered align-middle">
@@ -69,8 +81,8 @@ function BillList() {
                   <td>
                     <span
                       className={`badge ${bill.payment_status === "Paid"
-                          ? "bg-success"
-                          : "bg-warning text-dark"
+                        ? "bg-success"
+                        : "bg-warning text-dark"
                         }`}
                     >
                       {bill.payment_status}
@@ -90,9 +102,9 @@ function BillList() {
                       <span className="text-success fw-bold">Paid</span>
                     )}
                     <button className="btn  btn-sm"
-                        onClick={() =>navigate(`${SUB_ADMIN_ROUTE.BILL}/${bill._id}`)} >
-                        <FaEye className="me-1" />
-                      </button>
+                      onClick={() => navigate(`${SUB_ADMIN_ROUTE.BILL}/${bill._id}`)} >
+                      <FaEye className="me-1" />
+                    </button>
                   </td>
                 </tr>
               ))}

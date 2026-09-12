@@ -34,7 +34,8 @@ exports.getOwners = async (req, res, next) => {
     try {
         const owners = await userModel.find({
             role: "owner"
-        }).sort({ createdAt: -1 });
+        })
+            .populate("restaurant_id", "restaurant_name").sort({ createdAt: -1 });
 
         res.status(200).json({
             success: true,

@@ -37,7 +37,6 @@ const StatCard = ({
         >
           {icon}
         </div>
-
       </div>
     </div>
   );

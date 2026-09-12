@@ -41,7 +41,7 @@ function StaffList() {
 
   useEffect(() => {
     fetchStaff();
-     setCurrentPage(1);
+    setCurrentPage(1);
   }, [selectedRole, selectedStatus]);
   // FILTER
   const filteredStaff = staffData.filter((s) => {
@@ -155,7 +155,7 @@ function StaffList() {
           <h2 className="fw-bold mb-1">Staff Management</h2>
           <small className="text-muted">Manage restaurant staff</small>
         </div>
-    
+
         <button
           className="btn btn-success"
           onClick={() => navigate(SUB_ADMIN_ROUTE.STAFFADD)}>
@@ -165,7 +165,7 @@ function StaffList() {
       </div>
 
       {/* FILTER */}
-      <div className="row mb-3">
+      <div className="row mb-3 g-2">
         <div className="col-md-3">
           <select
             className="form-select"
@@ -197,118 +197,120 @@ function StaffList() {
       <div className="card shadow-sm border-0">
         <div className="card-body p-0">
 
-          <table className="table table-hover mb-0">
-            <thead className="table-dark">
-              <tr>
-                <th>
-                  <input
-                    type="checkbox"
-                    checked={
-                      staffData.length > 0 &&
-                      selectedStaff.length === staffData.length
-                    }
-                    onChange={handleSelectAll}
-                  />
-                </th>
-                <th>#</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
+          <div className="table-responsive">
+            <table className="table table-hover mb-0">
+              <thead className="table-dark">
+                <tr>
+                  <th>
+                    <input
+                      type="checkbox"
+                      checked={
+                        staffData.length > 0 &&
+                        selectedStaff.length === staffData.length
+                      }
+                      onChange={handleSelectAll}
+                    />
+                  </th>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
 
-            <tbody>
-              {currentStaff.length > 0 ? (
-                currentStaff.map((staff, index) => (
-                  <tr
-                    key={staff._id}
-                    style={{
-                      backgroundColor: staff.is_deleted
-                        ? "#ffebee"
-                        : "inherit",
-                      opacity: staff.is_deleted ? 0.6 : 1,
-                    }}
-                  >
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={selectedStaff.includes(staff._id)}
-                        onChange={() => handleSelect(staff._id)}
-                      />
-                    </td>
+              <tbody>
+                {currentStaff.length > 0 ? (
+                  currentStaff.map((staff, index) => (
+                    <tr
+                      key={staff._id}
+                      style={{
+                        backgroundColor: staff.is_deleted
+                          ? "#ffebee"
+                          : "inherit",
+                        opacity: staff.is_deleted ? 0.6 : 1,
+                      }}
+                    >
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={selectedStaff.includes(staff._id)}
+                          onChange={() => handleSelect(staff._id)}
+                        />
+                      </td>
 
-                    <td>{indexOfFirstItem + index + 1}</td>
-                    <td>{staff.name}</td>
-                    <td>{staff.email}</td>
-                    <td>{staff.phone}</td>
-                    <td>{staff.role}</td>
+                      <td>{indexOfFirstItem + index + 1}</td>
+                      <td>{staff.name}</td>
+                      <td>{staff.email}</td>
+                      <td>{staff.phone}</td>
+                      <td>{staff.role}</td>
 
-                    <td>
-                      <span
-                        className={`badge ${staff.status === "active"
-                          ? "bg-success"
-                          : "bg-danger"
-                          }`}
-                      >
-                        {staff.status}
-                      </span>
-                    </td>
-
-                    <td>
-                      <div className="d-flex gap-2">
-
-                        <button
-                          className="btn btn-sm btn-outline-primary"
-                          onClick={() =>
-                            navigate(
-                              `${SUB_ADMIN_ROUTE.STAFFEDIT}/${staff._id}`
-                            )
-                          }
-                          disabled={staff.is_deleted}
+                      <td>
+                        <span
+                          className={`badge ${staff.status === "active"
+                            ? "bg-success"
+                            : "bg-danger"
+                            }`}
                         >
-                          <FaEdit />
-                        </button>
+                          {staff.status}
+                        </span>
+                      </td>
 
-                        {staff.is_deleted ? (
+                      <td>
+                        <div className="d-flex gap-2">
+
                           <button
-                            className="btn btn-sm btn-outline-success"
-                            onClick={() => handleRecover(staff._id)}
+                            className="btn btn-sm btn-outline-primary"
+                            onClick={() =>
+                              navigate(
+                                `${SUB_ADMIN_ROUTE.STAFFEDIT}/${staff._id}`
+                              )
+                            }
+                            disabled={staff.is_deleted}
                           >
-                            <FaUndo />
+                            <FaEdit />
                           </button>
-                        ) : (
+
+                          {staff.is_deleted ? (
+                            <button
+                              className="btn btn-sm btn-outline-success"
+                              onClick={() => handleRecover(staff._id)}
+                            >
+                              <FaUndo />
+                            </button>
+                          ) : (
+                            <button
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => handleDelete(staff._id)}
+                            >
+                              <FaTrash />
+                            </button>
+                          )}
+
                           <button
-                            className="btn btn-sm btn-outline-danger"
-                            onClick={() => handleDelete(staff._id)}
+                            className="btn btn-sm btn-outline-warning"
+                            onClick={() => handleToggleStatus(staff._id)}
+                            disabled={staff.is_deleted}
                           >
-                            <FaTrash />
+                            {staff.status === "active" ? <FaEyeSlash /> : <FaEye />}
                           </button>
-                        )}
 
-                        <button
-                          className="btn btn-sm btn-outline-warning"
-                          onClick={() => handleToggleStatus(staff._id)}
-                          disabled={staff.is_deleted}
-                        >
-                          {staff.status === "active" ? <FaEyeSlash /> : <FaEye />}
-                        </button>
-
-                      </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="text-center py-4">
+                      No Staff Found
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8" className="text-center py-4">
-                    No Staff Found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
 
         </div>
       </div>
@@ -349,8 +351,8 @@ function StaffList() {
 
             <li
               className={`page-item ${currentPage === totalPages || totalPages === 0
-                  ? "disabled"
-                  : ""
+                ? "disabled"
+                : ""
                 }`}
             >
               <button

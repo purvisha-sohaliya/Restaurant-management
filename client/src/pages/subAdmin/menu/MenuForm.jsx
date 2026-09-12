@@ -7,6 +7,7 @@ import { getCategories } from "../../../services/categoryService";
 import { getRestaurants } from "../../../services/restaurant.service";
 import { SUB_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
 import { FaUtensils, FaSave } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 function MenuForm() {
   const { id } = useParams();
@@ -56,10 +57,15 @@ function MenuForm() {
           res = await createMenuItem(formData);
         }
         if (res?.success) {
+          toast.success(
+            id
+              ? "Menu item updated successfully!"
+              : "Menu item created successfully!"
+          );
           navigate(SUB_ADMIN_ROUTE.MENULIST);
         }
       } catch (err) {
-        console.log(err);
+        toast.error(err?.response?.data?.message || "menu already exists!");
       }
     }
   });

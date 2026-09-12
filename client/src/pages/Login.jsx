@@ -1,9 +1,7 @@
-
-import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-
+import { toast } from "react-toastify";
 import { COMMON_ROUTE, SUPER_ADMIN_ROUTE } from "../Constant/RoutesConstant";
 import { ROLES } from "../Constant/CommonConstant";
 import { login } from "../services/authService";
@@ -31,25 +29,16 @@ function Login() {
 
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        console.log("LOGIN VALUES:", values);
-
         const res = await login(values);
-
-        console.log("LOGIN RESPONSE:", res);
-
         if (!res.success) {
-          console.log("LOGIN FAILED:", res.message);
+          toast.error("Invalid email or password!");
           return;
         }
-
         const user = res.data;
-
-        console.log("LOGGED USER:", user);
-
         setUser(user);
-
+        toast.success("Login successful!");
         if (user.role === ROLES.SUPER_ADMIN) {
-          navigate(SUPER_ADMIN_ROUTE.RESTOURANTSLIST, { replace: true });
+          navigate(SUPER_ADMIN_ROUTE.RESTAURANTSLIST, { replace: true });
           return;
         }
 
@@ -64,13 +53,8 @@ function Login() {
           return;
         }
 
-        console.log("UNKNOWN ROLE:", user.role);
-
       } catch (err) {
-        console.error(
-          "LOGIN ERROR:",
-          err.response?.data || err.message
-        );
+        toast.error("Invalid email or password!");
       } finally {
         setSubmitting(false);
       }
@@ -79,18 +63,13 @@ function Login() {
 
   return (
     <div className="login-wrapper min-vh-100 d-flex justify-content-center align-items-center">
-
       <div className="login-card bg-white text-center shadow">
-
         <h2>Restaurant POS</h2>
-
         <p>Sign in to continue</p>
-
         <form onSubmit={formik.handleSubmit}>
 
           {/* EMAIL */}
           <div className="mb-3">
-
             <input
               type="email"
               name="email"
@@ -109,12 +88,10 @@ function Login() {
                 {formik.errors.email}
               </div>
             )}
-
           </div>
 
           {/* PASSWORD */}
           <div className="mb-3">
-
             <input
               type="password"
               name="password"
@@ -146,11 +123,8 @@ function Login() {
               ? "Logging in..."
               : "Login"}
           </button>
-
         </form>
-
       </div>
-
     </div>
   );
 }

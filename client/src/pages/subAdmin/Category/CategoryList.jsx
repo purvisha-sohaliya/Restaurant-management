@@ -164,7 +164,7 @@ function CategoryList() {
       {/* Card View */}
       <div className="row g-4">
         {filteredCategories.map((category) => (
-          <div className="col-xl-3 col-lg-4 col-md-6" key={category._id}
+          <div className="col-xl-3 col-lg-4 col-md-6 col-6 mb-3" key={category._id}
             style={{
               backgroundColor: category.isDeleted ? "#ffebee" : "inherit",
               opacity: category.isDeleted ? 0.6 : 1

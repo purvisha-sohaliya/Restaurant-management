@@ -1,19 +1,32 @@
+import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/admin/Sidebar";
 import Topbar from "../components/admin/Topbar";
 
 const AdminLayout = () => {
-  return ( 
-    <div className="admin-layout d-flex min-vh-100">
-      <Sidebar />
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
-      <div className="admin-main main-content flex-grow-1 min-vh-100 d-flex flex-column">
-        <Topbar />
+  return (
+    <div className="admin-layout">
 
-        <main className="content-area flex-grow-1 p-4">
-          <Outlet />
-        </main>s
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+      <div
+        className={`admin-main ${sidebarOpen
+            ? "sidebar-expanded"
+            : "sidebar-collapsed"
+          }`}
+      >
+
+        <Topbar
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+        />
+
+        <Outlet />
+
       </div>
+
     </div>
   );
 };

@@ -9,16 +9,16 @@ export const COMMON_ROUTE = {
 };
 // super admin
 export const SUPER_ADMIN_ROUTE = {
-    RESTOURANTSLIST: "/RestaurantsList",
-    RESTOURANTSADD: "/RestaurantsAdd",
-    RESTOURANTSEDIT: "/RestaurantsEdit",
+    RESTAURANTSLIST: "/RestaurantsList",
+    RESTAURANTSADD: "/RestaurantsAdd",
+    RESTAURANTSEDIT: "/RestaurantsEdit",
 
     // OWNER
     OWNERLIST: "/ownersList",
     OWNERADD: "/ownersAdd",
     OWNEREDIT: "/ownersEdit",
     
-    REPORTS: "/Reportsa"
+    REPORTS: "/Reports"
 }
 // sub admin
 export const SUB_ADMIN_ROUTE = {
@@ -54,7 +54,6 @@ export const SUB_ADMIN_ROUTE = {
     BILL: "/bill",
     BILL_LIST: "/bill-list",
 
-
     // Waiting
     WAITINGQUEUE: "/waiting-queue",
     WATINGORDERCARD: "/waiting-order-card",
@@ -65,5 +64,4 @@ export const SUB_ADMIN_ROUTE = {
 
     // LiveScreen
     LIVESCREEN: "/Livescreen"
-
 };

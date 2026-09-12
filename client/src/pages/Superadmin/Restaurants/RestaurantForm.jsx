@@ -65,7 +65,7 @@ function RestaurantForm() {
 
                 if (res.success) {
                     resetForm();
-                    navigate(SUPER_ADMIN_ROUTE.RESTOURANTSLIST);
+                    navigate(SUPER_ADMIN_ROUTE.RESTAURANTSLIST);
                 }
             } catch (err) {
                 console.log(err.response?.data || err.message);

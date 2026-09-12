@@ -385,7 +385,7 @@ function OrderForm() {
                 {/* MENU */}
                 <div className="row g-3">
                   {filteredMenu.map((menu) => (
-                    <div className="col-xl-4 col-lg-6 col-md-6" key={menu._id}>
+                    <div className="col-xl-4 col-lg-6 col-md-6 col-6 mb-3" key={menu._id}>
                       <div className="card border-0 shadow-sm h-100"
                         style={{ cursor: "pointer", borderRadius: "15px", transition: "0.3s" }}
                         onClick={() => addItem(menu)}>

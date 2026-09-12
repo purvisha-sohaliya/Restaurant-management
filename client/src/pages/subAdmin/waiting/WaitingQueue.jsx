@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaUsers, FaChair, FaClock, FaPhoneAlt, FaUserFriends, } from "react-icons/fa";
+import { FaUsers, FaClock, FaPhoneAlt, FaUserFriends, } from "react-icons/fa";
 import { addToWaiting, deleteWaitingEntry, getWaitingList, seatCustomer, } from "../../../services/waitingService";
 import { getAllTables } from "../../../services/tableservice";
 import { useNavigate } from "react-router-dom";
@@ -209,8 +209,7 @@ function WaitingQueue() {
         <button
           className="btn btn-success"
           data-bs-toggle="modal"
-          data-bs-target="#addCustomerModal"
-        >
+          data-bs-target="#addCustomerModal">
           + Add Customer
         </button>
       </div>
@@ -224,7 +223,7 @@ function WaitingQueue() {
           </div>
         ) : (
           waitingList.map((item) => (
-            <div className="col-md-4 mb-3" key={item._id}>
+            <div className="col-lg-4 col-sm-6 mb-3" key={item._id}>
               <div className="card shadow">
                 <div className="card-header d-flex justify-content-between">
                   <div>
@@ -260,14 +259,12 @@ function WaitingQueue() {
                       data-bs-target="#assignTableModal"
                       onClick={() => openAssignModal(item)}
                     >
-                      <FaChair className="me-2" />
                       Assign Table
                     </button>
 
                     <button
                       className="btn btn-danger"
-                      onClick={() => handleDeleteWaiting(item)}
-                    >
+                      onClick={() => handleDeleteWaiting(item)}>
                       Delete
                     </button>
                   </div>
@@ -279,7 +276,6 @@ function WaitingQueue() {
       </div>
 
       {/* Modal */}
-
       <div
         className="modal fade"
         id="addCustomerModal"
@@ -348,6 +344,7 @@ function WaitingQueue() {
           </div>
         </div>
       </div>
+
       <div
         className="modal fade"
         id="assignTableModal"

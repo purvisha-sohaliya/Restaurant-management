@@ -68,7 +68,7 @@ function ActiveOrders() {
                     </div>
                 ) : (
                     orders.map((order) => (
-                        <div className="col-lg-4 col-md-6 mb-4" key={order._id}>
+                        <div className="col-lg-4 col-6 mb-4" key={order._id}>
                             <div className="card shadow-sm border-0 h-100">
 
                                 <div className="card-header d-flex justify-content-between align-items-center">

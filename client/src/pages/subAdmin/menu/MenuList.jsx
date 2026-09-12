@@ -152,7 +152,7 @@ function MenuList() {
       <>
         {/* Filter */}
         <div className="row mb-4">
-          <div className="col-md-3">
+          <div className="col-12 col-sm-8 col-md-6 col-lg-4">
             <select
               className="form-select"
               value={selectedCategory}
@@ -174,7 +174,7 @@ function MenuList() {
           {filteredMenus.length > 0 ? (
             filteredMenus.map((menu) => (
               <div
-                className="col-xl-3 col-lg-4 col-md-6"
+                className="col-xl-3 col-lg-4 col-md-6 col-6 mb-3"
                 key={menu._id}
               >
                 <div

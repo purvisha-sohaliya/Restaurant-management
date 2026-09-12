@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getDisplayScreen } from "../../services/kitchenService";
 import { addDisplayVideo, getDisplayVideos } from "../../services/displayVideoService";
+import { toast } from "react-toastify";
 
 const LiveScreen = () => {
   // left-side show token
@@ -72,11 +73,11 @@ const LiveScreen = () => {
   const handleVideoUpload = async (e) => {
     e.preventDefault();
     if (!videoTitle.trim()) {
-      alert("Please enter video title");
+      toast.warning("Please enter video title!");
       return;
     }
     if (!videoFile) {
-      alert("Please select video");
+      toast.warning("Please select video!");
       return;
     }
     try {
@@ -90,34 +91,22 @@ const LiveScreen = () => {
         setVideoTitle("");
         setVideoFile(null);
         await fetchDisplayVideos();
+        if (response?.success) {
+          toast.success("Video uploaded successfully!");
+        }
         const modalElement = document.getElementById("uploadVideoModal");
         if (modalElement) {
           const modal = window.bootstrap.Modal.getInstance(modalElement);
           if (modal) { modal.hide(); }
         }
       }
-
     } catch (error) {
-
-      alert(
-        error?.response?.data?.message ||
-        "Video upload failed"
-      );
+      toast.error(error?.response?.data?.message || "Video upload failed");
     } finally {
       setUploading(false);
     }
   };
 
-  // API CALL
-
-  // useEffect(() => {
-  //   fetchLiveTokens();
-  //   fetchDisplayVideos();
-  //   const interval = setInterval(() => {
-  //     fetchLiveTokens();
-  //   }, 5000);
-  //   return () => clearInterval(interval);
-  // }, []);
   useEffect(() => {
     document.body.classList.add("live-screen-active");
     fetchLiveTokens();
@@ -130,21 +119,18 @@ const LiveScreen = () => {
   return (
     <div className="live-screen-page">
       <div
-        className="live-screen w-100 vh-100 d-flex gap-3 overflow-hidden">
-        {/*  TOKEN SECTION - 30% */}
-        <div
-          className="live-token-section h-100 d-flex flex-column bg-white overflow-hidden"
-          style={{ width: "30%", minWidth: "320px", }}>
+        className="live-screen w-100 min-vh-100 d-flex flex-column flex-md-row gap-3 overflow-hidden">
+        <div className="live-token-section d-flex flex-column bg-white overflow-hidden col-12 col-md-4 col-xl-3">
           {/*  HEADER  */}
 
           <div className="token-header d-flex align-items-center justify-content-between bg-blue text-white px-3 py-3">
-            <div className="d-flex align-items-center gap-3">
+            <div className="d-flex align-items-center gap-2">
               <button
                 type="button"
                 className="btn text-white btn-sm fw-bold"
                 onClick={() => window.history.back()}
               >
-                 Back
+                Back
               </button>
 
               <h2 className="mb-0 fs-4 fw-bold">
@@ -174,7 +160,7 @@ const LiveScreen = () => {
                 {/* TOKEN NUMBER */}
                 <h1 className="current-token mb-2 fw-bold text-black"
                   style={{
-                    fontSize: "55px", lineHeight: "1", display: "block", visibility: "visible", opacity: 1,
+                    fontSize: "clamp(40px, 5vw, 55px)", lineHeight: "1"
                   }}>
                   {currentToken.token_number}
                 </h1>
@@ -222,9 +208,7 @@ const LiveScreen = () => {
                     </span>
 
                     {/* RIGHT SIDE - STATUS */}
-                    <span style={{
-                      fontSize: "13px",
-                    }}>
+                    <span className="small">
                       {token.status}
                     </span>
                   </div>
@@ -246,8 +230,8 @@ const LiveScreen = () => {
         </div>
 
         {/* VIDEO SECTION */}
-        <div className="live-video-section vh-100 position-relative overflow-hidden"
-          style={{ width: "70%" }}>
+        <div className="live-video-section col-12 col-md-8 col-xl-9 position-relative overflow-hidden"
+          style={{ height: "100vh" }}>
           {displayVideos.length > 0 ? (
 
             <video
@@ -268,7 +252,6 @@ const LiveScreen = () => {
                 );
               }}
               style={{
-                width: "100%",
                 height: "100%",
                 objectFit: "cover"
               }}
@@ -293,7 +276,7 @@ const LiveScreen = () => {
 
           {/* UPLOAD MODAL */}
           <div className="modal fade" id="uploadVideoModal" tabIndex="-1" >
-            <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title">
