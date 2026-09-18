@@ -13,6 +13,8 @@ const WAITING = require("./waitingRoutes");
 const KITCHEN = require("./kitchenRoutes");
 const CUSTOMERS = require("./customerRoutes");
 const DISPLAY = require("./displayVideoRoutes");
+const RECIPE = require("./recipeRoutes");
+const INVENTORY = require("./inventoryRoutes");
 const DASHBOARD = require("./dashboardRoutes");
 
 router.use("/restaurants", RESTAURANT);
@@ -27,6 +29,8 @@ router.use("/waiting", WAITING);
 router.use("/kitchen", KITCHEN);
 router.use("/customers", CUSTOMERS);
 router.use("/display-videos", DISPLAY);
+router.use("/recipes", RECIPE);
+router.use("/inventory", INVENTORY);
 router.use("/dashboard", DASHBOARD);
 
 router.use("/users", USERS);

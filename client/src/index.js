@@ -5,7 +5,6 @@ import App from './App';
 // import { AuthProvider } from "";
 import { AuthProvider } from './context/AuthContext';
 
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
@@ -14,5 +13,3 @@ root.render(
     </AuthProvider>
   </React.StrictMode>
 );
-
-

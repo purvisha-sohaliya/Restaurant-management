@@ -1,5 +1,7 @@
+const inventoryModel = require("../models/inventoryModel");
 const kitchenModel = require("../models/kitchenModel");
 const orderModel = require("../models/orderModel");
+const recipeModel = require("../models/recipeModel");
 
 exports.getKitchenOrders = async (req, res, next) => {
     try {
@@ -132,6 +134,62 @@ exports.readyKitchenOrder = async (req, res, next) => {
             throw error;
         }
 
+        const order = await orderModel.findById(kitchenOrder.order_id);
+
+        if (!kitchenOrder.stock_deducted) {
+            for (const orderItem of order.items) {
+
+                const recipe = await recipeModel.findOne({
+                    menu_item_id: orderItem.menu_item_id,
+                    restaurant_id: req.user.restaurant_id,
+                    is_deleted: false
+                });
+
+                if (!recipe) {
+                    continue;
+                }
+
+                for (const ingredient of recipe.ingredients) {
+
+                    const requiredQuantity =
+                        ingredient.quantity * orderItem.quantity;
+
+                    const inventory = await inventoryModel.findOne({
+                        _id: ingredient.inventory_id,
+                        restaurant_id: req.user.restaurant_id,
+                        is_deleted: false
+                    });
+
+                    if (!inventory) {
+                        const error = new Error("Inventory item not found");
+                        error.statusCode = 404;
+                        throw error;
+                    }
+
+                    if (inventory.current_stock < requiredQuantity) {
+                        const error = new Error(
+                            `Insufficient stock for ${inventory.item_name}`
+                        );
+                        error.statusCode = 400;
+                        throw error;
+                    }
+
+                    inventory.current_stock -= requiredQuantity;
+
+                    if (inventory.current_stock === 0) {
+                        inventory.stock_status = "Out of Stock";
+                    } else if (inventory.current_stock <= inventory.minimum_stock) {
+                        inventory.stock_status = "Low Stock";
+                    } else {
+                        inventory.stock_status = "In Stock";
+                    }
+
+                    await inventory.save();
+                }
+            }
+            kitchenOrder.stock_deducted = true;
+        }
+
         kitchenOrder.kitchen_status = "Ready";
 
         kitchenOrder.items.forEach(item => {
@@ -142,23 +200,19 @@ exports.readyKitchenOrder = async (req, res, next) => {
 
         await kitchenOrder.save();
 
-        const order = await orderModel.findById(kitchenOrder.order_id);
+        order.items.forEach(orderItem => {
+            const kitchenItem = kitchenOrder.items.find(
+                kitchenItem =>
+                    kitchenItem.menu_item_id.toString() ===
+                    orderItem.menu_item_id.toString()
+            );
 
-        if (order) {
-            order.items.forEach(orderItem => {
-                const kitchenItem = kitchenOrder.items.find(
-                    kitchenItem =>
-                        kitchenItem.menu_item_id.toString() ===
-                        orderItem.menu_item_id.toString()
-                );
+            if (kitchenItem && kitchenItem.status === "Ready") {
+                orderItem.kitchen_status = "Ready";
+            }
+        });
 
-                if (kitchenItem && kitchenItem.status === "Ready") {
-                    orderItem.kitchen_status = "Ready";
-                }
-            });
-
-            await order.save();
-        }
+        await order.save();
 
         res.status(200).json({
             success: true,

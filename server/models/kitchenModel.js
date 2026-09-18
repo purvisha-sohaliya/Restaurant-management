@@ -48,11 +48,16 @@ const kitchenSchema = new mongoose.Schema(
                 },
             },
         ],
-        
+
         kitchen_status: {
             type: String,
             enum: ["Pending", "Preparing", "Ready", "Served", "Cancelled"],
             default: "Pending",
+        },
+
+        stock_deducted: {
+            type: Boolean,
+            default: false
         },
 
         printed: {
