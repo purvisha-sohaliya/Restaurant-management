@@ -31,6 +31,7 @@ import Kitchen from './pages/Kitchen/Kitchen';
 import LiveScreen from './pages/live-screen/LiveScreen';
 import PublicRoute from './routes/PublicRoute';
 import ErrorPage from './pages/ErrorPage';
+import Inventory from './pages/subAdmin/inventory/inventory';
 
 function App(props) {
   return (
@@ -75,6 +76,7 @@ function App(props) {
               <Route path={`${SUB_ADMIN_ROUTE.BILL}/:id`} element={<Bill />} />
               <Route path={SUB_ADMIN_ROUTE.KITCHEN} element={<Kitchen />} />
               <Route path={SUB_ADMIN_ROUTE.LIVESCREEN} element={<LiveScreen />} />
+              <Route path={SUB_ADMIN_ROUTE.INVENTORY} element={<Inventory />} />
             </Route>
           </Route>
 

@@ -17,7 +17,7 @@ export const SUPER_ADMIN_ROUTE = {
     OWNERLIST: "/ownersList",
     OWNERADD: "/ownersAdd",
     OWNEREDIT: "/ownersEdit",
-    
+
     REPORTS: "/Reports"
 }
 // sub admin
@@ -63,5 +63,7 @@ export const SUB_ADMIN_ROUTE = {
     KITCHEN: "/kitchen",
 
     // LiveScreen
-    LIVESCREEN: "/Livescreen"
+    LIVESCREEN: "/Livescreen",
+    // inventoryList
+    INVENTORY: "/Inventory",
 };

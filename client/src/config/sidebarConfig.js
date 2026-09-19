@@ -8,8 +8,8 @@ import {
     FaTags,
     FaList,
     FaListUl,
-    FaCartPlus,
-    FaCog, FaThLarge
+    FaCartPlus, FaThLarge,
+    FaBoxes
 } from "react-icons/fa";
 
 import { SUPER_ADMIN_ROUTE, MANAGER_ROUTE, SUB_ADMIN_ROUTE, WAITER_ROUTE } from "../Constant/RoutesConstant";
@@ -194,7 +194,7 @@ export const sidebarConfig = [
     {
         title: "WaitingQueue",
         icon: FaClipboardList,
-          path: SUB_ADMIN_ROUTE.WAITINGQUEUE,
+        path: SUB_ADMIN_ROUTE.WAITINGQUEUE,
         roles: [ROLES.OWNER, ROLES.MANAGER],
     },
 
@@ -213,14 +213,18 @@ export const sidebarConfig = [
     },
 
 
-//   livescreen
- {
+    //   livescreen
+    {
         title: "LiveScreen",
         icon: FaList,
         path: SUB_ADMIN_ROUTE.LIVESCREEN,
         roles: [ROLES.OWNER, ROLES.MANAGER, ROLES.WAITER],
     },
 
-    
-
+    {
+        title: "Inventory",
+        icon: FaBoxes,
+        path: SUB_ADMIN_ROUTE.INVENTORY,
+        roles: [ROLES.OWNER, ROLES.MANAGER]
+    }
 ];
