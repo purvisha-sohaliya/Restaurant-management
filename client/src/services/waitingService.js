@@ -41,4 +41,3 @@ export const deleteWaitingEntry = async (id) => {
   const res = await api.delete(`/api/waiting/${id}`);
   return res.data;
 };
-

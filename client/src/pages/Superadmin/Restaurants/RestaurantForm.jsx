@@ -9,7 +9,7 @@ import {
     createRestaurant,
     getRestaurantById,
     updateRestaurant,
-} from "../../../services/restaurant.service";
+} from "../../../services/restaurantService";
 
 function RestaurantForm() {
     const navigate = useNavigate();

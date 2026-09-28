@@ -137,22 +137,26 @@ exports.readyKitchenOrder = async (req, res, next) => {
         const order = await orderModel.findById(kitchenOrder.order_id);
 
         if (!kitchenOrder.stock_deducted) {
-            for (const orderItem of order.items) {
-
+            for (const kitchenItem of kitchenOrder.items) {
+                
                 const recipe = await recipeModel.findOne({
-                    menu_item_id: orderItem.menu_item_id,
+                    menu_item_id: kitchenItem.menu_item_id,
                     restaurant_id: req.user.restaurant_id,
                     is_deleted: false
                 });
 
                 if (!recipe) {
-                    continue;
+                    const error = new Error(
+                        `Recipe not found for ${kitchenItem.name}`
+                    );
+                    error.statusCode = 400;
+                    throw error;
                 }
 
                 for (const ingredient of recipe.ingredients) {
 
                     const requiredQuantity =
-                        ingredient.quantity * orderItem.quantity;
+                        ingredient.quantity * kitchenItem.quantity;
 
                     const inventory = await inventoryModel.findOne({
                         _id: ingredient.inventory_id,
@@ -178,7 +182,9 @@ exports.readyKitchenOrder = async (req, res, next) => {
 
                     if (inventory.current_stock === 0) {
                         inventory.stock_status = "Out of Stock";
-                    } else if (inventory.current_stock <= inventory.minimum_stock) {
+                    } else if (
+                        inventory.current_stock <= inventory.minimum_stock
+                    ) {
                         inventory.stock_status = "Low Stock";
                     } else {
                         inventory.stock_status = "In Stock";

@@ -1,6 +1,5 @@
 import api from "../api/axios";
 
-
 export const getRestaurants = async () => {
   const res = await api.get("/api/restaurants");
   return res.data;
@@ -35,7 +34,3 @@ export const recoverRestaurant = async (id) => {
   const res = await api.patch(`/api/restaurants/${id}/recover`);
   return res.data;
 };
-
-
-
-

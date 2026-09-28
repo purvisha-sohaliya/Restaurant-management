@@ -130,7 +130,7 @@ exports.confirmPayment = async (req, res, next) => {
             if (order.table_id) {
                 await tableModel.findByIdAndUpdate(
                     order.table_id,
-                    { status: "Cleaning" }
+                    { status: "cleaning" }
                 );
 
                 setTimeout(async () => {

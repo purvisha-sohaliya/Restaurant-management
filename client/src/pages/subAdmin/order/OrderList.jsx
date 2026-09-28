@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
-import {
-  FaPlus,
-  FaSearch,
-  FaEdit,
-  FaTrash,
-  FaEye
-} from "react-icons/fa";
+import { FaPlus, FaSearch, } from "react-icons/fa";
 import { getOrders, } from "../../../services/orderService";
 import { useAuth } from "../../../context/AuthContext";
 import { SUB_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
@@ -15,36 +8,57 @@ import { SUB_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
 function OrderList() {
 
   const { user } = useAuth();
-
-  const CURRENT_ROLE = user?.role;
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [tableFilter, setTableFilter] = useState("All");
+  const filteredOrders = orders.filter((order) => {
+  const searchText = search.toLowerCase().trim();
 
-  const filteredOrders = orders.filter((order) =>
-    (order.order_number || "")
-      .toLowerCase()
-      .includes(search.toLowerCase()) ||
+    // SEARCH FILTER
+    const matchesSearch =
+      (order.order_number || "")
+        .toLowerCase()
+        .includes(searchText) ||
+      (order.customer_name || "")
+        .toLowerCase()
+        .includes(searchText) ||
+      String(order.table_id?.tableNumber || "")
+        .toLowerCase()
+        .includes(searchText) ||
+      (order.waiter_id?.name || "")
+        .toLowerCase()
+        .includes(searchText);
 
-    (order.customer_name || "")
-      .toLowerCase()
-      .includes(search.toLowerCase()) ||
+    // STATUS FILTER
+    const matchesStatus =
+      statusFilter === "All" ||
+      order.order_status === statusFilter;
 
-    (order.table_id?.tableNumber?.toString() || "")
-      .toLowerCase()
-      .includes(search.toLowerCase()) ||
+    // TABLE FILTER
+    const matchesTable =
+      tableFilter === "All" ||
+      String(order.table_id?._id) === String(tableFilter);
 
-    (order.waiter_id?.name || "")
-      .toLowerCase()
-      .includes(search.toLowerCase())
-  );
+    return (
+      matchesSearch &&matchesStatus && matchesTable);
+  });
   useEffect(() => {
     fetchOrders();
   }, []);
 
+  const uniqueTables = [
+    ...new Map(
+      orders
+        .filter((order) => order.table_id)
+        .map((order) => [
+          order.table_id._id,
+          order.table_id,
+        ])
+    ).values(),
+  ];
   const fetchOrders = async () => {
     try {
       const res = await getOrders();
@@ -58,21 +72,18 @@ function OrderList() {
       setLoading(false);
     }
   };
- 
+
 
   return (
     <div className="container-fluid py-4">
-
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
-
         <div>
           <h3 className="fw-bold mb-1">Order Management</h3>
           <small className="text-muted">
             Manage Restaurant Orders
           </small>
         </div>
-
 
         <button
           className="btn btn-success"
@@ -81,23 +92,17 @@ function OrderList() {
           <FaPlus className="me-2" />
           Add Order
         </button>
-        {/* )} */}
       </div>
 
       {/* Search & Filter */}
       <div className="card shadow-sm border-0 mb-4">
-
         <div className="card-body">
-
           <div className="row g-3">
-
             <div className="col-md-4">
               <div className="input-group">
-
                 <span className="input-group-text">
                   <FaSearch />
                 </span>
-
                 <input
                   type="text"
                   className="form-control"
@@ -117,6 +122,8 @@ function OrderList() {
                 <option value="All">All Status</option>
                 <option value="Pending">Pending</option>
                 <option value="Preparing">Preparing</option>
+                <option value="Ready">Ready</option>
+                <option value="Served">Served</option>
                 <option value="Completed">Completed</option>
                 <option value="Cancelled">Cancelled</option>
               </select>
@@ -126,17 +133,9 @@ function OrderList() {
               <select
                 className="form-select"
                 value={tableFilter}
-                onChange={(e) => setTableFilter(e.target.value)}
-              >
+                onChange={(e) => setTableFilter(e.target.value)}>
                 <option value="All">All Tables</option>
-
-                {[
-                  ...new Map(
-                    orders
-                      .filter((o) => o.table_id)
-                      .map((o) => [o.table_id._id, o.table_id])
-                  ).values(),
-                ].map((table) => (
+                {uniqueTables.map((table) => (
                   <option key={table._id} value={table._id}>
                     Table {table.tableNumber}
                   </option>
@@ -144,24 +143,18 @@ function OrderList() {
               </select>
             </div>
           </div>
-
         </div>
 
       </div>
 
       {/* Order Table */}
       <div className="card shadow-sm border-0">
-
         <div className="card-header bg-white">
           <h5 className="mb-0">Order List</h5>
         </div>
-
         <div className="table-responsive">
-
           <table className="table table-hover align-middle mb-0">
-
             <thead className="table-light">
-
               <tr>
                 <th>#</th>
                 <th>Order ID</th>
@@ -229,13 +222,9 @@ function OrderList() {
                 </tr>
               )}
             </tbody>
-
           </table>
-
         </div>
-
       </div>
-
     </div>
   );
 }

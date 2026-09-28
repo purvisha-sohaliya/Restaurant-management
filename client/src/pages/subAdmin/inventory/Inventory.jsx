@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaTimes, FaUtensils, FaBoxes, } from "react-icons/fa";
 import { createInventory, deleteInventory, getInventory, getLowStock, updateInventory, addStock } from "../../../services/inventoryservice";
-import { createRecipe, deleteRecipe, getRecipes, updateRecipe } from "../../../services/recipeservice";
+import { createRecipe, deleteRecipe, getRecipes, updateRecipe } from "../../../services/recipeService";
 import { toast } from "react-toastify";
 import { getMenuItems } from "../../../services/menuItemService";
 
@@ -80,7 +80,7 @@ const Inventory = () => {
             setMenuLoading(false);
         }
     };
-    // ================= RECIPE DATA c=================
+    // ================= RECIPE DATA =================
     const [recipes, setRecipes] = useState([]);
     const [recipeLoading, setRecipeLoading] = useState(false);
 
@@ -168,12 +168,9 @@ const Inventory = () => {
             setStockItem(null);
             setStockQuantity("");
 
-            // Refresh inventory + stock counts
             await loadInventory();
 
         } catch (error) {
-            console.error("Add stock error:", error);
-
             toast.error(
                 error.response?.data?.message ||
                 "Failed to add stock"
@@ -491,7 +488,7 @@ const Inventory = () => {
         );
     };
 
-    // ================= SEARCH ITEMS c =================
+    // ================= SEARCH ITEMS =================
     const filteredItems = items.filter((item) =>
         item.item_name
             .toLowerCase()
@@ -528,12 +525,6 @@ const Inventory = () => {
         0
     );
 
-    const formatDateForInput = (date) => {
-        if (!date) return "";
-
-        return new Date(date).toISOString().split("T")[0];
-    };
-
     return (
         <div className="inventory-page py-4 px-4 bg-light min-vh-100">
 
@@ -556,8 +547,7 @@ const Inventory = () => {
                         activeTab === "inventory"
                             ? handleAddItem
                             : handleAddRecipe
-                    }
-                >
+                    }>
                     <FaPlus />
 
                     {activeTab === "inventory"
@@ -591,7 +581,6 @@ const Inventory = () => {
                         ₹{inventoryValue.toLocaleString()}
                     </h3>
                 </div>
-
             </div>
 
             {/* ================= TABS ================= */}
@@ -617,9 +606,7 @@ const Inventory = () => {
                         <FaUtensils className="me-2" />
                         Recipes
                     </button>
-
                 </div>
-
             </div>
 
             {/* INVENTORY TAB */}
@@ -646,7 +633,6 @@ const Inventory = () => {
                         <table className="inventory-table w-100 mb-0">
                             <thead>
                                 <tr>
-
                                     <th className="bg-light text-secondary">
                                         Item Name
                                     </th>
@@ -682,17 +668,14 @@ const Inventory = () => {
                                     <th className="bg-light text-secondary">
                                         Action
                                     </th>
-
                                 </tr>
                             </thead>
 
                             <tbody>
-
                                 {filteredItems.length > 0 ? (
                                     filteredItems.map((item) => (
 
                                         <tr key={item._id}>
-
                                             <td className="fw-bold">
                                                 {item.item_name}
                                             </td>
@@ -771,17 +754,14 @@ const Inventory = () => {
                                     <tr>
                                         <td
                                             colSpan="10"
-                                            className="text-center py-4 text-secondary"
-                                        >
+                                            className="text-center py-4 text-secondary" >
                                             No inventory items found
                                         </td>
                                     </tr>
-
                                 )}
                             </tbody>
                         </table>
                     </div>
-
                 </>
             )}
 
@@ -799,8 +779,7 @@ const Inventory = () => {
                                 value={recipeSearch}
                                 onChange={(e) =>
                                     setRecipeSearch(e.target.value)
-                                }
-                            />
+                                } />
                         </div>
                     </div>
                     {/* RECIPE TABLE */}
@@ -826,7 +805,6 @@ const Inventory = () => {
                                 </tr>
                             </thead>
                             <tbody>
-
                                 {recipeLoading ? (
                                     <tr>
                                         <td
@@ -870,9 +848,7 @@ const Inventory = () => {
 
                                             {/* ACTION */}
                                             <td>
-
                                                 <div className="action-buttons d-flex gap-2">
-
                                                     <button
                                                         className="edit-btn border-0 rounded-2 d-flex align-items-center justify-content-center"
                                                         onClick={() =>
@@ -886,23 +862,15 @@ const Inventory = () => {
                                                         className="delete-btn border-0 rounded-2 d-flex align-items-center justify-content-center"
                                                         onClick={() =>
                                                             handleDeleteRecipe(recipe._id)
-                                                        }
-                                                    >
+                                                        }>
                                                         <FaTrash />
                                                     </button>
-
                                                 </div>
-
                                             </td>
-
                                         </tr>
-
                                     ))
-
                                 ) : (
-
                                     <tr>
-
                                         <td
                                             colSpan="4"
                                             className="text-center py-4 text-secondary">
@@ -912,9 +880,7 @@ const Inventory = () => {
                                 )}
                             </tbody>
                         </table>
-
                     </div>
-
                 </>
             )}
 
@@ -949,7 +915,7 @@ const Inventory = () => {
                                         Item Name *
                                     </label>
                                     <input type="text" name="item_name" value={itemForm.item_name} onChange={handleItemChange}
-                                        placeholder="Enter item name" className="form-control rounded-2 shadow-none" />
+                                        placeholder="Enter item name" className="form-control rounded-2 shadow-none" required />
                                 </div>
 
                                 <div className="col-12 col-md-6">
@@ -958,7 +924,7 @@ const Inventory = () => {
                                     </label>
 
                                     <select name="unit" value={itemForm.unit} onChange={handleItemChange}
-                                        className="form-select rounded-2 shadow-none">
+                                        className="form-select rounded-2 shadow-none" required>
                                         <option value="kg">Kg</option>
                                         <option value="gram">Gram</option>
                                         <option value="liter">Liter</option>
@@ -974,7 +940,7 @@ const Inventory = () => {
 
                                     <input type="number" name="current_stock"
                                         value={itemForm.current_stock} onChange={handleItemChange} min="0"
-                                        placeholder="Enter current stock" className="form-control rounded-2 shadow-none" />
+                                        placeholder="Enter current stock" className="form-control rounded-2 shadow-none" required />
                                 </div>
 
                                 <div className="col-12 col-md-6">
@@ -984,7 +950,7 @@ const Inventory = () => {
 
                                     <input type="number" name="minimum_stock" value={itemForm.minimum_stock}
                                         onChange={handleItemChange} min="0" placeholder="Enter minimum stock"
-                                        className="form-control rounded-2 shadow-none" />
+                                        className="form-control rounded-2 shadow-none" required />
                                 </div>
 
                                 <div className="col-12 col-md-6">
@@ -994,7 +960,7 @@ const Inventory = () => {
 
                                     <input type="number" name="purchase_price" value={itemForm.purchase_price}
                                         onChange={handleItemChange} min="0"
-                                        placeholder="Enter purchase price" className="form-control rounded-2 shadow-none" />
+                                        placeholder="Enter purchase price" className="form-control rounded-2 shadow-none" required />
                                 </div>
 
                                 <div className="col-12 col-md-6">
@@ -1003,7 +969,7 @@ const Inventory = () => {
                                     </label>
 
                                     <input type="date" name="expiry_date" value={itemForm.expiry_date}
-                                        onChange={handleItemChange} className="form-control rounded-2 shadow-none" />
+                                        onChange={handleItemChange} className="form-control rounded-2 shadow-none" required />
                                 </div>
                             </div>
 
@@ -1161,19 +1127,14 @@ const Inventory = () => {
                                 <button
                                     type="submit"
                                     className="btn bg-blue border-0 px-3 py-2 rounded-2 fw-semibold text-white"
-                                    disabled={stockLoading}
-                                >
+                                    disabled={stockLoading}>
                                     {stockLoading
                                         ? "Adding..."
                                         : "Add Stock"}
                                 </button>
-
                             </div>
-
                         </form>
-
                     </div>
-
                 </div>
             )}
             {/*  RECIPE MODAL c*/}
@@ -1208,7 +1169,6 @@ const Inventory = () => {
                             >
                                 <FaTimes />
                             </button>
-
                         </div>
 
                         <form onSubmit={handleRecipeSubmit}>
@@ -1225,8 +1185,7 @@ const Inventory = () => {
                                     value={recipeForm.menu_item_id}
                                     onChange={handleRecipeChange}
                                     className="form-select rounded-2 shadow-none"
-                                    disabled={menuLoading}
-                                >
+                                    disabled={menuLoading}>
 
                                     <option value="">
                                         {menuLoading
@@ -1281,8 +1240,7 @@ const Inventory = () => {
                                                             e.target.value
                                                         )
                                                     }
-                                                    className="form-select rounded-2 shadow-none"
-                                                >
+                                                    className="form-select rounded-2 shadow-none">
                                                     <option value="">
                                                         Select item
                                                     </option>
@@ -1290,8 +1248,7 @@ const Inventory = () => {
                                                     {items.map((item) => (
                                                         <option
                                                             key={item._id}
-                                                            value={item._id}
-                                                        >
+                                                            value={item._id}>
                                                             {item.item_name}
                                                         </option>
                                                     ))}

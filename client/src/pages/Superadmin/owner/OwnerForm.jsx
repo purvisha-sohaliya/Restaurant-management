@@ -2,12 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { SUPER_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
 import {
-    FaUserTie,
-    FaEnvelope,
-    FaPhone,
     FaSave,
     FaTimes,
-    FaEdit,
 } from "react-icons/fa";
 
 import { useFormik } from "formik";
@@ -18,7 +14,7 @@ import {
     getOwnerById,
     updateOwner,
 } from "../../../services/ownerService";
-import { getRestaurants } from "../../../services/restaurant.service";
+import { getRestaurants } from "../../../services/restaurantService";
 
 function OwnerForm() {
     const navigate = useNavigate();
@@ -313,11 +309,8 @@ function OwnerForm() {
                                 <FaSave className="me-2" />
                                 {id ? "Update Owner" : "Save Owner"}
                             </button>
-
                         </div>
-
                     </form>
-
                 </div>
             </div>
         </div>

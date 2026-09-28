@@ -121,7 +121,6 @@ const LiveScreen = () => {
       <div
         className="live-screen w-100 min-vh-100 d-flex flex-column flex-md-row gap-3 overflow-hidden">
         <div className="live-token-section d-flex flex-column bg-white overflow-hidden col-12 col-md-4 col-xl-3">
-          {/*  HEADER  */}
 
           <div className="token-header d-flex align-items-center justify-content-between bg-blue text-white px-3 py-3">
             <div className="d-flex align-items-center gap-2">
@@ -144,20 +143,17 @@ const LiveScreen = () => {
             </div>
 
           </div>
-          {/* CURRENT TOKEN */}
 
           <div className="current-token-card m-3 p-3 text-center rounded-3 border bg-light shadow-sm">
             <p className="now-serving mb-1 text-secondary fw-bold">
               NOW SERVING
             </p>
-            {/* LOADING */}
             {loading ? (
               <div className="token-loading py-4">
                 Loading...
               </div>
             ) : currentToken ? (
               <>
-                {/* TOKEN NUMBER */}
                 <h1 className="current-token mb-2 fw-bold text-black"
                   style={{
                     fontSize: "clamp(40px, 5vw, 55px)", lineHeight: "1"
@@ -165,7 +161,6 @@ const LiveScreen = () => {
                   {currentToken.token_number}
                 </h1>
 
-                {/*STATUS*/}
                 {currentToken.status && (
                   <span
                     className={`badge mb-2 ${currentToken.status === "Ready"
@@ -200,14 +195,11 @@ const LiveScreen = () => {
                     key={token.kitchen_id || index}
                   >
 
-                    {/* LEFT SIDE - TOKEN */}
                     <span
-                      className="next-token-number text-black fw-bold"
-                    >
+                      className="next-token-number text-black fw-bold" >
                       {token.token_number}
                     </span>
 
-                    {/* RIGHT SIDE - STATUS */}
                     <span className="small">
                       {token.status}
                     </span>
@@ -266,7 +258,6 @@ const LiveScreen = () => {
               No display video available
             </div>
           )}
-          {/* UPLOAD BUTTON */}
           <button type="button" className="btn bg-blue text-white position-absolute"
             style={{ top: "20px", right: "20px", zIndex: 10, }}
             data-bs-toggle="modal"
@@ -286,7 +277,6 @@ const LiveScreen = () => {
                 </div>
                 <form onSubmit={handleVideoUpload}>
                   <div className="modal-body">
-                    {/* TITLE */}
                     <div className="mb-3">
                       <label className="form-label fw-semibold">
                         Video Title
@@ -295,7 +285,6 @@ const LiveScreen = () => {
                         placeholder="Enter video title" value={videoTitle}
                         onChange={(e) => setVideoTitle(e.target.value)} />
                     </div>
-                    {/* VIDEO */}
                     <div className="mb-3">
                       <label className="form-label fw-semibold">
                         Select Video

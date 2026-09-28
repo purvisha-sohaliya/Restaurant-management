@@ -155,6 +155,19 @@ exports.getDashboard = async (req, res, next) => {
 
         const recentOrders = orders.slice(0, 5);
 
+        for (const order of recentOrders) {
+
+            const bill = await billModel.findOne({
+                order_id: order._id,
+                restaurant_id,
+                is_deleted: false
+            });
+
+            if (bill) {
+                order.grand_total = bill.grand_total;
+            }
+        }
+
         // ================= OWNER =================
 
         if (role === "owner") {

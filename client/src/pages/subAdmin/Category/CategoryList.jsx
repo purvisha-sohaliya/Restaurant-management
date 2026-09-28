@@ -41,13 +41,6 @@ function CategoryList() {
     );
   };
 
-  const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelectedCategories(categories.map((c) => c._id));
-    } else {
-      setSelectedCategories([]);
-    }
-  };
   //Delete
   const handleDelete = async (id) => {
     const result = await Swal.fire({
@@ -126,10 +119,19 @@ function CategoryList() {
     <div className="container-fluid py-4">
       {/* HEADER */}
       <div className="mb-4">
-        <h2 className="fw-bold">Category Management</h2>
-        <small className="text-muted">
-          Manage restaurant categories efficiently
-        </small>
+        <div className="d-flex justify-content-between align-items-start flex-wrap gap-3">
+          <div>
+            <h2 className="fw-bold">Category Management</h2>
+            <small className="text-muted">
+              Manage restaurant categories efficiently
+            </small>
+          </div>
+
+          <button type="button" className="btn btn-success"
+            onClick={() => navigate(SUB_ADMIN_ROUTE.CATEGORYADD)}>
+            <FaPlus className="me-2" />Add Category
+          </button>
+        </div>
 
         <div className="d-flex gap-2 mt-3 flex-wrap">
           <button
@@ -171,7 +173,7 @@ function CategoryList() {
             }}>
             <div
               className="card border-0 shadow-sm overflow-hidden h-100"
-              style={{ borderRadius: "18px", transition: "0.3s",}} >
+              style={{ borderRadius: "18px", transition: "0.3s", }} >
 
               {/* Image */}
               <div className="position-relative">
@@ -182,7 +184,7 @@ function CategoryList() {
                   }
                   alt={category.category_name}
                   className="w-100"
-                  style={{ height: "180px", objectFit: "cover",}} />
+                  style={{ height: "180px", objectFit: "cover", }} />
 
                 {/* Status */}
                 <span
@@ -235,7 +237,7 @@ function CategoryList() {
                   <button
                     className="btn btn-light rounded-circle shadow-sm"
                     onClick={() =>
-                      navigate( `${SUB_ADMIN_ROUTE.CATEGORYEDIT}/${category._id}`
+                      navigate(`${SUB_ADMIN_ROUTE.CATEGORYEDIT}/${category._id}`
                       )}>
                     <FaEdit className="text-primary" />
                   </button>

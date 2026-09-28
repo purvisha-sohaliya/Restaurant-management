@@ -223,21 +223,24 @@ exports.getExpiredInventory = async (req, res, next) => {
 
 exports.deleteInventory = async (req, res, next) => {
     try {
-        const inventory = await inventoryModel.findOne({
-            _id: req.params.id,
-            restaurant_id: req.user.restaurant_id,
-            is_deleted: false
-        });
+        const inventory = await inventoryModel.findByIdAndUpdate(
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id
+            },
+            {
+                is_deleted: true
+            },
+            {
+                new: true
+            }
+        );
 
         if (!inventory) {
             const error = new Error("Inventory item not found");
             error.statusCode = 404;
             throw error;
         }
-
-        inventory.is_deleted = true;
-
-        await inventory.save();
 
         res.status(200).json({
             success: true,

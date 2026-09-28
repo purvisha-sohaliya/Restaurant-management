@@ -61,7 +61,6 @@ function BillList() {
             <thead>
               <tr>
                 <th>Bill No</th>
-                {/* <th>Order</th> */}
                 <th>Total</th>
                 <th>Payment</th>
                 <th>Method</th>
@@ -73,9 +72,6 @@ function BillList() {
               {bills.map((bill) => (
                 <tr key={bill._id}>
                   <td>{bill.bill_number}</td>
-
-                  {/* <td>{bill.order_id?.order_number}</td> */}
-
                   <td>₹{bill.grand_total}</td>
 
                   <td>

@@ -10,7 +10,6 @@ const Topbar = ({ sidebarOpen, setSidebarOpen }) => {
     <header className="topbar sticky-top">
       <div className="container-fluid h-100 px-3 px-md-4">
         <div className="row h-100 align-items-center g-0">
-          {/* ================= LEFT ================= */}
           <div className="col d-flex align-items-center min-w-0">
             {/* Sidebar Toggle */}
             <button
@@ -21,20 +20,17 @@ const Topbar = ({ sidebarOpen, setSidebarOpen }) => {
             >
               {sidebarOpen ? <FaBars /> : <FaTimes />}
             </button>
-            {/* Welcome */}
             <div className="welcome-section ms-3 text-truncate">
               <h5 className="mb-0 text-truncate"> Welcome back, Admin 👋 </h5>
               <span className="d-none d-sm-block text-truncate"> Here's what's happening today. </span>
             </div>
           </div>
-          {/* ================= CENTER / DATE ================= */}
           <div className="col-auto">
             <div className="date-section">
               <input type="date" value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)} className="form-control form-control-sm date-input" />
             </div>
           </div>
-          {/* ================= RIGHT ================= */}
           <div className="col-auto">
             <div className="topbar-actions d-flex align-items-center gap-2 gap-md-3">
               {/* Notification */}
@@ -44,7 +40,6 @@ const Topbar = ({ sidebarOpen, setSidebarOpen }) => {
                 </span>
               </button>
             
-              {/* Profile */}
               <button type="button" className="profile-dropdown btn border-0 p-0 d-flex align-items-center" >
                 <img src="https://ui-avatars.com/api/?name=Admin+User&background=3C6E71&color=fff" alt="Admin Profile" />
               </button>

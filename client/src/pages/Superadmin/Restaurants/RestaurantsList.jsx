@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { SUB_ADMIN_ROUTE, SUPER_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
+import { SUPER_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
 import { FaEdit, FaTrash, FaEye, FaEyeSlash, FaUndo, } from "react-icons/fa";
-import { getRestaurants, deleteRestaurant, toggleVisibility, recoverRestaurant, } from "../../../services/restaurant.service";
+import { getRestaurants, deleteRestaurant, toggleVisibility, recoverRestaurant, } from "../../../services/restaurantService";
 
 function RestaurantsList() {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { FaEdit, FaTrash, FaEyeSlash, FaEye, FaUndo } from "react-icons/fa";
+import { FaEdit, FaTrash, FaEyeSlash, FaEye, FaUndo, FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { getMenuItems, deleteMenuItem, restoreMenuItem, changeMenuItemStatus, } from "../../../services/menuItemService";
 import { SUB_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
@@ -9,9 +9,7 @@ function MenuList() {
   const navigate = useNavigate();
   const [menus, setMenus] = useState([]);
   const [selectedMenus, setSelectedMenus] = useState([]);
-  const [expandedId, setExpandedId] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedRestaurant, setSelectedRestaurant] = useState("");
 
   // Fetch
   const fetchData = async () => {
@@ -49,14 +47,6 @@ function MenuList() {
         ? prev.filter((item) => item !== id)
         : [...prev, id]
     );
-  };
-
-  const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelectedMenus(menus.map((m) => m._id));
-    } else {
-      setSelectedMenus([]);
-    }
   };
 
   // Delete
@@ -136,16 +126,23 @@ function MenuList() {
     });
   };
 
-
   return (
     <div className="container-fluid py-4">
 
       {/* HEADER */}
-      <div className="mb-4">
-        <h2 className="fw-bold mb-1">Menu Management</h2>
-        <small className="text-muted">
-          Manage restaurant menu items
-        </small>
+      <div className="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+          <h2 className="fw-bold mb-1">Menu Management</h2>
+          <small className="text-muted">
+            Manage restaurant menu items
+          </small>
+        </div>
+        <button
+          type="button"
+          className="btn btn-success"
+          onClick={() => navigate(SUB_ADMIN_ROUTE.MENUADD)}>
+          <FaPlus className="me-2" />Add Menu
+        </button>
       </div>
 
       {/* // ================== Owner Table ================== */}
@@ -261,16 +258,12 @@ function MenuList() {
                           {menu.status}
                         </span>
                       </div>
-
                     </div>
-
                   </div>
 
                   {/* Footer */}
                   <div className="card-footer bg-white border-0">
-
                     <div className="d-flex justify-content-around">
-
                       <button
                         className="btn btn-light rounded-circle shadow-sm"
                         onClick={() =>

@@ -5,7 +5,7 @@ import { FaUserTie, FaSave } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { SUB_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
 import { createStaff, getStaffById, updateStaff } from "../../../services/staffService";
-import { getRestaurants } from "../../../services/restaurant.service";
+import { getRestaurants } from "../../../services/restaurantService";
 import { toast } from "react-toastify";
 
 function StaffForm() {
@@ -33,7 +33,6 @@ function StaffForm() {
       .required("Phone is required"),
 
     role: Yup.string().required("Role is required"),
-    // restaurant_id: Yup.string().required("Restaurant is required"),
     status: Yup.string().required("Status is required"),
   });
 
@@ -45,7 +44,6 @@ function StaffForm() {
       password: "",
       phone: "",
       role: "",
-      // restaurant_id: "",
       status: "active"
     },
 
@@ -92,7 +90,6 @@ function StaffForm() {
         password: "",
         phone: res.data.phone || "",
         role: res.data.role || "",
-        // restaurant_id: res.data.restaurant_id?._id || "",
         status: res.data.status || "active",
       });
     } catch (err) {

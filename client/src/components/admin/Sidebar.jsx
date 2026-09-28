@@ -5,7 +5,6 @@ import { sidebarConfig } from "../../config/sidebarConfig";
 import { useAuth } from "../../context/AuthContext";
 import { logout } from "../../services/authService";
 import { AUTH_ROUTE } from "../../Constant/RoutesConstant";
-import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
 const Sidebar = ({ sidebarOpen }) => {

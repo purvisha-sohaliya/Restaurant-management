@@ -31,7 +31,7 @@ import Kitchen from './pages/Kitchen/Kitchen';
 import LiveScreen from './pages/live-screen/LiveScreen';
 import PublicRoute from './routes/PublicRoute';
 import ErrorPage from './pages/ErrorPage';
-import Inventory from './pages/subAdmin/inventory/inventory';
+import Inventory from './pages/subAdmin/inventory/Inventory';
 
 function App(props) {
   return (

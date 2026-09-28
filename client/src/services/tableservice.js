@@ -18,7 +18,6 @@ export const getTableById = async (id) => {
     return res.data;
 };
 
-
 // UPDATE TABLE
 export const updateTable = async (id, data) => {
     const res = await api.put(`/api/tables/${id}`, data);

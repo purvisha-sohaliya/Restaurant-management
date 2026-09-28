@@ -6,9 +6,7 @@ import { useLocation } from "react-router-dom";
 import { addItemsToOrder, createOrder, getOrderById, sendToKitchen } from "../../../services/orderService";
 import { useNavigate, useParams } from "react-router-dom";
 import { SUB_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
-import { getRestaurants } from "../../../services/restaurant.service";
 import { getAllTables } from "../../../services/tableservice";
-import { getStaff } from "../../../services/staffService";
 import { getMenuItems } from "../../../services/menuItemService";
 import { updateWaitingStatus } from "../../../services/waitingService";
 import { toast } from "react-toastify";
@@ -20,14 +18,11 @@ function OrderForm() {
   const { id } = useParams();
   const location = useLocation();
   const waitingData = location.state || {};
-  const navigationState = location.state || {};
 
   const [showTableModal, setShowTableModal] = useState(false);
   const [selectedTable, setSelectedTable] = useState(null);
   const isEditMode = Boolean(id);
-  const [restaurants, setRestaurants] = useState([]);
   const [tables, setTables] = useState([]);
-  const [waiters, setWaiters] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
   const [existingItems, setExistingItems] = useState([]);
   const [search, setSearch] = useState("");
@@ -248,17 +243,22 @@ function OrderForm() {
   };
 
   const fetchData = async () => {
-    const restaurantRes = await getRestaurants();
-    const tableRes = await getAllTables();
-    const waiterRes = await getStaff();
-    const menuRes = await getMenuItems();
+    try {
+      const [tableRes, menuRes] = await Promise.all([
+        getAllTables(),
+        getMenuItems(),
+      ]);
+      setTables(tableRes?.data || []);
+      setMenuItems(menuRes?.data || []);
+    } catch (err) {
+      console.log("ORDER FORM FETCH ERROR:", err);
 
-    setRestaurants(restaurantRes.data);
-    setTables(tableRes.data);
-    setWaiters(
-      waiterRes.data.filter((staff) => staff.role === "waiter")
-    );
-    setMenuItems(menuRes.data);
+      toast.error(
+        err.response?.data?.message ||
+        err.message ||
+        "Unable to load order data"
+      );
+    }
   };
   const fetchOrder = async () => {
     if (!isEditMode) return;
@@ -351,7 +351,7 @@ function OrderForm() {
   return (
     <div className="container"
       style={{ maxWidth: "1350px" }}>
-      <div className="card shadow-lg border-0 rounded-4">
+      <div className="card shadow-lg border-0 my-4">
         {/* Header */}
         <div className="card-header bg-blue text-white py-3 rounded-top-4">
           <div className="d-flex align-items-center">

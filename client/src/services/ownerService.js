@@ -34,4 +34,3 @@ export const toggleOwnerVisibility = async (id) => {
   const res = await api.patch(`/api/owners/${id}/status`);
   return res.data;
 };
-

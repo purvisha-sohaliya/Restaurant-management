@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { FaEye, FaPlusCircle, FaMoneyBillWave } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaMoneyBillWave } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { getOrders } from "../../services/orderService";
-import { SUB_ADMIN_ROUTE, WAITER_ROUTE } from "../../Constant/RoutesConstant";
+import { SUB_ADMIN_ROUTE } from "../../Constant/RoutesConstant";
 import { generateBill } from "../../services/billService";
 
 function ActiveOrders() {
@@ -53,11 +53,8 @@ function ActiveOrders() {
 
     return (
         <div className="container-fluid py-4">
-
             <h3 className="fw-bold mb-4">Active Orders</h3>
-
             <div className="row">
-
                 {loading ? (
                     <div className="text-center py-5">
                         <h5>Loading...</h5>

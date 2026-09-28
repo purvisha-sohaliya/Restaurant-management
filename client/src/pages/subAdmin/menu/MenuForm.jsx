@@ -4,7 +4,6 @@ import * as Yup from "yup";
 import { useNavigate, useParams } from "react-router-dom";
 import { createMenuItem, getMenuItemById, updateMenuItem, } from "../../../services/menuItemService";
 import { getCategories } from "../../../services/categoryService";
-import { getRestaurants } from "../../../services/restaurant.service";
 import { SUB_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
 import { FaUtensils, FaSave } from "react-icons/fa";
 import { toast } from "react-toastify";
@@ -13,8 +12,6 @@ function MenuForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-  const [restaurants, setRestaurants] = useState([]);
-  const [preview, setPreview] = useState("");
   const [imageName, setImageName] = useState("No file chosen");
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -35,9 +32,7 @@ function MenuForm() {
       image: null,
       status: "active",
     },
-
     validationSchema,
-
     onSubmit: async (values) => {
       try {
         const formData = new FormData();
@@ -178,7 +173,6 @@ function MenuForm() {
             <FaSave className="me-2" />
             {id ? "Update Menu Item" : "Save Menu Item"}
           </button>
-
         </form>
       </div>
     </div>

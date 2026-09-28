@@ -134,9 +134,9 @@ function Bill() {
           {/* Item */}
           {bill.items?.map((item, index) => {
             const quantity = Number(item.quantity || item.qty || 1);
-            const rate = Number(item.price || item.rate || item.unit_price || item.price_per_unit || 0);
-            const amount = Number(item.amount || item.total || item.total_amount || quantity * rate);
-            const itemName = item.name || item.item_name || item.menu_item_name || item.menuItem?.name || "Item";
+            const rate = Number(item.price || item.rate || 0);
+            const amount = Number(item.amount || item.total);
+            const itemName = item.item_name || "Item";
 
             return (
               <div key={item._id || index}
@@ -146,7 +146,7 @@ function Bill() {
                 <div className="text-dark" style={{ width: "45%" }}> {itemName} </div>
 
                 {/* Quantity */}
-                <div className="text-center text-dark" style={{ width: "15%" }}>{quantity}  </div>
+                <div className="text-center text-dark" style={{ width: "15%" }}>{quantity} </div>
 
                 {/* Rate */}
                 <div className="text-end text-dark" style={{ width: "20%" }}>₹{rate.toFixed(2)}</div>
@@ -225,7 +225,6 @@ function Bill() {
             </strong>
           </div>
 
-          {/* Non-Taxable */}
           <div className="amount-row d-flex justify-content-between align-items-center mb-2 text-secondary">
             <span> Non-Taxable</span>
             <strong className="text-dark fw-medium">₹0.00</strong>
@@ -241,7 +240,6 @@ function Bill() {
           </div>
         </div>
 
-        {/* Collect Button */}
         <button
           type="button"
           className="collect-btn bg-blue w-100 border-0 rounded-3 mt-3  text-white fw-bold" style={{ height: "50px" }}

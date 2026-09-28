@@ -45,8 +45,6 @@ export const deleteStaff = async (id) => {
 };
 
 // Restore Staff
-
-
 export const restoreStaff = async (id) => {
   const res = await api.patch(`/api/staff/${id}/restore`);
   return res.data;

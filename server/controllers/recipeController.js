@@ -84,7 +84,7 @@ exports.getRecipeById = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-};  
+};
 
 exports.updateRecipe = async (req, res, next) => {
     try {
@@ -125,21 +125,24 @@ exports.updateRecipe = async (req, res, next) => {
 
 exports.deleteRecipe = async (req, res, next) => {
     try {
-        const recipe = await recipeModel.findOne({
-            _id: req.params.id,
-            restaurant_id: req.user.restaurant_id,
-            is_deleted: false
-        });
+        const recipe = await recipeModel.findByIdAndUpdate(
+            {
+                _id: req.params.id,
+                restaurant_id: req.user.restaurant_id,
+            },
+            {
+                is_deleted: true
+            },
+            {
+                new: true
+            }
+        );
 
         if (!recipe) {
             const error = new Error("Recipe not found");
             error.statusCode = 404;
             throw error;
         }
-
-        recipe.is_deleted = true;
-
-        await recipe.save();
 
         res.status(200).json({
             success: true,

@@ -10,7 +10,6 @@ function PrivateRoute() {
         return <h1>Loading...</h1>;
     }
 
-    // Login નથી તો કોઈ private URL open નહીં થાય
     if (!user) {
         return <Navigate to={AUTH_ROUTE.LOGIN} />;
     }

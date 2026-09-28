@@ -10,14 +10,11 @@ function PublicRoute() {
         return <h1>Loading...</h1>;
     }
 
-    // Already logged in → dashboard
     if (user) {
         return <Navigate to="/dashboard" replace />;
     }
 
-    // Not logged in → allow public pages
     return <Outlet />;
 }
 
 export default PublicRoute;
-

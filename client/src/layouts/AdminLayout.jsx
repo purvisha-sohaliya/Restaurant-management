@@ -8,15 +8,12 @@ const AdminLayout = () => {
 
   return (
     <div className="admin-layout">
-
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
       <div
         className={`admin-main ${sidebarOpen
-            ? "sidebar-expanded"
-            : "sidebar-collapsed"
-          }`}
-      >
+          ? "sidebar-expanded"
+          : "sidebar-collapsed"
+          }`} >
 
         <Topbar
           sidebarOpen={sidebarOpen}
@@ -24,9 +21,7 @@ const AdminLayout = () => {
         />
 
         <Outlet />
-
       </div>
-
     </div>
   );
 };

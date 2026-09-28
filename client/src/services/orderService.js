@@ -67,8 +67,6 @@ export const getCompletedOrders = async () => {
 };
 
 // Send Order To Kitchen
-
-
 export const sendToKitchen = async (id) => {
     const res = await api.put(`/api/orders/send-to-kitchen/${id}`);
     return res.data;

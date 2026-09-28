@@ -12,7 +12,7 @@ import {
     FaBoxes
 } from "react-icons/fa";
 
-import { SUPER_ADMIN_ROUTE, MANAGER_ROUTE, SUB_ADMIN_ROUTE, WAITER_ROUTE } from "../Constant/RoutesConstant";
+import { SUPER_ADMIN_ROUTE, SUB_ADMIN_ROUTE } from "../Constant/RoutesConstant";
 import { ROLES } from "../Constant/CommonConstant";
 
 export const sidebarConfig = [
@@ -72,8 +72,6 @@ export const sidebarConfig = [
             },
         ],
     },
-
-    // Settings
 
     // ========================OWNER=========================
     // Category
@@ -209,16 +207,15 @@ export const sidebarConfig = [
         title: "Kitchen",
         icon: FaList,
         path: SUB_ADMIN_ROUTE.KITCHEN,
-        roles: [ROLES.OWNER, ROLES.MANAGER, ROLES.WAITER, ROLES.KITCHEN],
+        roles: [ROLES.OWNER, ROLES.MANAGER, ROLES.KITCHEN],
     },
-
 
     //   livescreen
     {
         title: "LiveScreen",
         icon: FaList,
         path: SUB_ADMIN_ROUTE.LIVESCREEN,
-        roles: [ROLES.OWNER, ROLES.MANAGER, ROLES.WAITER],
+        roles: [ROLES.OWNER, ROLES.MANAGER],
     },
 
     {

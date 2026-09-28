@@ -9,7 +9,6 @@ function OwnerList() {
   const navigate = useNavigate();
 
   const [owners, setOwners] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const fetchOwners = async () => {
     try {

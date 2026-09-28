@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate, useParams } from "react-router-dom";
-
 import { createCategory, getCategoryById, updateCategory } from "../../../services/categoryService";
 import { SUB_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
 import { FaTags, FaImage, FaSave } from "react-icons/fa";
@@ -33,9 +32,7 @@ function CategoryForm() {
       image: null,
 
     },
-
     validationSchema,
-
     onSubmit: async (values) => {
       try {
         const formData = new FormData();
@@ -111,16 +108,13 @@ function CategoryForm() {
 
         {/* FORM */}
         <form onSubmit={formik.handleSubmit}>
-          {/* Name */}
           <input name="category_name" className="form-control mb-2" placeholder="Category Name"
             value={formik.values.category_name}
             onChange={formik.handleChange} />
 
-          {/* Description */}
           <textarea name="description" className="form-control mb-2" placeholder="Description"
             value={formik.values.description} onChange={formik.handleChange} />
 
-          {/* Image */}
           <div className="input-group mb-2">
             <label htmlFor="image" className="btn btn-outline-secondary">  Choose File</label>
 
@@ -137,19 +131,16 @@ function CategoryForm() {
               readOnly />
           </div>
 
-          {/* Status */}
           <select name="status" className="form-select mb-3"
             value={formik.values.status} onChange={formik.handleChange} >
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
           </select>
 
-          {/* Subnit */}
           <button type="submit" className="btn bg-blue text-white w-100">
             <FaSave className="me-2" />
             {id ? "Update Category" : "Save Category"}
           </button>
-
         </form>
       </div>
     </div>

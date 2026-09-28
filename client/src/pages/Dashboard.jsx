@@ -64,7 +64,7 @@ const Dashboard = () => {
           />
 
           <p className="text-muted mb-0">
-            Loading dashboard...
+            Loading...
           </p>
         </div>
       </div>
@@ -430,9 +430,7 @@ const DashboardBottom = ({ dashboard }) => {
                         <td className="fw-semibold">
                           ₹
                           {Number(
-                            order.grand_total ||
-                            order.total_amount ||
-                            0
+                            order.grand_total || 0
                           ).toLocaleString(
                             "en-IN"
                           )}

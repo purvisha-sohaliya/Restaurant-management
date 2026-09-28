@@ -55,7 +55,6 @@ const Kitchen = () => {
     }
   };
 
-
   const handleReady = async (id) => {
     try {
       setActionLoading(id);
@@ -72,7 +71,6 @@ const Kitchen = () => {
       setActionLoading(null);
     }
   };
-
 
   const handleServed = async (id) => {
     try {
@@ -113,7 +111,6 @@ const Kitchen = () => {
     return item?.quantity || item?.qty || 1;
   };
 
-
   const getItemName = (item) => {
     return (
       item?.name ||
@@ -122,7 +119,6 @@ const Kitchen = () => {
       "Unknown Item"
     );
   };
-
 
   const isVeg = (item) => {
     return (
@@ -254,27 +250,22 @@ const Kitchen = () => {
                 </>
               )}
             </button>
-
           )}
 
           {status === "Ready" && (
-
             <button
               className="kds-btn kds-btn-waiter"
               onClick={() =>
                 handleServed(order._id)
               }
-              disabled={actionLoading === order._id}
-            >
+              disabled={actionLoading === order._id} >
               {actionLoading === order._id
                 ? "Serving..."
                 : "Waiting for Waiter"}
             </button>
-
           )}
 
         </div>
-
       </div>
     );
   };
