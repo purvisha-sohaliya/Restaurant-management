@@ -5,35 +5,45 @@ const { generateAccessToken, generateRefreshToken } = require("../utils/jwtHelpe
 
 exports.register = async (req, res, next) => {
     try {
-        const { name, email, password, phone, role } = req.body;
+        const {
+            name,
+            email,
+            password,
+            phone,
+        } = req.body;
 
-        const existingUser = await userModel.findOne({ email });
+        const existingUser = await userModel.findOne({
+            email: email.toLowerCase(),
+        });
 
         if (existingUser) {
             return res.status(400).json({
                 success: false,
                 message: "User already exists",
-                data: null
+                data: null,
             });
         }
 
         const hashedPassword = await hashPassword(password);
 
-        const newUser = await userModel.create({
+        const owner = await userModel.create({
             name,
-            email,
+            email: email.toLowerCase(),
             password: hashedPassword,
             phone,
-            role
+            role: "owner",
+            restaurant_id: null,
         });
 
-        const userResponse = newUser.toObject();
-        delete userResponse.password;
+        const ownerResponse = owner.toObject();
+
+        delete ownerResponse.password;
+        delete ownerResponse.refreshToken;
 
         return res.status(201).json({
             success: true,
-            message: "User registered successfully",
-            data: userResponse
+            message: "Owner created successfully",
+            data: ownerResponse,
         });
 
     } catch (error) {

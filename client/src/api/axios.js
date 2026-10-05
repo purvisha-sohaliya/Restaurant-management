@@ -35,8 +35,10 @@ api.interceptors.response.use(
 
         if (
             originalRequest?.url?.includes("/api/users/login") ||
+            originalRequest?.url?.includes("/api/users/register") ||
             originalRequest?.url?.includes("/api/users/logout") ||
-            originalRequest?.url?.includes("/api/users/refresh-access-token")
+            originalRequest?.url?.includes("/api/users/refresh-access-token") ||
+            originalRequest?.url?.includes("/api/restaurants")
         ) {
             return Promise.reject(error);
         }

@@ -1,8 +1,8 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { COMMON_ROUTE, SUPER_ADMIN_ROUTE } from "../Constant/RoutesConstant";
+import { AUTH_ROUTE, COMMON_ROUTE, SUPER_ADMIN_ROUTE } from "../Constant/RoutesConstant";
 import { ROLES } from "../Constant/CommonConstant";
 import { login } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
@@ -63,9 +63,11 @@ function Login() {
 
   return (
     <div className="login-wrapper min-vh-100 d-flex justify-content-center align-items-center">
-      <div className="login-card bg-white text-center shadow">
-        <h2>Restaurant POS</h2>
-        <p>Sign in to continue</p>
+      <div className="login-card">
+        <div className="text-center">
+          <h2>Restaurant POS</h2>
+          <p className="text-muted">Sign in to continue</p>
+        </div>
         <form onSubmit={formik.handleSubmit}>
 
           {/* EMAIL */}
@@ -124,10 +126,13 @@ function Login() {
               : "Login"}
           </button>
         </form>
+
+        <div className="mt-3 text-center">
+          <p className="m-0">Don't have an account? <Link to={AUTH_ROUTE.REGISTER}>Sign up</Link></p>
+        </div>
       </div>
     </div>
   );
 }
 
 export default Login;
-

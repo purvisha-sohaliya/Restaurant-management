@@ -1,8 +1,13 @@
 import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { Link, useNavigate } from "react-router-dom";
+import { AUTH_ROUTE } from "../Constant/RoutesConstant";
+import { register } from "../services/authService";
+import { toast } from "react-toastify";
 
 function Register() {
+  const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -29,17 +34,47 @@ function Register() {
         .required("Password is required"),
     }),
 
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        const payload = {
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
+          password: values.password,
+        };
+
+        const res = await register(payload);
+
+        if (res.success) {
+          toast.success("Owner created successfully");
+
+          resetForm();
+
+          navigate(AUTH_ROUTE.RESTAURANTSADD, {
+            state: {
+              owner_id: res.data._id,
+              owner_name: res.data.name,
+              owner_email: res.data.email,
+            },
+
+          });
+
+        }
+      } catch (error) {
+        toast.error(
+          error.response?.data?.message ||
+          "Owner creation failed"
+        );
+      }
     },
   });
 
   return (
     <div className="register-page min-vh-100 d-flex justify-content-center align-items-center">
-      <div className="register-card ">
-        <div className="register-header">
+      <div className="register-card">
+        <div className="text-center">
           <h2>Create Account</h2>
-          <p>Add New Restaurant Owner</p>
+          <p className="text-muted">Add New Restaurant Owner</p>
         </div>
 
         <form onSubmit={formik.handleSubmit}>
@@ -117,11 +152,14 @@ function Register() {
 
           <button
             type="submit"
-            className="btn btn-primary w-100"
-          >
+            className="btn btn-dark w-100" >
             Create Account
           </button>
         </form>
+
+        <div className="mt-3 text-center">
+          <p className="m-0">Don't have an account? <Link to={AUTH_ROUTE.LOGIN}>Sign in</Link></p>
+        </div>
       </div>
     </div>
   );

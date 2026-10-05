@@ -32,6 +32,7 @@ import LiveScreen from './pages/live-screen/LiveScreen';
 import PublicRoute from './routes/PublicRoute';
 import ErrorPage from './pages/ErrorPage';
 import Inventory from './pages/subAdmin/inventory/Inventory';
+import TokenSlip from './pages/subAdmin/TokenSlip';
 
 function App(props) {
   return (
@@ -43,12 +44,12 @@ function App(props) {
             <Route path="/" element={<Navigate to={COMMON_ROUTE.DASHBOARD} replace />} />
             <Route path={AUTH_ROUTE.LOGIN} element={<Login />} />
             <Route path={AUTH_ROUTE.REGISTER} element={<Register />} />
+            <Route path={AUTH_ROUTE.RESTAURANTSADD} element={<RestaurantForm />} />
           </Route>
           <Route element={<PrivateRoute />}>
             <Route element={<AdminLayout />}>
               <Route path={COMMON_ROUTE.DASHBOARD} element={<Dashboard />} />
               <Route path={SUPER_ADMIN_ROUTE.RESTAURANTSLIST} element={<RestaurantsList />} />
-              <Route path={SUPER_ADMIN_ROUTE.RESTAURANTSADD} element={<RestaurantForm />} />
               <Route path={SUPER_ADMIN_ROUTE.RESTAURANTSEDIT + "/:id"} element={<RestaurantForm />} />
               <Route path={SUPER_ADMIN_ROUTE.OWNERLIST} element={<OwnerList />} />
               <Route path={SUPER_ADMIN_ROUTE.OWNERADD} element={<OwnerForm />} />
@@ -77,6 +78,7 @@ function App(props) {
               <Route path={SUB_ADMIN_ROUTE.KITCHEN} element={<Kitchen />} />
               <Route path={SUB_ADMIN_ROUTE.LIVESCREEN} element={<LiveScreen />} />
               <Route path={SUB_ADMIN_ROUTE.INVENTORY} element={<Inventory />} />
+              <Route path={SUB_ADMIN_ROUTE.TOKENSLIP} element={<TokenSlip />} />
             </Route>
           </Route>
 

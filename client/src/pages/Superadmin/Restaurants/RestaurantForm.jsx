@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { SUPER_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
 import { FaSave, FaUtensils, FaEdit } from "react-icons/fa";
 import { useFormik } from "formik";
@@ -10,11 +10,13 @@ import {
     getRestaurantById,
     updateRestaurant,
 } from "../../../services/restaurantService";
+import { toast } from "react-toastify";
 
 function RestaurantForm() {
     const navigate = useNavigate();
+    const location = useLocation();
     const { id } = useParams();
-
+    const owner_id = location.state?.owner_id;
     const [initialValues, setInitialValues] = useState({
         restaurant_name: "",
         email: "",
@@ -22,6 +24,7 @@ function RestaurantForm() {
         city: "",
         address: "",
         country: "",
+        logo: null
     });
 
     const validationSchema = Yup.object({
@@ -46,30 +49,50 @@ function RestaurantForm() {
 
         onSubmit: async (values, { resetForm }) => {
             try {
-                const payload = {
-                    restaurant_name: values.restaurant_name,
-                    email: values.email,
-                    phone: values.phone,
-                    city: values.city,
-                    address: values.address,
-                    country: values.country,
-                };
+                if (!owner_id && !id) {
+                    toast.error("Owner information not found");
+                    return;
+                }
+
+                const formData = new FormData();
+
+                formData.append("restaurant_name", values.restaurant_name);
+                formData.append("email", values.email);
+                formData.append("phone", values.phone);
+                formData.append("address", values.address);
+                formData.append("city", values.city);
+                formData.append("country", values.country);
+
+                if (owner_id) {
+                    formData.append("owner_id", owner_id);
+                }
+                if (values.logo) {
+                    formData.append("logo", values.logo);
+                }
 
                 let res;
 
                 if (id) {
-                    res = await updateRestaurant(id, payload);
+                    res = await updateRestaurant(id, formData);
                 } else {
-                    res = await createRestaurant(payload);
+                    res = await createRestaurant(formData);
                 }
 
                 if (res.success) {
+                    toast.success(res.message);
+
                     resetForm();
+
                     navigate(SUPER_ADMIN_ROUTE.RESTAURANTSLIST);
                 }
-            } catch (err) {
-                console.log(err.response?.data || err.message);
-                alert("Server error");
+
+            } catch (error) {
+                console.error(error);
+
+                toast.error(
+                    error.response?.data?.message ||
+                    "Something went wrong"
+                );
             }
         },
     });
@@ -249,6 +272,44 @@ function RestaurantForm() {
                                 <div className="invalid-feedback">
                                     {formik.errors.country}
                                 </div>
+                            </div>
+
+                            {/* RESTAURANT LOGO */}
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label">
+                                    Restaurant Logo
+                                </label>
+
+                                <input
+                                    type="file"
+                                    name="logo"
+                                    accept="image/png,image/jpeg,image/jpg,image/webp"
+                                    className="form-control"
+                                    onChange={(e) => {
+                                        const file = e.currentTarget.files[0];
+
+                                        formik.setFieldValue("logo", file || null);
+                                    }}
+                                />
+
+                                {/* New Logo Preview */}
+                                {formik.values.logo && (
+                                    <div className="mt-3">
+                                        <img
+                                            src={URL.createObjectURL(formik.values.logo)}
+                                            alt="Restaurant Logo"
+                                            style={{
+                                                width: "90px",
+                                                height: "90px",
+                                                objectFit: "contain",
+                                                border: "1px solid #ddd",
+                                                borderRadius: "10px",
+                                                padding: "5px",
+                                                backgroundColor: "#fff",
+                                            }}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
 

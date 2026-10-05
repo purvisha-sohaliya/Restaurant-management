@@ -1,6 +1,7 @@
 export const AUTH_ROUTE = {
     LOGIN: "/login",
     REGISTER: "/register",
+    RESTAURANTSADD: "/RestaurantsAdd",
     ERROR: "*"
 }
 // Common Route
@@ -10,7 +11,6 @@ export const COMMON_ROUTE = {
 // super admin
 export const SUPER_ADMIN_ROUTE = {
     RESTAURANTSLIST: "/RestaurantsList",
-    RESTAURANTSADD: "/RestaurantsAdd",
     RESTAURANTSEDIT: "/RestaurantsEdit",
 
     // OWNER
@@ -64,6 +64,10 @@ export const SUB_ADMIN_ROUTE = {
 
     // LiveScreen
     LIVESCREEN: "/Livescreen",
+    
     // inventoryList
     INVENTORY: "/Inventory",
+
+    // Token-Slip
+    TOKENSLIP: "/token-slip",
 };

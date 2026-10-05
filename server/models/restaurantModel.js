@@ -1,6 +1,12 @@
 const { default: mongoose } = require("mongoose");
 
 const restaurantSchema = new mongoose.Schema({
+    owner_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Users",
+        required: true,
+    },
+
     restaurant_name: {
         type: String,
         required: true,
@@ -32,6 +38,11 @@ const restaurantSchema = new mongoose.Schema({
     country: {
         type: String,
         default: "India",
+    },
+
+    logo: {
+        type: String,
+        default: null
     },
 
     status: {
