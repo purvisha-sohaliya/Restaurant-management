@@ -108,6 +108,21 @@ function OrderForm() {
               }));
               formik.setFieldValue("items", updatedItems);
               setExistingItems(updatedItems);
+
+              navigate(SUB_ADMIN_ROUTE.TOKENSLIP, {
+                state: {
+                  token_number: order.token_number,
+                  order_number: order.order_number,
+                  customer_name: order.customer_name,
+                  order_type: order.order_type,
+                  table_number:
+                    selectedTable?.tableNumber ||
+                    order.table_id?.tableNumber ||
+                    waitingData?.tableNumber ||
+                    "",
+                  items: res.data.items || [],
+                },
+              });
             }
             toast.success("New items sent to kitchen!");
           }
@@ -127,19 +142,30 @@ function OrderForm() {
           notes: values.notes,
           items: itemsPayload,
         };
-        console.log("CREATE ORDER PAYLOAD:", payload);
         const res = await createOrder(payload);
         if (res.success) {
           await sendToKitchen(res.data._id);
+
           if (waitingData?.waiting_entry_id) {
             await updateWaitingStatus(
               waitingData.waiting_entry_id,
               { status: "Seated" }
             );
           }
-
+          navigate(SUB_ADMIN_ROUTE.TOKENSLIP, {
+            state: {
+              token_number: res.data.token_number,
+              order_number: res.data.order_number,
+              customer_name: res.data.customer_name,
+              order_type: res.data.order_type,
+              table_number:
+                selectedTable?.tableNumber ||
+                waitingData?.tableNumber ||
+                "",
+              items: res.data.items || [],
+            },
+          });
           toast.success("Order sent to kitchen!");
-          // navigate(SUB_ADMIN_ROUTE.ACTIVE_ORDERS);
         }
       } catch (err) {
         console.log("ORDER ERROR:", err);
@@ -315,6 +341,7 @@ function OrderForm() {
         payment_method: "Cash",
       });
       if (res.success) {
+        toast.success("Bill generated successfully");
         navigate(`${SUB_ADMIN_ROUTE.BILL}/${res.data._id}`);
       }
     } catch (err) {
