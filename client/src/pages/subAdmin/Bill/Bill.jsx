@@ -93,6 +93,20 @@ function Bill() {
 
         {/* Restaurant Header */}
         <div className="text-center border-bottom pb-3 mb-3">
+
+          {restaurant.logo && (
+            <img
+              src={restaurant.logo}
+              alt={`${restaurantName} Logo`}
+              style={{
+                width: "80px",
+                height: "80px",
+                objectFit: "contain",
+                borderRadius: "8px",
+              }}
+            />
+          )}
+          
           <h4 className="fw-bold mb-1 text-dark">
             {restaurantName}
           </h4>
@@ -211,12 +225,10 @@ function Bill() {
           </div>
           <hr />
 
-          {/* Tax Note */}
-          <div className="text-center text-secondary small my-2">
+          {/* <div className="text-center text-secondary small my-2">
             ABOVE PRICES INCLUDE TAXES
           </div>
 
-          {/* Total GST */}
           <div className="amount-row d-flex justify-content-between align-items-center mb-2 text-secondary">
             <span>Total GST</span>
 
@@ -229,7 +241,7 @@ function Bill() {
             <span> Non-Taxable</span>
             <strong className="text-dark fw-medium">₹0.00</strong>
           </div>
-          <hr />
+          <hr /> */}
 
           {/* Paid By */}
           <div className="amount-row d-flex justify-content-between align-items-center text-secondary">

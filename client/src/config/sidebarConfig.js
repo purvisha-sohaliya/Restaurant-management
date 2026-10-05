@@ -215,7 +215,7 @@ export const sidebarConfig = [
         title: "LiveScreen",
         icon: FaList,
         path: SUB_ADMIN_ROUTE.LIVESCREEN,
-        roles: [ROLES.OWNER, ROLES.MANAGER],
+        roles: [ROLES.OWNER, ROLES.MANAGER, ROLES.SUPER_ADMIN],
     },
 
     {

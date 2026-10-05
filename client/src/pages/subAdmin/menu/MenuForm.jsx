@@ -60,7 +60,7 @@ function MenuForm() {
           navigate(SUB_ADMIN_ROUTE.MENULIST);
         }
       } catch (err) {
-        toast.error(err?.response?.data?.message || "menu already exists!");
+        toast.error("menu already exists!");
       }
     }
   });

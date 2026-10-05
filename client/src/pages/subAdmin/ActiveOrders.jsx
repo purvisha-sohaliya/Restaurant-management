@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getOrders } from "../../services/orderService";
 import { SUB_ADMIN_ROUTE } from "../../Constant/RoutesConstant";
 import { generateBill } from "../../services/billService";
+import { toast } from "react-toastify";
 
 function ActiveOrders() {
     const navigate = useNavigate();
@@ -44,6 +45,7 @@ function ActiveOrders() {
             });
 
             if (res.success) {
+                toast.success("Bill generated successfully");
                 navigate(`${SUB_ADMIN_ROUTE.BILL}/${res.data._id}`);
             }
         } catch (err) {

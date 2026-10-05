@@ -12,7 +12,7 @@ exports.createCategory = async (req, res, next) => {
         if (req.file) {
             const result = await uploadToCloudinary(
                 req.file.path,
-                "restaurant-categories"
+                "restaurant/categories"
             );
             imageUrl = result.secure_url;
         }

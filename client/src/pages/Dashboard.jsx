@@ -73,8 +73,7 @@ const Dashboard = () => {
 
   // ================= CARD COMPONENT =================
 
-  const Card = ({ title, value, icon, color,
-  }) => (
+  const Card = ({ title, value, icon, color }) => (
     <div className="col-12 col-sm-6 col-xl-3">
       <div className="card border-0 shadow-sm h-100">
         <div className="card-body p-3">
@@ -88,8 +87,7 @@ const Dashboard = () => {
                 {value}
               </h4>
             </div>
-            <div
-              className={`bg-${color}-subtle text-${color} rounded-3 p-2`}>
+            <div className={`dashboard-card-icon ${color}`}>
               {React.cloneElement(icon, {
                 size: 18,
               })}
@@ -402,8 +400,8 @@ const DashboardBottom = ({ dashboard }) => {
 
           </div>
           <div className="table-responsive">
-            <table className="table table-hover align-middle mb-0">
-              <thead className="table-light">
+            <table className="table table-hover align-middle b mb-0">
+              <thead className="table-warning">
                 <tr>
                   <th>Order</th>
                   <th>Table</th>

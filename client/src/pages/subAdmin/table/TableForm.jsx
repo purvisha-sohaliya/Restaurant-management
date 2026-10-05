@@ -6,6 +6,7 @@ import { FaTable, FaSave } from "react-icons/fa";
 
 import {createTable,updateTable, getTableById,} from "../../../services/tableservice";
 import { SUB_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
+import { toast } from "react-toastify";
 
 function TableForm() {
   const { id } = useParams();
@@ -42,7 +43,7 @@ function TableForm() {
           navigate(SUB_ADMIN_ROUTE.TABLE_LIST);
         }
       } catch (err) {
-        console.log(err);
+        toast.error("Table already exists!");
       }
     },
   });

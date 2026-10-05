@@ -10,7 +10,7 @@ exports.createMenuItem = async (req, res, next) => {
         if (req.file) {
             const result = await uploadToCloudinary(
                 req.file.path,
-                "menu-items"
+                "restaurant/menu"
             );
             imageUrl = result.secure_url;
         }

@@ -200,7 +200,7 @@ exports.getBillById = async (req, res, next) => {
             })
             .populate("order_id")
             .populate("customer_id", "name phone email")
-            .populate("restaurant_id","restaurant_name address")
+            .populate("restaurant_id","restaurant_name address city country phone email logo")
 
         if (!bill || bill.is_deleted) {
             return res.status(404).json({

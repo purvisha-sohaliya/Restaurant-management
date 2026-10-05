@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaClock, FaUtensils, FaCheckCircle } from "react-icons/fa";
+import { FaClock, FaUtensils, FaCheckCircle, FaSyncAlt } from "react-icons/fa";
 import { getKitchenOrders, acceptKitchenOrder, readyKitchenOrder, servedKitchenOrder, } from "../../services/kitchenService";
 import { toast } from "react-toastify";
 
@@ -200,16 +200,11 @@ const Kitchen = () => {
                   {getItemName(item)}
                 </span>
               </div>
-              {isVeg(item) && (
-                <span className="veg-icon">
-                  ●
-                </span>
-              )}
             </div>
           ))}
         </div>
         {/* ACTION */}
-        <div className="kds-action ">
+        <div className="kds-action">
           {status === "Pending" && (
             <button
               className="kds-btn kds-btn-start"
@@ -300,9 +295,9 @@ const Kitchen = () => {
           </small>
         </div>
         <button
-          className="btn btn-outline-primary"
+          className="btn btn-primary"
           onClick={fetchKitchenOrders}>
-          Refresh
+          <FaSyncAlt />
         </button>
       </div>
       {/* ERROR */}
