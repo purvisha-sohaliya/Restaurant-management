@@ -40,6 +40,11 @@ const kitchenSchema = new mongoose.Schema(
 
                 name: String,
                 quantity: Number,
+                token_number: {
+                    type: String,
+                    required: true
+                },
+
                 note: String,
                 status: {
                     type: String,

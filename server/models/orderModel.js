@@ -56,6 +56,11 @@ const orderSchema = new mongoose.Schema(
         price: Number,
         quantity: Number,
         total: Number,
+        token_number: {
+          type: String,
+          required: true
+        },
+
 
         is_sent_to_kitchen: {
           type: Boolean,

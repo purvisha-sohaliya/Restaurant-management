@@ -114,12 +114,16 @@ exports.createOrder = async (req, res, next) => {
 
             totalAmount += total;
 
+            const itemToken =
+                orderItems.length === 0 ? finalTokenNumber : await generateToken();
+
             orderItems.push({
                 menu_item_id: menuItem._id,
                 item_name: menuItem.item_name,
                 price: menuItem.price,
                 quantity: item.quantity,
                 total,
+                token_number: itemToken,
                 is_sent_to_kitchen: false
             });
         }
@@ -134,6 +138,7 @@ exports.createOrder = async (req, res, next) => {
             waiting_entry_id: waiting_entry_id || null,
             waiter_id,
             customer_name: finalCustomerName,
+            token_number: finalTokenNumber,
             token_number: finalTokenNumber,
             order_number: `ORD-${orderNumber}`,
             order_type,
@@ -252,6 +257,7 @@ exports.addItemsToOrder = async (req, res, next) => {
 
             const total = menuItem.price * item.quantity;
 
+            const itemToken = await generateToken();
             // Always add as a new item
             order.items.push({
                 menu_item_id: menuItem._id,
@@ -259,9 +265,11 @@ exports.addItemsToOrder = async (req, res, next) => {
                 price: menuItem.price,
                 quantity: item.quantity,
                 total,
+                token_number: itemToken,
                 is_sent_to_kitchen: false,
                 kitchen_status: "Pending"
             });
+            order.token_number = itemToken;
             addedAmount += total;
         }
 
@@ -384,6 +392,7 @@ exports.sendToKitchen = async (req, res, next) => {
                 menu_item_id: item.menu_item_id,
                 name: item.item_name,
                 quantity: item.quantity,
+                token_number: item.token_number,
                 note: "",
                 status: "Pending"
             }))

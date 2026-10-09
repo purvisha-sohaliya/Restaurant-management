@@ -300,7 +300,7 @@ exports.getDisplayScreen = async (req, res, next) => {
             })
             .populate(
                 "order_id",
-                "order_number order_type customer_name token_number"
+                "order_number order_type customer_name"
             )
             .populate(
                 "table_id",
@@ -322,23 +322,46 @@ exports.getDisplayScreen = async (req, res, next) => {
             });
         }
 
-        const currentOrder = kitchenOrders[0];
+        const activeTokens = [];
 
-        // Remaining tokens
-        const queue = kitchenOrders.slice(1).map(order => ({
-            kitchen_id: order._id,
-            token_number: order.order_id.token_number,
-            status: order.kitchen_status
-        }));
+        for (const kitchenOrder of kitchenOrders) {
+            for (const item of kitchenOrder.items) {
+                if (item.token_number) {
+                    activeTokens.push({
+                        kitchen_id: kitchenOrder._id,
+                        token_number: item.token_number,
+                        status:
+                            item.status ||
+                            kitchenOrder.kitchen_status
+                    });
+                }
+            }
+        }
+
+        if (activeTokens.length === 0) {
+            return res.status(200).json({
+                success: true,
+                data: {
+                    current_token: null,
+                    current_status: null,
+                    queue: []
+                }
+            });
+        }
+
+        const currentToken = activeTokens[0];
+
+        const queue = activeTokens.slice(1);
 
         res.status(200).json({
             success: true,
             data: {
-                current_token: currentOrder.order_id.token_number,
-                current_status: currentOrder.kitchen_status,
+                current_token: currentToken.token_number,
+                current_status: currentToken.status,
                 queue
             }
         });
+
     } catch (err) {
         next(err);
     }
