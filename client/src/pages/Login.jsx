@@ -1,14 +1,15 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { AUTH_ROUTE, COMMON_ROUTE, SUPER_ADMIN_ROUTE } from "../Constant/RoutesConstant";
+import { AUTH_ROUTE, COMMON_ROUTE } from "../Constant/RoutesConstant";
 import { ROLES } from "../Constant/CommonConstant";
 import { login } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setUser } = useAuth();
 
   const formik = useFormik({
@@ -37,13 +38,40 @@ function Login() {
         const user = res.data;
         setUser(user);
         toast.success("Login successful!");
-        if (user.role === ROLES.SUPER_ADMIN) {
-          navigate(SUPER_ADMIN_ROUTE.RESTAURANTSLIST, { replace: true });
+        const from = location.state?.from;
+
+        if (from?.pathname === COMMON_ROUTE.SUBSCRIPTIONPLAN) {
+          navigate(COMMON_ROUTE.SUBSCRIPTIONPLAN, {
+            state: from.state,
+            replace: true,
+          });
+          return;
+        }
+
+        if (from?.pathname) {
+          navigate(from.pathname, {
+            state: from.state,
+            replace: true,
+          });
+          return;
+        }
+        if (user.role === ROLES.OWNER) {
+          const subscription = user.subscription;
+
+          if (
+            subscription?.plan === "trial" &&
+            subscription?.status === "active" &&
+            subscription?.trial_end_date &&
+            new Date(subscription.trial_end_date) > new Date()
+          ) {
+            navigate(COMMON_ROUTE.DASHBOARD, { replace: true });
+          } else {
+            navigate(COMMON_ROUTE.SUBSCRIPTIONPLAN, { replace: true });
+          }
           return;
         }
 
         if (
-          user.role === ROLES.OWNER ||
           user.role === ROLES.MANAGER ||
           user.role === ROLES.WAITER ||
           user.role === ROLES.CASHIER ||

@@ -16,6 +16,7 @@ const DISPLAY = require("./displayVideoRoutes");
 const RECIPE = require("./recipeRoutes");
 const INVENTORY = require("./inventoryRoutes");
 const DASHBOARD = require("./dashboardRoutes");
+const SUBSCRIPTIONPLAN = require("./subscriptionPlanRoutes");
 
 router.use("/restaurants", RESTAURANT);
 router.use("/owners", OWNERS);
@@ -32,6 +33,7 @@ router.use("/display-videos", DISPLAY);
 router.use("/recipes", RECIPE);
 router.use("/inventory", INVENTORY);
 router.use("/dashboard", DASHBOARD);
+router.use("/subscription-plans", SUBSCRIPTIONPLAN);
 
 router.use("/users", USERS);
 module.exports = router;

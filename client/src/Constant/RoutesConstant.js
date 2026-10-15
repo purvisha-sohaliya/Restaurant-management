@@ -7,6 +7,7 @@ export const AUTH_ROUTE = {
 // Common Route
 export const COMMON_ROUTE = {
     DASHBOARD: "/dashboard",
+    SUBSCRIPTIONPLAN: "/SubscriptionPlan",
 };
 // super admin
 export const SUPER_ADMIN_ROUTE = {
@@ -64,7 +65,7 @@ export const SUB_ADMIN_ROUTE = {
 
     // LiveScreen
     LIVESCREEN: "/Livescreen",
-    
+
     // inventoryList
     INVENTORY: "/Inventory",
 

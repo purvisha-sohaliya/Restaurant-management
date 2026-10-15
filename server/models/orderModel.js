@@ -61,7 +61,6 @@ const orderSchema = new mongoose.Schema(
           required: true
         },
 
-
         is_sent_to_kitchen: {
           type: Boolean,
           default: false

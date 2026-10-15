@@ -43,6 +43,42 @@ const userSchema = new mongoose.Schema(
             ref: "Restaurant"
         },
 
+         subscription: {
+            plan_id: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "SubscriptionPlan",
+                default: null
+            },
+
+            restaurant_id: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Restaurant",
+                default: null
+            },
+
+            plan_type: {
+                type: String,
+                enum: ["trial", "monthly", "yearly"],
+                default: null
+            },
+
+            status: {
+                type: String,
+                enum: ["active", "expired", "cancelled"],
+                default: null
+            },
+
+            start_date: {
+                type: Date,
+                default: null
+            },
+
+            end_date: {
+                type: Date,
+                default: null
+            }
+        },
+
         status: {
             type: String,
             enum: ["active", "blocked"],
