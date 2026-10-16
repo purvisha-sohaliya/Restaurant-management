@@ -2,12 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPlus, FaSearch, } from "react-icons/fa";
 import { getOrders, } from "../../../services/orderService";
-import { useAuth } from "../../../context/AuthContext";
 import { SUB_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
 
 function OrderList() {
-
-  const { user } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,7 +69,6 @@ function OrderList() {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="container-fluid py-4">
@@ -148,82 +144,153 @@ function OrderList() {
       </div>
 
       {/* Order Table */}
-      <div className="card shadow-sm border-0">
-        <div className="card-header bg-white">
-          <h5 className="mb-0">Order List</h5>
+       <div className="card border-0 shadow-sm rounded-3 overflow-hidden">
+
+        {/* HEADER */}
+        <div className="card-header bg-white border-0 px-3 px-md-4 py-3">
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 className="fw-bold mb-1">Order List</h5>
+              <small className="text-muted">
+                View and track all restaurant orders
+              </small>
+            </div>
+
+            <span className="badge bg-light text-dark rounded-pill px-3 py-2">
+              {filteredOrders.length} Orders
+            </span>
+          </div>
         </div>
+
+        {/* TABLE */}
         <div className="table-responsive">
           <table className="table table-hover align-middle mb-0">
+
             <thead className="table-light">
               <tr>
-                <th>#</th>
-                <th>Order ID</th>
-                <th>Table</th>
-                <th>Customer</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Date</th>
+                <th className="py-3 px-4">Order Details</th>
+                <th className="py-3">Table</th>
+                <th className="py-3">Customer</th>
+                <th className="py-3">Total</th>
+                <th className="py-3">Status</th>
+                <th className="py-3">Date</th>
               </tr>
             </thead>
 
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="9" className="text-center py-4">
-                    Loading...
+                  <td colSpan="7" className="text-center py-5">
+                    <div
+                      className="spinner-border spinner-border-sm text-success me-2"
+                      role="status"
+                    />
+                    <span className="text-muted">
+                      Loading orders...
+                    </span>
                   </td>
                 </tr>
               ) : filteredOrders.length > 0 ? (
                 filteredOrders.map((order, index) => (
                   <tr key={order._id}>
-                    <td>{index + 1}</td>
 
-                    <td>{order.order_number || order._id.slice(-6)}</td>
-
+                    {/* ORDER ID */}
                     <td>
-                      {order.table_id?.tableNumber || "-"}
+                      <div className="d-flex align-items-center gap-3 px-3">
+
+                        <div>
+                          <div className="fw-bold">
+                            {order.order_number ||
+                              order._id.slice(-6)}
+                          </div>
+                          <small className="text-muted">
+                            Restaurant Order
+                          </small>
+                        </div>
+                      </div>
                     </td>
 
+                    {/* TABLE */}
                     <td>
-                      {order.customer_name || "-"}
-                    </td>
-
-                    <td>
-                      ₹{order.total_amount || order.total || 0}
-                    </td>
-                    <td>
-                      <span
-                        className={`badge ${order.order_status === "Pending"
-                          ? "bg-warning text-dark"
-                          : order.order_status === "Preparing"
-                            ? "bg-primary"
-                            : order.order_status === "Ready"
-                              ? "bg-info"
-                              : order.order_status === "Served"
-                                ? "bg-secondary"
-                                : order.order_status === "Completed"
-                                  ? "bg-success"
-                                  : "bg-danger"
-                          }`}>
-                        {order.order_status}
+                      <span className="badge bg-light text-dark border rounded-pill px-3 py-2">
+                        T{order.table_id?.tableNumber || "-"}
                       </span>
                     </td>
 
+                    {/* CUSTOMER */}
                     <td>
-                      {new Date(order.createdAt).toLocaleDateString()}
+                      <span className="fw-medium">
+                        {order.customer_name || "Walk In"}
+                      </span>
+                    </td>
+
+                    {/* TOTAL */}
+                    <td>
+                      <span className="fw-bold">
+                        ₹{Number(
+                          order.total_amount || order.total || 0
+                        ).toLocaleString("en-IN")}
+                      </span>
+                    </td>
+
+                    {/* STATUS */}
+                    <td>
+                      <span
+                        className={`badge rounded-pill px-3 py-2 ${order.order_status === "Pending"
+                            ? "bg-warning text-white"
+                            : order.order_status === "Preparing"
+                              ? "bg-primary  text-white"
+                              : order.order_status === "Ready"
+                                ? "bg-info text-white"
+                                : order.order_status === "Served"
+                                  ? "bg-secondary text-white"
+                                  : order.order_status === "Completed"
+                                    ? "bg-success text-white"
+                                    : "bg-danger text-white"
+                          }`}>
+                        {order.order_status || "Unknown"}
+                      </span>
+                    </td>
+
+                    {/* DATE */}
+                    <td>
+                      <span className="text-muted">
+                        {new Date(
+                          order.createdAt
+                        ).toLocaleDateString("en-IN", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </span>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="9" className="text-center py-4">
-                    No Orders Found
+                  <td colSpan="7" className="text-center py-5">
+                    <h6 className="fw-bold mb-1">
+                      No Orders Found
+                    </h6>
+                    <p className="text-muted mb-0">
+                      Restaurant orders will appear here.
+                    </p>
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
+
+        {/* FOOTER */}
+        {!loading && filteredOrders.length > 0 && (
+          <div className="card-footer bg-white border-0 px-3 px-md-4 py-3">
+            <small className="text-muted">
+              Showing {filteredOrders.length} order
+              {filteredOrders.length !== 1 ? "s" : ""}
+            </small>
+          </div>
+        )}
       </div>
     </div>
   );

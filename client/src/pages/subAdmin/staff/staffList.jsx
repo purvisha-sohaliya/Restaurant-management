@@ -147,174 +147,168 @@ function StaffList() {
   };
 
   return (
-    <div className="container-fluid py-4">
+     <div className="container-fluid py-4">
 
       {/* HEADER */}
-      <div className="d-flex justify-content-between align-items-center mb-3">
+      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4">
         <div>
-          <h2 className="fw-bold mb-1">Staff Management</h2>
-          <small className="text-muted">Manage restaurant staff</small>
+          <h3 className="fw-bold mb-1">Staff List</h3>
+          <p className="text-muted mb-0">
+            Manage and track all restaurant staff
+          </p>
         </div>
 
         <button
-          className="btn btn-success"
-          onClick={() => navigate(SUB_ADMIN_ROUTE.STAFFADD)}>
+          type="button"
+          className="btn btn-success rounded-3 px-3 py-2"
+          onClick={() => navigate(SUB_ADMIN_ROUTE.STAFFADD)}
+        >
           <FaPlus className="me-2" />
           Add Staff
         </button>
       </div>
 
-      {/* FILTER */}
-      <div className="row mb-3 g-2">
-        <div className="col-md-3">
-          <select
-            className="form-select"
-            value={selectedRole}
-            onChange={(e) => setSelectedRole(e.target.value)}
-          >
-            <option value="">All Roles</option>
-            <option value="manager">Manager</option>
-            <option value="cashier">Cashier</option>
-            <option value="waiter">Waiter</option>
-            <option value="kitchen">Kitchen</option>
-          </select>
+      {/* FILTERS */}
+        <div className="card-body shadow-none px-0">
+          <div className="row g-3">
+            <div className="col-md-3">
+              <select  className="form-select"value={selectedRole}
+                onChange={(e) => { setSelectedRole(e.target.value);
+                  setCurrentPage(1);}}>
+                <option value="">All Roles</option>
+                <option value="manager">Manager</option>
+                <option value="cashier">Cashier</option>
+                <option value="waiter">Waiter</option>
+                <option value="kitchen">Kitchen</option>
+              </select>
+            </div>
+
+            <div className="col-md-3">
+              <select className="form-select" value={selectedStatus}
+                onChange={(e) => { setSelectedStatus(e.target.value);
+                  setCurrentPage(1);}} >
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="blocked">Blocked</option>
+              </select>
+            </div>
+          </div>
         </div>
 
-        <div className="col-md-3">
-          <select
-            className="form-select"
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-          >
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="blocked">Blocked</option>
-          </select>
-        </div>
-      </div>
+      {/* STAFF TABLE */}
+      <div className="card border-0 shadow-sm rounded-3">
+        <div className="table-responsive">
+          <table className="table table-hover align-middle mb-0">
+            <thead className="table-light">
+              <tr>
+                <th className="px-3 py-3">
+                  <input type="checkbox"
+                    className="form-check-input"
+                    checked={ currentStaff.length > 0 &&
+                      currentStaff.every((staff) => selectedStaff.includes(staff._id)
+                      )} onChange={handleSelectAll}
+                  />
+                </th>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th className="text-center">Action</th>
+              </tr>
+            </thead>
 
-      {/* TABLE */}
-      <div className="card shadow-sm border-0">
-        <div className="card-body p-0">
+            <tbody>
+              {currentStaff.length > 0 ? (
+                currentStaff.map((staff, index) => (
+                  <tr key={staff._id}
+                    className={staff.is_deleted ? "table-danger opacity-50" : ""}>
+                    <td className="px-3">
+                      <input  type="checkbox" className="form-check-input"
+                        checked={selectedStaff.includes(staff._id)}
+                        onChange={() => handleSelect(staff._id)}/>
+                    </td>
 
-          <div className="table-responsive">
-            <table className="table table-hover mb-0">
-              <thead className="table-dark">
-                <tr>
-                  <th>
-                    <input
-                      type="checkbox"
-                      checked={
-                        staffData.length > 0 &&
-                        selectedStaff.length === staffData.length
-                      }
-                      onChange={handleSelectAll}
-                    />
-                  </th>
-                  <th>#</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Role</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {currentStaff.length > 0 ? (
-                  currentStaff.map((staff, index) => (
-                    <tr
-                      key={staff._id}
-                      style={{
-                        backgroundColor: staff.is_deleted
-                          ? "#ffebee"
-                          : "inherit",
-                        opacity: staff.is_deleted ? 0.6 : 1,
-                      }}
-                    >
-                      <td>
-                        <input
-                          type="checkbox"
-                          checked={selectedStaff.includes(staff._id)}
-                          onChange={() => handleSelect(staff._id)}
-                        />
-                      </td>
-
-                      <td>{indexOfFirstItem + index + 1}</td>
-                      <td>{staff.name}</td>
-                      <td>{staff.email}</td>
-                      <td>{staff.phone}</td>
-                      <td>{staff.role}</td>
-
-                      <td>
-                        <span
-                          className={`badge ${staff.status === "active"
-                            ? "bg-success"
-                            : "bg-danger"
-                            }`}
-                        >
-                          {staff.status}
-                        </span>
-                      </td>
-
-                      <td>
-                        <div className="d-flex gap-2">
-
-                          <button
-                            className="btn btn-sm btn-outline-primary"
-                            onClick={() =>
-                              navigate(
-                                `${SUB_ADMIN_ROUTE.STAFFEDIT}/${staff._id}`
-                              )
-                            }
-                            disabled={staff.is_deleted}
-                          >
-                            <FaEdit />
-                          </button>
-
-                          {staff.is_deleted ? (
-                            <button
-                              className="btn btn-sm btn-outline-success"
-                              onClick={() => handleRecover(staff._id)}
-                            >
-                              <FaUndo />
-                            </button>
-                          ) : (
-                            <button
-                              className="btn btn-sm btn-outline-danger"
-                              onClick={() => handleDelete(staff._id)}
-                            >
-                              <FaTrash />
-                            </button>
-                          )}
-
-                          <button
-                            className="btn btn-sm btn-outline-warning"
-                            onClick={() => handleToggleStatus(staff._id)}
-                            disabled={staff.is_deleted}
-                          >
-                            {staff.status === "active" ? <FaEyeSlash /> : <FaEye />}
-                          </button>
-
+                    <td>{indexOfFirstItem + index + 1}</td>
+                    <td>
+                      <div className="d-flex align-items-center gap-2">
+                        <div className="rounded-circle bg-success bg-opacity-10  text-white fw-bold d-flex align-items-center justify-content-center flex-shrink-0"
+                          style={{ width: "38px", height: "38px" }}>
+                          {staff.name?.charAt(0).toUpperCase() || "S"}
                         </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="8" className="text-center py-4">
-                      No Staff Found
+                        <span className="fw-semibold">
+                          {staff.name}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td>{staff.email}</td>
+                    <td>{staff.phone || "-"}</td>
+
+                    <td>
+                      <span className="badge bg-light text-dark border text-capitalize rounded-pill px-3 py-2">
+                        {staff.role?.replace("_", " ")}
+                      </span>
+                    </td>
+
+                    <td>
+                      <span className={`badge rounded-pill px-3 py-2 ${staff.status === "active"
+                          ? "bg-success text-white"
+                          : "bg-danger text-white"
+                        }`}>
+                        {staff.status}
+                      </span>
+                    </td>
+
+                    <td>
+                      <div className="d-flex justify-content-center gap-2">
+
+                        <button type="button"className="btn btn-outline-primary btn-sm"
+                          title="Edit" disabled={staff.is_deleted}
+                          onClick={() => navigate(`${SUB_ADMIN_ROUTE.STAFFEDIT}/${staff._id}`)}>
+                          <FaEdit />
+                        </button>
+
+                        {staff.is_deleted ? (
+                          <button type="button" className="btn btn-outline-success btn-sm"
+                            title="Restore" onClick={() => handleRecover(staff._id)}>
+                            <FaUndo />
+                          </button>
+                        ) : (
+                          <button type="button" className="btn btn-outline-danger btn-sm"
+                            title="Delete"onClick={() => handleDelete(staff._id)} >
+                            <FaTrash />
+                          </button>
+                        )}
+
+                        <button type="button" className="btn btn-outline-warning btn-sm"
+                          title="Change Status" disabled={staff.is_deleted} onClick={() => handleToggleStatus(staff._id)} >
+                          {staff.status === "active"
+                            ? <FaEyeSlash />
+                            : <FaEye />}
+                        </button>
+                      </div>
                     </td>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8" className="text-center py-5">
+                    <h6 className="fw-bold mb-1">No Staff Found</h6>
+                    <p className="text-muted mb-0">
+                      Try changing the selected filters.
+                    </p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
-      <div className="d-flex justify-content-between align-items-center mt-4">
+
+      {/* PAGINATION */}
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mt-4">
         <small className="text-muted">
           Showing {filteredStaff.length === 0 ? 0 : indexOfFirstItem + 1} to{" "}
           {Math.min(indexOfLastItem, filteredStaff.length)} of{" "}
@@ -323,49 +317,31 @@ function StaffList() {
 
         <nav>
           <ul className="pagination mb-0">
-            <li
-              className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
-            >
-              <button
-                className="page-link"
-                onClick={() => setCurrentPage((prev) => prev - 1)}
-              >
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <button type="button" className="page-link"
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))} >
                 Previous
               </button>
             </li>
 
             {[...Array(totalPages)].map((_, index) => (
-              <li
-                key={index}
-                className={`page-item ${currentPage === index + 1 ? "active" : ""
-                  }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(index + 1)}
-                >
+              <li key={index} className={`page-item ${currentPage === index + 1 ? "active" : ""}`} >
+                <button type="button" className="page-link" onClick={() => setCurrentPage(index + 1)} >
                   {index + 1}
                 </button>
               </li>
             ))}
 
-            <li
-              className={`page-item ${currentPage === totalPages || totalPages === 0
-                ? "disabled"
-                : ""
-                }`}
-            >
-              <button
-                className="page-link"
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-              >
+            <li className={`page-item ${currentPage === totalPages || totalPages === 0 ? "disabled" : ""
+              }`}>
+              <button type="button" className="page-link"
+                onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}>
                 Next
               </button>
             </li>
           </ul>
         </nav>
       </div>
-
     </div>
   );
 }

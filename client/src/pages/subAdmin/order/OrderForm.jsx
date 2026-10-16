@@ -347,7 +347,6 @@ function OrderForm() {
     } catch (err) {
       toast.error(
         err.response?.data?.message ||
-        err.message ||
         "Unable to generate bill"
       );
     }

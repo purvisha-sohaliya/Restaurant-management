@@ -214,7 +214,7 @@ function WaitingQueue() {
         </button>
       </div>
 
-      <div className="row">
+       <div className="row">
         {waitingList.length === 0 ? (
           <div className="col-12">
             <div className="text-center py-5">
@@ -224,46 +224,93 @@ function WaitingQueue() {
         ) : (
           waitingList.map((item) => (
             <div className="col-lg-4 col-sm-6 mb-3" key={item._id}>
-              <div className="card shadow">
-                <div className="card-header d-flex justify-content-between">
-                  <div>
-                    <h5>{item.token_number}</h5>
-                    <small>{item.customer_name}</small>
+              <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+
+                {/* HEADER */}
+                <div className="card-body p-2">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div className="d-flex align-items-center gap-3">
+                      <div className=" bg-opacity-10 text-black rounded-3 px-3 py-2 fw-bold">
+                        {item.token_number}
+                      </div>
+
+                      <div>
+                        <h5 className="fw-bold mb-0 text-truncate">
+                          {item.customer_name}
+                        </h5>
+                      </div>
+
+                    </div>
+
+                    <span className="badge bg-warning text-dark rounded-pill px-3 py-2">
+                      {item.status}
+                    </span>
+
                   </div>
 
-                  <span className="text">
-                    {item.status}
-                  </span>
                 </div>
 
-                <div className="card-body">
-                  <p>
-                    <FaPhoneAlt className="me-2 text-success" />
-                    {item.phone}
-                  </p>
+                {/* DETAILS */}
+                <div className="border-top px-4 py-3">
 
-                  <p>
-                    <FaUserFriends className="me-2 text-primary" />
-                    Party Size : {item.party_size}
-                  </p>
+                  <div className="row g-2">
 
-                  <p>
-                    <FaClock className="me-2 text-danger" />
-                    Wait : {getWaitingTime(item.createdAt)}
-                  </p>
+                    {/* PHONE */}
+                    <div className="col-6">
+                      <div className="bg-light rounded-3 p-3 h-100">
+                        <small className="text-muted d-block mb-1">
+                          <FaPhoneAlt className="me-1 text-success" />
+                          Phone
+                        </small>
 
+                        <span className="fw-semibold">
+                          {item.phone || "-"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* PARTY */}
+                    <div className="col-6">
+                      <div className="bg-light rounded-3 p-3 h-100">
+                        <small className="text-muted d-block mb-1">
+                          <FaUserFriends className="me-1 text-primary" />
+                          Party
+                        </small>
+
+                        <span className="fw-semibold">
+                          {item.party_size} People
+                        </span>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* WAITING TIME */}
+                  <div className="border rounded-3 px-3 py-2 mt-3 d-flex justify-content-between align-items-center">
+                    <div className="d-flex align-items-center gap-2">
+                      <FaClock className="text-danger" />
+                      <span className="text-muted">
+                        Waiting Time
+                      </span>
+                    </div>
+
+                    <span className="fw-bold">
+                      {getWaitingTime(item.createdAt)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* ACTIONS */}
+                <div className="card-footer bg-white border-0 px-4 pb-4">
                   <div className="d-flex gap-2">
-                    <button
-                      className="btn btn-primary flex-grow-1"
-                      data-bs-toggle="modal"
-                      data-bs-target="#assignTableModal"
-                      onClick={() => openAssignModal(item)}
-                    >
-                      Assign Table
+                    <button type="button" className="btn bg-blue text-white rounded-3 flex-fill py-2 fw-semibold"
+                      data-bs-toggle="modal" data-bs-target="#assignTableModal"
+                      onClick={() => openAssignModal(item)}>Assign Table
                     </button>
 
                     <button
-                      className="btn btn-danger"
+                      type="button"
+                      className="btn btn-outline-danger bg-danger text-white rounded-3 px-4 py-2 fw-semibold"
                       onClick={() => handleDeleteWaiting(item)}>
                       Delete
                     </button>

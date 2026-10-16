@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FaAngleDown, FaAngleUp, } from "react-icons/fa";
+import { useLocation, useNavigate } from "react-router-dom";
+import { FaAngleDown, FaAngleUp, FaSignOutAlt, } from "react-icons/fa";
 import { sidebarConfig } from "../../config/sidebarConfig";
 import { useAuth } from "../../context/AuthContext";
 import { logout } from "../../services/authService";
@@ -11,6 +11,7 @@ const Sidebar = ({ sidebarOpen }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [openMenu, setOpenMenu] = useState("");
+  const location = useLocation();
 
   const CURRENT_ROLE = user?.role;
   const menus = sidebarConfig
@@ -71,7 +72,7 @@ const Sidebar = ({ sidebarOpen }) => {
           ${sidebarOpen ? "sidebar-open" : "sidebar-closed"
           }`}
       >
-        <div className="sidebar-logo text-white text-center mb-4 pb-3 ">
+        <div className="sidebar-logo text-light text-center mb-4 pb-3 ">
           <h4>{CURRENT_ROLE ? CURRENT_ROLE.toUpperCase() : ""}</h4>
         </div>
         <ul className="nav flex-column">
@@ -81,7 +82,8 @@ const Sidebar = ({ sidebarOpen }) => {
               return (
                 <li
                   key={menu.title}
-                  className="sidebar-item"
+                  className={`sidebar-item ${location.pathname === menu.path ? "active" : ""
+                    }`}
                   onClick={() => navigate(menu.path)}>
                   <Icon className="me-2" />
                   {menu.title}
@@ -110,26 +112,25 @@ const Sidebar = ({ sidebarOpen }) => {
                       : <FaAngleDown />
                   }
                 </a>
-                {
-                  openMenu === menu.title &&
+                {openMenu === menu.title && (
                   <ul className="list-unstyled ms-4">
-                    {
-                      menu.children.map(sub => {
-                        const SubIcon = sub.icon;
-                        return (
-                          <li
-                            key={sub.title}
-                            className="sidebar-sub-item"
-                            onClick={() => navigate(sub.path)}
-                          >
-                            <SubIcon className="me-2" />
-                            {sub.title}
-                          </li>
-                        );
-                      })
-                    }
+                    {menu.children.map((sub) => {
+                      const SubIcon = sub.icon;
+
+                      return (
+                        <li
+                          key={sub.title}
+                          className={`sidebar-sub-item ${location.pathname === sub.path ? "active" : ""
+                            }`}
+                          onClick={() => navigate(sub.path)}
+                        >
+                          <SubIcon className="me-2" />
+                          {sub.title}
+                        </li>
+                      );
+                    })}
                   </ul>
-                }
+                )}
               </li>
             );
 
@@ -138,12 +139,22 @@ const Sidebar = ({ sidebarOpen }) => {
             <button
               type="button"
               className="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2 py-2"
-              onClick={handleLogout}
-            >
+              onClick={handleLogout}>
+              <FaSignOutAlt />
               Logout
             </button>
           </div>
         </ul>
+        {/* <div className=" flex-shrink-0 pt-3 position-fixed bottom-0 start-0 p-4 ">
+          <button
+            type="button"
+            className="btn btn-danger  d-flex align-items-center justify-content-center gap-2 py-2 "
+            style={{ width: "200px" }}
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        </div> */}
       </div>
     </div>
   );

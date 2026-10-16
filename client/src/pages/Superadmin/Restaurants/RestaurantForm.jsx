@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { SUPER_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
+import { COMMON_ROUTE, SUPER_ADMIN_ROUTE } from "../../../Constant/RoutesConstant";
 import { FaSave, FaUtensils, FaEdit } from "react-icons/fa";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-
-import {
-    createRestaurant,
-    getRestaurantById,
-    updateRestaurant,
-} from "../../../services/restaurantService";
+import { createRestaurant, getRestaurantById, updateRestaurant } from "../../../services/restaurantService";
 import { toast } from "react-toastify";
 
 function RestaurantForm() {
@@ -80,15 +75,11 @@ function RestaurantForm() {
 
                 if (res.success) {
                     toast.success(res.message);
-
                     resetForm();
-
-                    navigate(SUPER_ADMIN_ROUTE.RESTAURANTSLIST);
+                    navigate(COMMON_ROUTE.DASHBOARD);
                 }
 
             } catch (error) {
-                console.error(error);
-
                 toast.error(
                     error.response?.data?.message ||
                     "Something went wrong"

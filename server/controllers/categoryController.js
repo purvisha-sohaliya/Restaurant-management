@@ -9,6 +9,22 @@ exports.createCategory = async (req, res, next) => {
         const { category_name, description } = req.body;
         let imageUrl = "";
 
+        const existingCategory = await categoryModel.findOne({
+            restaurant_id: req.user.restaurant_id,
+            category_name: {
+                $regex: `^${category_name.trim()}$`,
+                $options: "i"
+            },
+            isDeleted: false
+        });
+
+        if (existingCategory) {
+            return res.status(400).json({
+                success: false,
+                message: "Category already exists"
+            });
+        }
+
         if (req.file) {
             const result = await uploadToCloudinary(
                 req.file.path,

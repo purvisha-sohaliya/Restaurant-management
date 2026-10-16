@@ -14,6 +14,22 @@ exports.createMenuItem = async (req, res, next) => {
             );
             imageUrl = result.secure_url;
         }
+        
+        const existingItem = await menuitemsModel.findOne({
+            restaurant_id: req.user.restaurant_id,
+            item_name: {
+                $regex: `^${item_name.trim()}$`,
+                $options: "i"
+            },
+            is_deleted: false
+        });
+
+        if (existingItem) {
+            return res.status(400).json({
+                success: false,
+                message: "Menu item already exists"
+            });
+        }
 
         const menuItem = await menuitemsModel.create({ category_id, item_name, description, price, image: imageUrl, restaurant_id: req.user.restaurant_id });
 

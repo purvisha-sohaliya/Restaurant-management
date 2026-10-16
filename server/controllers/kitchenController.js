@@ -94,7 +94,7 @@ exports.acceptKitchenOrder = async (req, res, next) => {
                 const kitchenItem = kitchenOrder.items.find(
                     kitchenItem =>
                         kitchenItem.menu_item_id.toString() ===
-                        orderItem.menu_item_id.toString()
+                        orderItem.menu_item_id.toString() && kitchenItem.token_number === orderItem.token_number
                 );
 
                 if (kitchenItem && kitchenItem.status === "Preparing") {
@@ -138,7 +138,7 @@ exports.readyKitchenOrder = async (req, res, next) => {
 
         if (!kitchenOrder.stock_deducted) {
             for (const kitchenItem of kitchenOrder.items) {
-                
+
                 const recipe = await recipeModel.findOne({
                     menu_item_id: kitchenItem.menu_item_id,
                     restaurant_id: req.user.restaurant_id,

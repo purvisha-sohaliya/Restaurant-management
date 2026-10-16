@@ -3,6 +3,19 @@
   --color-background: #E5E7EB
 }
 
+/* comman css */
+.pointer {
+  cursor: pointer;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  list-style: none;
+}
+
 .dashboard-container {
   padding: 20px;
   width: 100%;
@@ -73,6 +86,14 @@
   margin-bottom: 6px;
   transition: all 0.3s ease;
 }
+
+.sidebar-item.active,
+.sidebar-sub-item.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-weight: 600;
+}
+
 
 .sidebar-item:hover {
   background: rgba(255, 255, 255, 0.1);
@@ -633,6 +654,16 @@
   height: 50px;
   border-radius: 12px;
   font-weight: 600;
+}
+
+/*===========Category============== */
+
+.filter-btn {
+  padding: 8px 18px !important;
+  min-width: 100px;
+  height: 40px;
+  line-height: 1.2;
+  box-sizing: border-box;
 }
 
 /*============== Staff================ */
