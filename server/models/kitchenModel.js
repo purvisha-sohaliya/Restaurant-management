@@ -14,6 +14,12 @@ const kitchenSchema = new mongoose.Schema(
             required: true
         },
 
+        order_type: {
+            type: String,
+            enum: ["Dine In", "Takeaway", "Delivery"],
+            default: "Dine In"
+        },
+
         waiter_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Users"

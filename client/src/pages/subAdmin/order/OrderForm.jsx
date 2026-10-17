@@ -46,7 +46,10 @@ function OrderForm() {
     enableReinitialize: true,
     initialValues: {
       table_id: waitingData?.table_id || "",
-      order_type: waitingData?.order_type || "Dine In",
+      order_type:
+        waitingData?.order_type === "Take Away"
+          ? "Takeaway"
+          : waitingData?.order_type || "Dine In",
       customer_name: waitingData?.customer_name || "",
       waiting_entry_id:
         waitingData?.waiting_entry_id || null,
@@ -113,6 +116,7 @@ function OrderForm() {
                 state: {
                   token_number: order.token_number,
                   order_number: order.order_number,
+                  order_type: res.data.order_type,
                   customer_name: order.customer_name,
                   order_type: order.order_type,
                   table_number:
@@ -486,11 +490,16 @@ function OrderForm() {
                         </h5>
 
                         {/* ORDER TYPE */}
-                        <span
-                          className="badge bg-white text-dark fw-semibold"
-                          style={{ fontSize: "12px", padding: "6px 9px", borderRadius: "6px", }}>
-                          {formik.values.order_type || waitingData?.order_type || "Dine In"}
-                        </span>
+                        <select
+                          name="order_type"
+                          className="form-select form-select-sm fw-bold w-auto border-0 shadow-none rounded-2"
+                          value={formik.values.order_type}
+                          onChange={formik.handleChange}
+                          style={{ width: "130px", height: "30px", minWidth: "75px", fontSize: "13px", }}>
+                          <option value="Dine In">Dine In</option>
+                          <option value="Takeaway">Takeaway</option>
+                          <option value="Delivery">Delivery</option>
+                        </select>
 
                         {/* SEATS */}
                         <div

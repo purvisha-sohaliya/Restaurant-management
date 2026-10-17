@@ -11,6 +11,7 @@ const TokenSlip = () => {
         order_number,
         table_number,
         customer_name,
+        order_type,
         items = []
     } = location.state || {};
 
@@ -66,6 +67,11 @@ const TokenSlip = () => {
                         <strong>
                             {order_number || "-"}
                         </strong>
+                    </div>
+
+                    <div className="d-flex justify-content-between gap-2">
+                        <span>Order Type</span>
+                        <strong>{order_type || "Dine In"}</strong>
                     </div>
 
                     <div className="d-flex justify-content-between gap-2">

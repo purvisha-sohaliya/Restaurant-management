@@ -382,6 +382,7 @@ exports.sendToKitchen = async (req, res, next) => {
         // Create new kitchen slip
         const kitchenSlip = await kitchenModel.create({
             order_id: order._id,
+            order_type: order.order_type,
             table_id: order.table_id,
             waiter_id: order.waiter_id,
             restaurant_id: req.user.restaurant_id,

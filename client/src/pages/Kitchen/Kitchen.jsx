@@ -178,6 +178,17 @@ const Kitchen = () => {
             <div className="kds-order-number">
               {getOrderNumber(order)}
             </div>
+            <span
+              className={`badge ${(order.order_type || order.order_id?.order_type) === "Delivery"
+                ? "bg-warning text-dark"
+                : (order.order_type || order.order_id?.order_type) === "Takeaway" ||
+                  (order.order_type || order.order_id?.order_type) === "Takeaway"
+                  ? "bg-info text-dark"
+                  : "bg-primary"
+                }`}
+            >
+              {order.order_type || order.order_id?.order_type || "Dine In"}
+            </span>
           </div>
           <div className="kds-time">
             <FaClock className="me-1" />
