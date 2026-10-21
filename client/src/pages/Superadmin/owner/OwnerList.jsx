@@ -98,25 +98,14 @@ function OwnerList() {
     <div className="container-fluid py-3 py-md-4">
 
       {/* HEADER */}
-      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
-        <div>
-          <h3 className="fw-bold mb-1">
-            Owner List
-          </h3>
+      <div className="mb-3">
+        <h3 className="fw-bold mb-1">
+          Owner List
+        </h3>
 
-          <p className="text-muted mb-0">
-            Manage restaurant owners
-          </p>
-        </div>
-
-        <button
-          className="btn btn-sm btn-primary d-flex align-items-center justify-content-center"
-          onClick={() =>
-            navigate(SUPER_ADMIN_ROUTE.OWNERADD)
-          }
-        >
-          + Add Owner
-        </button>
+        <p className="text-muted mb-0">
+          Manage restaurant owners
+        </p>
       </div>
 
       {/* TABLE */}

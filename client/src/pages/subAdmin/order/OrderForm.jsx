@@ -89,12 +89,17 @@ function OrderForm() {
             await handleBill(id);
             return;
           }
+
           const res = await addItemsToOrder(id, { items: newItems, });
+
           if (res.success) {
             await sendToKitchen(id);
+
             const orderRes = await getOrderById(id);
+
             if (orderRes.success) {
               const order = orderRes.data?.data || orderRes.data;
+
               const updatedItems = (order.items || []).map((item) => ({
                 menu_item_id:
                   item.menu_item_id?._id || item.menu_item_id,
@@ -109,27 +114,56 @@ function OrderForm() {
                 isExisting: true,
                 hasNewQuantity: false,
               }));
+
               formik.setFieldValue("items", updatedItems);
               setExistingItems(updatedItems);
+
+              // Send ONLY newly added items to TokenSlip
+              const tokenItems = newItems.map((newItem) => {
+                const orderItem = (order.items || []).find((item) => {
+                  const orderMenuId =
+                    item.menu_item_id?._id || item.menu_item_id;
+
+                  return (
+                    String(orderMenuId) ===
+                    String(newItem.menu_item_id)
+                  );
+                });
+
+                const menu = menuItems.find(
+                  (m) =>
+                    String(m._id) === String(newItem.menu_item_id)
+                );
+
+                return {
+                  menu_item_id: newItem.menu_item_id,
+                  item_name:
+                    orderItem?.menu_item_id?.item_name ||
+                    menu?.item_name ||
+                    "Item",
+                  quantity: Number(newItem.quantity || 0),
+                };
+              });
 
               navigate(SUB_ADMIN_ROUTE.TOKENSLIP, {
                 state: {
                   token_number: order.token_number,
                   order_number: order.order_number,
-                  order_type: res.data.order_type,
-                  customer_name: order.customer_name,
                   order_type: order.order_type,
+                  customer_name: order.customer_name,
                   table_number:
                     selectedTable?.tableNumber ||
                     order.table_id?.tableNumber ||
                     waitingData?.tableNumber ||
                     "",
-                  items: res.data.items || [],
+                  items: tokenItems,
                 },
               });
             }
+
             toast.success("New items sent to kitchen!");
           }
+
           return;
         }
         const itemsPayload =

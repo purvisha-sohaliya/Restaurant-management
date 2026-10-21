@@ -150,10 +150,10 @@ function StaffList() {
      <div className="container-fluid py-4">
 
       {/* HEADER */}
-      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4">
+      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-2">
         <div>
-          <h3 className="fw-bold mb-1">Staff List</h3>
-          <p className="text-muted mb-0">
+          <h4 className="fw-bold mb-1">Staff List</h4>
+          <p className="text-muted small mb-0">
             Manage and track all restaurant staff
           </p>
         </div>

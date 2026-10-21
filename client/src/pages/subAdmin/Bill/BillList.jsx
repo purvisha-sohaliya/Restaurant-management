@@ -8,6 +8,15 @@ import { useNavigate } from "react-router-dom";
 function BillList() {
   const [bills, setBills] = useState([]);
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const billsPerPage = 10;
+
+  const totalPages = Math.ceil(bills.length / billsPerPage);
+
+  const indexOfLastBill = currentPage * billsPerPage;
+  const indexOfFirstBill = indexOfLastBill - billsPerPage;
+
+  const currentBills = bills.slice(indexOfFirstBill, indexOfLastBill);
 
   useEffect(() => {
     fetchBills();
@@ -46,8 +55,8 @@ function BillList() {
       {/* HEADER */}
       <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
         <div>
-          <h3 className="fw-bold mb-1">Bill Management</h3>
-          <p className="text-muted mb-0">
+          <h4 className="fw-bold mb-1">Bill Management</h4>
+          <p className="text-muted small mb-0">
             Manage payments and track restaurant bills
           </p>
         </div>
@@ -103,7 +112,7 @@ function BillList() {
             </thead>
 
             <tbody>
-              {bills.map((bill) => (
+              {currentBills.map((bill) => (
                 <tr key={bill._id}>
 
                   {/* BILL NUMBER */}
@@ -135,8 +144,8 @@ function BillList() {
                   <td>
                     <span
                       className={`badge rounded-pill px-3 py-2 ${bill.payment_status === "Paid"
-                          ? "bg-success-subtle text-success"
-                          : "bg-warning-subtle text-warning-emphasis"
+                        ? "bg-success-subtle text-success"
+                        : "bg-warning-subtle text-warning-emphasis"
                         }`}
                     >
                       <span className="me-1">
@@ -160,7 +169,7 @@ function BillList() {
                     <div className="d-flex justify-content-center align-items-center gap-2">
 
                       {bill.payment_status === "Pending" ? (
-                        <button type="button"className="btn btn-success btn-sm rounded-3 px-3"
+                        <button type="button" className="btn btn-success btn-sm rounded-3 px-3"
                           onClick={() => handlePayment(bill._id)}>
                           <FaCheckCircle className="me-1" />
                           Pay Now
@@ -176,7 +185,7 @@ function BillList() {
                         type="button"
                         className="btn btn-light border btn-sm rounded-3"
                         title="View Bill"
-                        onClick={() => navigate( `${SUB_ADMIN_ROUTE.BILL}/${bill._id}`)} >
+                        onClick={() => navigate(`${SUB_ADMIN_ROUTE.BILL}/${bill._id}`)} >
                         <FaEye />
                       </button>
 
@@ -202,16 +211,67 @@ function BillList() {
           </table>
         </div>
 
-        {/* FOOTER */}
-        {bills.length > 0 && (
-          <div className="card-footer bg-white border-0 px-4 py-3">
-            <small className="text-muted">
-              Showing {bills.length} bill{bills.length !== 1 ? "s" : ""}
-            </small>
-          </div>
-        )}
+
 
       </div>
+      {/* FOOTER + PAGINATION */}
+      {bills.length > 0 && (
+        <div className="card-footer bg-white border-0 px-4 py-3">
+          <div className="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+
+            <small className="text-muted">
+              Showing {bills.length === 0 ? 0 : indexOfFirstBill + 1} to{" "}
+              {Math.min(indexOfLastBill, bills.length)} of{" "}
+              {bills.length} entries
+            </small>
+
+            <nav aria-label="Bills pagination">
+              <ul className="pagination pagination-sm mb-0">
+
+                {/* Previous */}
+                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                  <button
+                    type="button"
+                    className="page-link rounded-start-3"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage((prev) => prev - 1)}>
+                    Previous
+                  </button>
+                </li>
+
+                {/* Page Numbers */}
+                {Array.from({ length: totalPages }, (_, index) => (
+                  <li
+                    key={index + 1}
+                    className={`page-item ${currentPage === index + 1 ? "active" : ""
+                      }`} >
+                    <button
+                      type="button"
+                      className="page-link"
+                      onClick={() => setCurrentPage(index + 1)} >
+                      {index + 1}
+                    </button>
+                  </li>
+                ))}
+
+                {/* Next */}
+                <li
+                  className={`page-item ${currentPage === totalPages ? "disabled" : ""
+                    }`}>
+                  <button
+                    type="button"
+                    className="page-link rounded-end-3"
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage((prev) => prev + 1)} >
+                    Next
+                  </button>
+                </li>
+
+              </ul>
+            </nav>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

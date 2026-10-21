@@ -33,6 +33,7 @@ import PublicRoute from './routes/PublicRoute';
 import ErrorPage from './pages/ErrorPage';
 import Inventory from './pages/subAdmin/inventory/Inventory';
 import TokenSlip from './pages/subAdmin/TokenSlip';
+import SubscriptionPlan from './pages/SubscriptionPlan';
 
 function App(props) {
   return (
@@ -80,6 +81,7 @@ function App(props) {
               <Route path={SUB_ADMIN_ROUTE.INVENTORY} element={<Inventory />} />
               <Route path={SUB_ADMIN_ROUTE.TOKENSLIP} element={<TokenSlip />} />
             </Route>
+            <Route path={COMMON_ROUTE.SUBSCRIPTIONPLAN} element={<SubscriptionPlan />} />
           </Route>
 
           <Route path={AUTH_ROUTE.ERROR} element={<ErrorPage />} />

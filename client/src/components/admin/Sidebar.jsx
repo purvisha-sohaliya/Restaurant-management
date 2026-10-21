@@ -145,16 +145,7 @@ const Sidebar = ({ sidebarOpen }) => {
             </button>
           </div>
         </ul>
-        {/* <div className=" flex-shrink-0 pt-3 position-fixed bottom-0 start-0 p-4 ">
-          <button
-            type="button"
-            className="btn btn-danger  d-flex align-items-center justify-content-center gap-2 py-2 "
-            style={{ width: "200px" }}
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
-        </div> */}
+        
       </div>
     </div>
   );

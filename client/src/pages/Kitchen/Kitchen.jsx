@@ -120,14 +120,6 @@ const Kitchen = () => {
     );
   };
 
-  const isVeg = (item) => {
-    return (
-      item?.food_type === "Veg" ||
-      item?.foodType === "Veg" ||
-      item?.menu_item_id?.food_type === "Veg"
-    );
-  };
-
   const getElapsedTime = (order) => {
     if (!order?.createdAt) {
       return "0:00";
@@ -183,8 +175,8 @@ const Kitchen = () => {
                 ? "bg-warning text-dark"
                 : (order.order_type || order.order_id?.order_type) === "Takeaway" ||
                   (order.order_type || order.order_id?.order_type) === "Takeaway"
-                  ? "bg-info text-dark"
-                  : "bg-primary"
+                  ? "bg-light text-dark"
+                  : "bg-light text-dark"
                 }`}
             >
               {order.order_type || order.order_id?.order_type || "Dine In"}
@@ -297,13 +289,12 @@ const Kitchen = () => {
       {/* HEADER */}
       <div className="d-flex justify-content-between align-items-center my-4">
         <div>
-          <h3 className="fw-bold mb-1">
-            <FaUtensils className="me-2" />
+          <h4 className="fw-bold mb-1">
             Kitchen Display
-          </h3>
-          <small className="text-muted">
+          </h4>
+          <p className="text-muted small mb-0">
             Live Kitchen Orders
-          </small>
+          </p>
         </div>
         <button
           className="btn btn-primary"
@@ -319,16 +310,10 @@ const Kitchen = () => {
       )}
       {/* ORDERS */}
       {kitchenOrders.length === 0 ? (
-        <div className="text-center py-5">
-          <FaUtensils size={50}
-            className="text-muted mb-3"
-          />
-          <h5>
-            No Kitchen Orders
-          </h5>
-          <p className="text-muted">
-            New orders will appear here.
-          </p>
+        <div className="col-12">
+          <div className="text-center py-5">
+            <h5 className="text-muted">No Kitchen Orders</h5>
+          </div>
         </div>
       ) : (
         <div className="kds-grid d-grid align-items-start">

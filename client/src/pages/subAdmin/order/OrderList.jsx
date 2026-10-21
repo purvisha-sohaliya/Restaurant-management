@@ -42,9 +42,25 @@ function OrderList() {
     return (
       matchesSearch &&matchesStatus && matchesTable);
   });
+
+   const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 10;
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+
+  const currentOrders = filteredOrders.slice(
+    indexOfFirstOrder,
+    indexOfLastOrder
+  );
+  
   useEffect(() => {
     fetchOrders();
   }, []);
+
+   useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter, tableFilter]);
 
   const uniqueTables = [
     ...new Map(
@@ -75,10 +91,10 @@ function OrderList() {
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h3 className="fw-bold mb-1">Order Management</h3>
-          <small className="text-muted">
+          <h4 className="fw-bold mb-1">Order Management</h4>
+          <p className="text-muted small mb-0">
             Manage Restaurant Orders
-          </small>
+          </p>
         </div>
 
         <button
@@ -191,7 +207,7 @@ function OrderList() {
                   </td>
                 </tr>
               ) : filteredOrders.length > 0 ? (
-                filteredOrders.map((order, index) => (
+                currentOrders.map((order, index) => (
                   <tr key={order._id}>
 
                     {/* ORDER ID */}
@@ -282,16 +298,57 @@ function OrderList() {
           </table>
         </div>
 
-        {/* FOOTER */}
-        {!loading && filteredOrders.length > 0 && (
-          <div className="card-footer bg-white border-0 px-3 px-md-4 py-3">
-            <small className="text-muted">
-              Showing {filteredOrders.length} order
-              {filteredOrders.length !== 1 ? "s" : ""}
-            </small>
-          </div>
-        )}
+       
       </div>
+      {/* FOOTER WITH PAGINATION */}
+      {!loading && filteredOrders.length > 0 && (
+        <div className="card-footer bg-white border-0 px-3 px-md-4 py-3">
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+
+            {/* Showing Entries */}
+            <small className="text-muted">
+              Showing {indexOfFirstOrder + 1} to{" "}
+              {Math.min(indexOfLastOrder, filteredOrders.length)} of{" "}
+              {filteredOrders.length} entries
+            </small>
+
+            {/* Pagination Buttons */}
+            <nav aria-label="Order pagination">
+              <ul className="pagination pagination-sm mb-0">
+
+                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                  <button type="button" className="page-link"
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1} >
+                    Previous
+                  </button>
+                </li>
+
+                {Array.from({ length: Math.max(totalPages, 1) }, (_, index) => (
+                  <li
+                    key={index + 1}
+                    className={`page-item ${currentPage === index + 1 ? "active" : ""}`}>
+                    <button type="button" className="page-link"
+                      onClick={() => setCurrentPage(index + 1)} >{index + 1}
+                    </button>
+                  </li>
+                ))}
+
+                <li
+                  className={`page-item ${currentPage === totalPages || totalPages === 0 ? "disabled" : ""
+                    }`} >
+                  <button type="button" className="page-link"
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages || totalPages === 0}>
+                    Next
+                  </button>
+                </li>
+
+              </ul>
+            </nav>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

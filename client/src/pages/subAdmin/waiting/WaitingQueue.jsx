@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaUsers, FaClock, FaPhoneAlt, FaUserFriends, } from "react-icons/fa";
+import { FaClock, FaPhoneAlt, FaUserFriends, } from "react-icons/fa";
 import { addToWaiting, deleteWaitingEntry, getWaitingList, seatCustomer, } from "../../../services/waitingService";
 import { getAllTables } from "../../../services/tableservice";
 import { useNavigate } from "react-router-dom";
@@ -204,7 +204,7 @@ function WaitingQueue() {
   return (
     <div className="container-fluid py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h3><FaUsers className="me-2" />Waiting Queue</h3>
+        <h4 className="fw-bold mb-1">Waiting Queue</h4>
 
         <button
           className="btn btn-success"

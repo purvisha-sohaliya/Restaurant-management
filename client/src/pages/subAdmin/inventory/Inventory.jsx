@@ -532,11 +532,11 @@ const Inventory = () => {
             <div className="inventory-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
 
                 <div>
-                    <h2 className="m-0 fs-3 text-dark">
+                    <h4 className="fw-bold mb-1">
                         Inventory
-                    </h2>
+                    </h4>
 
-                    <p className="mt-1 mb-0 text-secondary">
+                    <p className="text-muted small mb-0">
                         Manage restaurant inventory and recipes
                     </p>
                 </div>

@@ -7,9 +7,7 @@ import { logout } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
 import { getSubscriptionStatus } from "../../services/subscriptionPlanService";
 
-
 const Topbar = ({ sidebarOpen, setSidebarOpen }) => {
-
   const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();

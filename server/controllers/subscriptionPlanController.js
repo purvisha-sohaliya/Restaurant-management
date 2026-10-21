@@ -64,46 +64,61 @@ exports.activateSubscription = async (req, res, next) => {
         if (!owner_id || !restaurant_id || !plan_id) {
             return res.status(400).json({
                 success: false,
-                message: "owner_id, restaurant_id and plan_id are required"
+                message: "owner_id, restaurant_id and plan_id are required",
             });
         }
 
         const owner = await userModel.findOne({
             _id: owner_id,
             role: "owner",
-            is_deleted: false
+            is_deleted: false,
         });
 
         if (!owner) {
             return res.status(404).json({
                 success: false,
-                message: "Owner not found"
+                message: "Owner not found",
             });
         }
 
         const restaurant = await restaurantModel.findOne({
             _id: restaurant_id,
             owner_id: owner._id,
-            isDeleted: false
+            isDeleted: false,
         });
 
         if (!restaurant) {
             return res.status(404).json({
                 success: false,
-                message: "Restaurant not found for this owner"
+                message: "Restaurant not found for this owner",
             });
         }
 
         const plan = await subscriptionPlanModel.findOne({
             _id: plan_id,
             status: "active",
-            is_deleted: false
+            is_deleted: false,
         });
 
         if (!plan) {
             return res.status(404).json({
                 success: false,
-                message: "Active subscription plan not found"
+                message: "Active subscription plan not found",
+            });
+        }
+
+        // Reject trial if this owner has already used it.
+        if (
+            plan.plan_type === "trial" &&
+            (
+                owner.trial_used === true ||
+                owner.subscription?.plan_type === "trial"
+            )
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "You have already used your 15 Days Free Trial. Please choose Monthly or Yearly plan.",
             });
         }
 
@@ -112,39 +127,74 @@ exports.activateSubscription = async (req, res, next) => {
 
         endDate.setDate(endDate.getDate() + plan.duration_days);
 
-        // Save all subscription fields defined in userModel
-        owner.subscription = {
+        const subscriptionData = {
             plan_id: plan._id,
             restaurant_id: restaurant._id,
             plan_type: plan.plan_type,
             status: "active",
             start_date: startDate,
-            end_date: endDate
+            end_date: endDate,
         };
 
-        await owner.save();
+        let updatedOwner;
+
+        if (plan.plan_type === "trial") {
+            updatedOwner = await userModel.findOneAndUpdate(
+                {
+                    _id: owner._id,
+                    role: "owner",
+                    is_deleted: false,
+                    trial_used: { $ne: true },
+                    "subscription.plan_type": { $ne: "trial" },
+                },
+                {
+                    $set: {
+                        trial_used: true,
+                        subscription: subscriptionData,
+                    },
+                },
+                {
+                    new: true,
+                    runValidators: true,
+                }
+            );
+
+            if (!updatedOwner) {
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        "You have already used your 15 Days Free Trial. Please choose Monthly or Yearly plan.",
+                });
+            }
+        } else {
+            owner.subscription = subscriptionData;
+            updatedOwner = await owner.save();
+        }
 
         const remainingDays = Math.max(
             0,
-            Math.ceil((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+            Math.ceil(
+                (endDate.getTime() - Date.now()) /
+                (1000 * 60 * 60 * 24)
+            )
         );
 
         return res.status(200).json({
             success: true,
             message: "Subscription activated successfully",
             data: {
-                owner_id: owner._id,
+                owner_id: updatedOwner._id,
                 restaurant_id: restaurant._id,
                 plan_id: plan._id,
                 plan_name: plan.plan_name,
                 plan_type: plan.plan_type,
-                status: owner.subscription.status,
+                trial_used: updatedOwner.trial_used,
+                status: updatedOwner.subscription.status,
                 start_date: startDate,
                 end_date: endDate,
-                remaining_days: remainingDays
-            }
+                remaining_days: remainingDays,
+            },
         });
-
     } catch (error) {
         next(error);
     }
@@ -296,63 +346,65 @@ exports.changeSubscriptionPlanStatus = async (req, res, next) => {
 };
 
 exports.getSubscriptionStatus = async (req, res, next) => {
-  try {
-    const ownerId = req.user.id; // અહીં id વાપરો, _id નહીં
+    try {
+        const ownerId = req.user.id;
 
-    const owner = await userModel.findOne({
-      _id: ownerId,
-      role: "owner",
-      is_deleted: false,
-    }).select("subscription");
+        const owner = await userModel.findOne({
+            _id: ownerId,
+            role: "owner",
+            is_deleted: false,
+        }).select("subscription trial_used");
 
-    if (!owner) {
-      return res.status(404).json({
-        success: false,
-        message: "Owner not found",
-      });
+        if (!owner) {
+            return res.status(404).json({
+                success: false,
+                message: "Owner not found",
+            });
+        }
+
+        const subscription = owner.subscription;
+
+        if (!subscription || !subscription.end_date) {
+            return res.status(200).json({
+                success: true,
+                data: {
+                    status: "inactive",
+                    remaining_days: 0,
+                    start_date: null,
+                    end_date: null,
+                    trial_used: owner.trial_used === true,
+                },
+            });
+        }
+
+        const now = new Date();
+        const endDate = new Date(subscription.end_date);
+
+        const remainingDays = Math.max(
+            0,
+            Math.ceil(
+                (endDate.getTime() - now.getTime()) /
+                (1000 * 60 * 60 * 24)
+            )
+        );
+
+        const status =
+            remainingDays === 0 ? "expired" : subscription.status;
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                status,
+                plan_id: subscription.plan_id,
+                restaurant_id: subscription.restaurant_id,
+                plan_type: subscription.plan_type,
+                start_date: subscription.start_date,
+                end_date: subscription.end_date,
+                remaining_days: remainingDays,
+                trial_used: owner.trial_used === true,
+            },
+        });
+    } catch (error) {
+        next(error);
     }
-
-    const subscription = owner.subscription;
-
-    if (!subscription || !subscription.end_date) {
-      return res.status(200).json({
-        success: true,
-        data: {
-          status: "inactive",
-          remaining_days: 0,
-          start_date: null,
-          end_date: null,
-        },
-      });
-    }
-
-    const now = new Date();
-    const endDate = new Date(subscription.end_date);
-
-    const remainingDays = Math.max(
-      0,
-      Math.ceil(
-        (endDate.getTime() - now.getTime()) /
-          (1000 * 60 * 60 * 24)
-      )
-    );
-
-    const status =
-      remainingDays === 0 ? "expired" : subscription.status;
-
-    return res.status(200).json({
-      success: true,
-      data: {
-        status,
-        plan_id: subscription.plan_id,
-        restaurant_id: subscription.restaurant_id,
-        plan_type: subscription.plan_type,
-        start_date: subscription.start_date,
-        end_date: subscription.end_date,
-        remaining_days: remainingDays,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
 };

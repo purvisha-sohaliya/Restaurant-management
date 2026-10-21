@@ -123,10 +123,10 @@ function MenuList() {
       {/* HEADER */}
       <div className="mb-4 d-flex justify-content-between align-items-center">
         <div>
-          <h2 className="fw-bold mb-1">Menu Management</h2>
-          <small className="text-muted">
+          <h4 className="fw-bold mb-1">Menu Management</h4>
+          <p className="text-muted small mb-0">
             Manage restaurant menu items
-          </small>
+          </p>
         </div>
 
         <button type="button" className="btn btn-success"

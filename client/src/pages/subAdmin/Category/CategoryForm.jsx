@@ -12,14 +12,16 @@ function CategoryForm() {
   const navigate = useNavigate();
   const [imageName, setImageName] = useState("No file chosen");
   const [imagePreview, setImagePreview] = useState(null);
-  // validation
+   // validation
   const validationSchema = Yup.object({
     category_name: Yup.string()
-      .min(2)
+      .trim()
+      .min(2, "Category name must be at least 2 characters")
       .required("Category name is required"),
+
     status: Yup.string()
-      .oneOf(["active", "inactive"])
-      .required("Status required"),
+      .oneOf(["active", "inactive"], "Please select a valid status")
+      .required("Status is required"),
   });
 
   //  Formik
@@ -101,45 +103,68 @@ function CategoryForm() {
           </div>
 
           <div>
-            <h4>{id ? "Edit Category" : "Create Category"}</h4>
-            <small className="text-muted">Manage categories</small>
+            <h4 className="fw-bold mb-1">{id ? "Edit Category" : "Create Category"}</h4>
+            <p className="text-muted small mb-0">Manage categories</p>
           </div>
         </div>
 
         {/* FORM */}
         <form onSubmit={formik.handleSubmit}>
-          <input name="category_name" className="form-control mb-2" placeholder="Category Name"
-            value={formik.values.category_name}
-            onChange={formik.handleChange} />
+          {/* Category Name */}
+          <input name="category_name" type="text"
+            className={`form-control mb-1 ${formik.touched.category_name && formik.errors.category_name
+              ? "is-invalid" : ""}`} placeholder="Category Name" value={formik.values.category_name}
+            onChange={formik.handleChange} onBlur={formik.handleBlur} />
 
-          <textarea name="description" className="form-control mb-2" placeholder="Description"
-            value={formik.values.description} onChange={formik.handleChange} />
+          {formik.touched.category_name && formik.errors.category_name && (
+            <div className="text-danger small mb-3">
+              {formik.errors.category_name}
+            </div>
+          )}
 
-          <div className="input-group mb-2">
-            <label htmlFor="image" className="btn btn-outline-secondary">  Choose File</label>
+          {/* Description */}
+          <textarea name="description" className="form-control mb-3" placeholder="Description" rows="3"
+            value={formik.values.description}onChange={formik.handleChange}onBlur={formik.handleBlur}/>
 
-            <input id="image" type="file" hidden
-              onChange={(e) => {
-                const file = e.target.files[0];
+          {/* Image */}
+          <div className="input-group mb-3">
+            <label htmlFor="image" className="btn btn-outline-secondary">
+              Choose File
+            </label>
+
+            <input id="image" type="file" accept="image/*"  hidden
+              onChange={(e) => { const file = e.target.files[0];
                 if (file) {
                   formik.setFieldValue("image", file);
                   setImageName(file.name);
                 }
-              }} />
+              }}/>
 
-            <input type="text" className="form-control" value={imageName}
-              readOnly />
+            <input type="text" className="form-control" value={imageName} readOnly/>
           </div>
 
-          <select name="status" className="form-select mb-3"
-            value={formik.values.status} onChange={formik.handleChange} >
+          {/* Status */}
+          <select name="status" className={`form-select mb-1 ${formik.touched.status && formik.errors.status
+              ? "is-invalid": ""}`}
+            value={formik.values.status} onChange={formik.handleChange} onBlur={formik.handleBlur}>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
           </select>
 
-          <button type="submit" className="btn bg-blue text-white w-100">
+          {formik.touched.status && formik.errors.status && (
+            <div className="text-danger small mb-3">
+              {formik.errors.status}
+            </div>
+          )}
+
+          {/* Submit */}
+          <button type="submit" className="btn bg-blue text-white w-100"disabled={formik.isSubmitting}>
             <FaSave className="me-2" />
-            {id ? "Update Category" : "Save Category"}
+            {formik.isSubmitting
+              ? "Saving..."
+              : id
+                ? "Update Category"
+                : "Save Category"}
           </button>
         </form>
       </div>

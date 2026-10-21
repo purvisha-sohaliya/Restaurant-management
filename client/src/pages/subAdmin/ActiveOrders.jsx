@@ -62,8 +62,8 @@ function ActiveOrders() {
             {/* Header */}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h3 className="fw-bold mb-1">Active Orders</h3>
-                    <p className="text-muted mb-0">
+                    <h4 className="fw-bold mb-1">Active Orders</h4>
+                    <p className="text-muted small mb-0">
                         Manage your ongoing orders
                     </p>
                 </div>
@@ -81,14 +81,8 @@ function ActiveOrders() {
                     </div>
                 ) : orders.length === 0 ? (
                     <div className="col-12">
-                        <div className="card border-0 shadow-sm rounded-4">
-                            <div className="card-body text-center py-5">
-                                <div className="fs-1 mb-3">🍽️</div>
-                                <h5 className="fw-bold">No Active Orders</h5>
-                                <p className="text-muted mb-0">
-                                    New orders will appear here.
-                                </p>
-                            </div>
+                        <div className="card-body text-center py-5">
+                            <h5 className="text-muted">No Active Orders</h5>
                         </div>
                     </div>
                 ) : (
@@ -192,7 +186,7 @@ function ActiveOrders() {
                                             Total Amount
                                         </span>
                                         <span className="fs-5 fw-bold">
-                                            ₹{order.total_amount || order.total || 0}
+                                            ₹{Number(order.total_amount || 0).toFixed(2)}
                                         </span>
                                     </div>
                                 </div>

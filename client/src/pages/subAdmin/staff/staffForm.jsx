@@ -115,10 +115,10 @@ function StaffForm() {
             <FaUserTie />
           </div>
           <div>
-            <h4> {id ? "Edit Staff" : "Create Staff"} </h4>
-            <small className="text-muted">
+            <h4 className="fw-bold mb-1"> {id ? "Edit Staff" : "Create Staff"} </h4>
+            <p className="text-muted small mb-0">
               Manage restaurant staff
-            </small>
+            </p>
           </div>
         </div>
 

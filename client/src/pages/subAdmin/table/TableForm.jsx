@@ -67,7 +67,6 @@ function TableForm() {
     }
   };
 
-
   return (
     <div className="container py-4 d-flex justify-content-center">
 
@@ -81,9 +80,9 @@ function TableForm() {
             <h4 className="mb-1 fw-bold">
               {id ? "Edit Table" : "Create Table"}
             </h4>
-            <small className="text-muted">
+            <p className="text-muted small mb-0">
               Manage restaurant tables
-            </small>
+            </p>
           </div>
 
         </div>

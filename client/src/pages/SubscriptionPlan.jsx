@@ -25,7 +25,7 @@ const featureLabels = {
 };
 
 function SubscriptionPlan() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -42,7 +42,21 @@ function SubscriptionPlan() {
   const [editingPlanId, setEditingPlanId] = useState(null);
   const [featureInput, setFeatureInput] = useState("");
   const [customFeatures, setCustomFeatures] = useState([]);
-  
+
+  const [trialUsed, setTrialUsed] = useState(
+    user?.trial_used === true ||
+    user?.subscription?.plan_type === "trial"
+  );
+
+  useEffect(() => {
+    if (
+      user?.trial_used === true ||
+      user?.subscription?.plan_type === "trial"
+    ) {
+      setTrialUsed(true);
+    }
+  }, [user]);
+
   const handleAddFeature = () => {
     const feature = featureInput.trim();
 
@@ -228,6 +242,18 @@ function SubscriptionPlan() {
   };
 
   const handleChoosePlan = (plan) => {
+    if (
+      plan.plan_type === "trial" &&
+      (
+        trialUsed ||
+        user?.trial_used === true ||
+        user?.subscription?.plan_type === "trial"
+      )
+    ) {
+      setTrialUsed(true);
+      toast.info("You have already used your Free Trial.");
+      return;
+    }
     setSelectedPlan(plan);
     setShowConfirmModal(true);
   };
@@ -240,15 +266,23 @@ function SubscriptionPlan() {
     }
 
     const finalOwnerId = ownerId || user?._id;
-    const finalRestaurantId =
-      restaurantId || user?.restaurant_id;
+    const finalRestaurantId = restaurantId || user?.restaurant_id;
 
     if (!finalOwnerId || !finalRestaurantId || !selectedPlan._id) {
-      console.log("Owner ID:", finalOwnerId);
-      console.log("Restaurant ID:", finalRestaurantId);
-      console.log("Selected Plan:", selectedPlan);
-
       toast.error("Owner ID, Restaurant ID or Plan ID is missing.");
+      return;
+    }
+    if (
+      selectedPlan.plan_type === "trial" &&
+      (
+        trialUsed ||
+        user?.trial_used === true ||
+        user?.subscription?.plan_type === "trial"
+      )
+    ) {
+      setTrialUsed(true);
+      setShowConfirmModal(false);
+      toast.error("You have already used your Free Trial.");
       return;
     }
 
@@ -266,29 +300,37 @@ function SubscriptionPlan() {
         plan_id: selectedPlan._id,
       };
 
-      console.log("Activation Payload:", payload);
-
       const response = await activateSubscription(payload);
-
-
 
       if (!response?.success) {
         throw new Error(response?.message || "Activation failed");
+      }
+      setTrialUsed(true);
+
+      if (typeof setUser === "function") {
+        setUser((currentUser) => ({
+          ...currentUser,
+          trial_used: true,
+          subscription: {
+            ...(currentUser?.subscription || {}),
+            plan_id: response.data?.plan_id || selectedPlan._id,
+            restaurant_id:
+              response.data?.restaurant_id || finalRestaurantId,
+            plan_type: "trial",
+            status: "active",
+            start_date:
+              response.data?.start_date || new Date().toISOString(),
+            end_date: response.data?.end_date || null,
+          },
+        }));
       }
 
       toast.success("15 Days Free Trial activated successfully!");
       setShowConfirmModal(false);
       navigate(COMMON_ROUTE.DASHBOARD, { replace: true });
-    } catch (error) {
-      console.error(
-        "Activation error:",
-        error.response?.data || error.message
-      );
 
-      toast.error(
-        error.response?.data?.message ||
-        error.message ||
-        "Subscription activation failed"
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Subscription activation failed"
       );
     } finally {
       setSaving(false);
@@ -346,13 +388,16 @@ function SubscriptionPlan() {
     }
   };
 
-
   return (
     <div className="min-vh-100 bg-light py-4 py-lg-5">
       <div className="container">
         {/* Header */}
         <div className="d-flex align-items-center justify-content-between mb-5 flex-wrap gap-3">
           <div>
+            <button type="button" className="btn btn-outline-secondary rounded-3 mb-3"
+              onClick={() => navigate(-1)}>
+              Back
+            </button>
             <h2 className="fw-bold mb-1">Choose Your Plan</h2>
             <p className="text-muted mb-0">
               Select the best plan for your Restaurant POS
@@ -459,20 +504,27 @@ function SubscriptionPlan() {
                           </div>
                         )}
 
-                        <button
-                          type="button"
-                          className={`btn ${plan.plan_type === "trial"
-                              ? "btn-dark"
+                        {user?.role === "owner" && (
+                          <button
+                            type="button"
+                            disabled={plan.plan_type === "trial" && trialUsed}
+                            className={`btn ${plan.plan_type === "trial"
+                              ? trialUsed
+                                ? "btn-secondary"
+                                : "btn-dark"
                               : plan.plan_type === "yearly"
                                 ? "btn-success"
                                 : "btn-outline-dark"
-                            } w-100 py-3 fw-bold`}
-                          onClick={() => handleChoosePlan(plan)}
-                        >
-                          {plan.plan_type === "trial"
-                            ? "Start Free Trial"
-                            : `Choose ${plan.plan_name}`}
-                        </button>
+                              } w-100 py-3 fw-bold`}
+                            onClick={() => handleChoosePlan(plan)}
+                          >
+                            {plan.plan_type === "trial"
+                              ? trialUsed
+                                ? "Free Trial Already Used"
+                                : "Start Free Trial"
+                              : `Choose ${plan.plan_name}`}
+                          </button>
+                        )}
 
                         {plan.plan_type === "trial" && (
                           <p className="text-muted small mt-3 mb-0">

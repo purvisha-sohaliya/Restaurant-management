@@ -12,7 +12,7 @@ import {
     FaBoxes
 } from "react-icons/fa";
 
-import { SUPER_ADMIN_ROUTE, SUB_ADMIN_ROUTE } from "../Constant/RoutesConstant";
+import { SUPER_ADMIN_ROUTE, SUB_ADMIN_ROUTE, COMMON_ROUTE } from "../Constant/RoutesConstant";
 import { ROLES } from "../Constant/CommonConstant";
 
 export const sidebarConfig = [
@@ -223,5 +223,12 @@ export const sidebarConfig = [
         icon: FaBoxes,
         path: SUB_ADMIN_ROUTE.INVENTORY,
         roles: [ROLES.OWNER, ROLES.MANAGER]
+    },
+
+    {
+        title: "Subscription",
+        icon: FaBoxes,
+        path: COMMON_ROUTE.SUBSCRIPTIONPLAN,
+        roles: [ROLES.OWNER, ROLES.SUPER_ADMIN]
     }
 ];

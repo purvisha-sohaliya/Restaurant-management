@@ -100,7 +100,7 @@ function TableList() {
 
       setTables((prev) =>
         prev.map((t) =>
-          t?._id === id? {...t,isDeleted: true,} : t
+          t?._id === id ? { ...t, isDeleted: true, } : t
         )
       );
 
@@ -123,7 +123,7 @@ function TableList() {
 
       setTables((prev) =>
         prev.map((t) =>
-          t?._id === id ? { ...t,isDeleted: false,}: t
+          t?._id === id ? { ...t, isDeleted: false, } : t
         )
       );
       Swal.fire("Restored!", "", "success");
@@ -213,10 +213,10 @@ function TableList() {
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h2 className="fw-bold mb-1">Table Management</h2>
-          <small className="text-muted">
+          <h4 className="fw-bold mb-1">Table Management</h4>
+          <p className="text-muted small mb-0">
             Manage restaurant tables
-          </small>
+          </p>
         </div>
         {!isManager && !isWaiter && (
           <button className="btn btn-success"
@@ -295,18 +295,18 @@ function TableList() {
                         Table {table.tableNumber}
                       </h4>
                       <p className="mb-1">
-                        <strong>Capacity:</strong> {table.capacity} Seats
+                        <small>Capacity:</small> {table.capacity} Seats
                       </p>
                       <span
                         className={`badge ${status === "available"
-                          ? "bg-success"
+                          ? "text-success"
                           : status === "occupied"
-                            ? "bg-danger"
+                            ? "text-danger"
                             : status === "reserved"
-                              ? "bg-warning text-dark"
+                              ? "text-warning text-dark"
                               : status === "cleaning"
-                                ? "bg-warning"
-                                : "bg-warning"
+                                ? "text-warning"
+                                : "text-warning"
                           }`}>
                         {status.charAt(0).toUpperCase() + status.slice(1)}
                       </span>
@@ -343,44 +343,49 @@ function TableList() {
                             </button>
                           )}
 
-                          {statusDropdown === table._id ? (
-                            <select
-                              className="form-select form-select-sm text-nowrap"
-                              value={table.status}
-                              onChange={(e) => {
-                                const newStatus = e.target.value;
-
-                                handleToggleStatus(table._id, newStatus);
-                                setStatusDropdown(null);
-                              }}
-                              onClick={(e) => e.stopPropagation()}
-                              disabled={table.isDeleted}
-                            >
-                              <option value="available">Available</option>
-                              <option value="occupied">Occupied</option>
-                              <option value="reserved">Reserved</option>
-                              <option value="cleaning">Cleaning</option>
-                            </select>
-                          ) : (
-                            <button
-                              className={`btn btn-sm text-nowrap ${table.status === "cleaning"
-                                ? "btn-outline-success"
-                                : "btn-outline-warning"
-                                }`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (table.status === "cleaning") {
-                                  handleToggleStatus(table._id, "available");
-                                } else {
-                                  setStatusDropdown(table._id);
-                                }
-                              }}
-                              disabled={table.isDeleted}>
-                              {table.status === "cleaning"
-                                ? "Make Available"
-                                : "Change Status"}
-                            </button>
-                          )}
+                          <div
+                            className="position-relative"
+                            style={{ width: "145px", minWidth: "145px" }}
+                            onClick={(e) => e.stopPropagation()} >
+                            {statusDropdown === table._id ? (
+                              <select
+                                className="form-select form-select-sm text-nowrap w-100 py-1"
+                                value={table.status}
+                                onChange={(e) => {
+                                  const newStatus = e.target.value;
+                                  handleToggleStatus(table._id, newStatus);
+                                  setStatusDropdown(null);
+                                }}
+                                onBlur={() => setStatusDropdown(null)}
+                                autoFocus
+                                disabled={table.isDeleted}
+                                style={{ height: "32px", minHeight: "32px", }}>
+                                <option value="available">Available</option>
+                                <option value="occupied">Occupied</option>
+                                <option value="reserved">Reserved</option>
+                                <option value="cleaning">Cleaning</option>
+                              </select>
+                            ) : (
+                              <button
+                                type="button"
+                                className={`btn btn-sm text-nowrap w-100 py-1 px-2 table-status-btn ${table.status === "cleaning"
+                                  ? "btn-outline-success"
+                                  : "btn-success"
+                                  }`}
+                                onClick={() => {
+                                  if (table.status === "cleaning") {
+                                    handleToggleStatus(table._id, "available");
+                                  } else {
+                                    setStatusDropdown(table._id);
+                                  }
+                                }}
+                                disabled={table.isDeleted}>
+                                {table.status === "cleaning"
+                                  ? "Make Available"
+                                  : "Change Status"}
+                              </button>
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>

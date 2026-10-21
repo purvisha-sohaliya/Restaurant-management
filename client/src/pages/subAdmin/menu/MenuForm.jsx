@@ -15,11 +15,22 @@ function MenuForm() {
   const [imageName, setImageName] = useState("No file chosen");
   const [imagePreview, setImagePreview] = useState(null);
 
-  const validationSchema = Yup.object({
-    item_name: Yup.string().required("Menu name is required"),
-    category_id: Yup.string().required("Category is required"),
-    price: Yup.number().required("Price is required"),
-    status: Yup.string().required("Status is required"),
+ const validationSchema = Yup.object({
+    item_name: Yup.string()
+      .trim()
+      .required("Menu name is required"),
+
+    category_id: Yup.string()
+      .required("Please select a category"),
+
+    price: Yup.number()
+      .typeError("Price must be a number")
+      .required("Price is required")
+      .moreThan(0, "Price must be greater than 0"),
+
+    status: Yup.string()
+      .oneOf(["active", "inactive"], "Please select a valid status")
+      .required("Status is required"),
   });
 
   const formik = useFormik({
@@ -117,41 +128,66 @@ function MenuForm() {
             <FaUtensils />
           </div>
           <div>
-            <h4>{id ? "Edit Menu Item" : "Create Menu Item"}</h4>
-            <small className="text-muted">
+            <h4 className="fw-bold mb-1">{id ? "Edit Menu Item" : "Create Menu Item"}</h4>
+            <p className="text-muted small mb-0">
               Manage restaurant menu
-            </small>
+            </p>
           </div>
         </div>
 
         <form onSubmit={formik.handleSubmit}>
+          {/* Menu Name */}
+          <input type="text" name="item_name" placeholder="Menu Name"
+            className={`form-control mb-1 ${formik.touched.item_name && formik.errors.item_name
+              ? "is-invalid" : ""}`}
+            value={formik.values.item_name} onChange={formik.handleChange} onBlur={formik.handleBlur}
+          />
+          {formik.touched.item_name && formik.errors.item_name && (
+            <div className="text-danger small mb-3">
+              {formik.errors.item_name}
+            </div>
+          )}
 
-          <input type="text" name="item_name" placeholder="Menu Name" className="form-control mb-3"
-            value={formik.values.item_name} onChange={formik.handleChange} />
-          <select name="category_id" className="form-select mb-3"
-            value={formik.values.category_id} onChange={formik.handleChange}>
-            <option value=""> Select Category </option>
-
+          {/* Category */}
+          <select name="category_id"
+            className={`form-select mb-1 ${formik.touched.category_id && formik.errors.category_id
+              ? "is-invalid" : ""}`}
+            value={formik.values.category_id} onChange={formik.handleChange} onBlur={formik.handleBlur}>
+            <option value="">Select Category</option>
             {categories.map((c) => (
               <option key={c._id} value={c._id}>
                 {c.category_name}
               </option>
             ))}
           </select>
+          {formik.touched.category_id && formik.errors.category_id && (
+            <div className="text-danger small mb-3">
+              {formik.errors.category_id}
+            </div>
+          )}
 
-          <input type="number" name="price" placeholder="Price" className="form-control mb-3"
-            value={formik.values.price} onChange={formik.handleChange} />
+          {/* Price */}
+          <input type="number" name="price" placeholder="Price" min="0.01"
+            className={`form-control mb-1 ${formik.touched.price && formik.errors.price
+              ? "is-invalid" : ""}`}
+            value={formik.values.price} onChange={formik.handleChange} onBlur={formik.handleBlur} />
+          {formik.touched.price && formik.errors.price && (
+            <div className="text-danger small mb-3">
+              {formik.errors.price}
+            </div>
+          )}
 
-          <textarea name="description" placeholder="Description" className="form-control mb-3"
-            rows="3" value={formik.values.description} onChange={formik.handleChange} />
+          {/* Description */}
+          <textarea name="description" placeholder="Description" className="form-control mb-3" rows="3"
+            value={formik.values.description} onChange={formik.handleChange} onBlur={formik.handleBlur} />
 
-          {/* IMAGE */}
-          <div className="input-group mb-2">
+          {/* Image */}
+          <div className="input-group mb-3">
             <label htmlFor="image" className="btn btn-outline-secondary">
               Choose File
             </label>
 
-            <input id="image" type="file" hidden
+            <input id="image" type="file" accept="image/*" hidden
               onChange={(e) => {
                 const file = e.target.files[0];
                 if (file) {
@@ -163,15 +199,30 @@ function MenuForm() {
             <input type="text" className="form-control" value={imageName} readOnly />
           </div>
 
-          <select name="status" className="form-select mb-4"
-            value={formik.values.status} onChange={formik.handleChange}>
-            <option value="active"> Active </option>
-            <option value="inactive"> Inactive </option>
+          {/* Status */}
+          <select name="status" className={`form-select mb-1 ${formik.touched.status && formik.errors.status
+            ? "is-invalid" : ""}`}
+            value={formik.values.status}onChange={formik.handleChange}onBlur={formik.handleBlur}>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
           </select>
+          {formik.touched.status && formik.errors.status && (
+            <div className="text-danger small mb-3">
+              {formik.errors.status}
+            </div>
+          )}
 
-          <button type="submit" className="btn bg-blue text-white  w-100" >
+          {/* Submit */}
+          <button
+            type="submit"
+            className="btn bg-blue text-white w-100"
+            disabled={formik.isSubmitting}>
             <FaSave className="me-2" />
-            {id ? "Update Menu Item" : "Save Menu Item"}
+            {formik.isSubmitting
+              ? "Saving..."
+              : id
+                ? "Update Menu Item"
+                : "Save Menu Item"}
           </button>
         </form>
       </div>
