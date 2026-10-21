@@ -287,7 +287,7 @@ function SubscriptionPlan() {
     }
 
     if (selectedPlan.plan_type !== "trial") {
-      toast.info("Monthly/Yearly plan માટે પહેલાં payment પૂર્ણ કરો.");
+      toast.info("Please complete the payment first to activate the Monthly or Yearly plan.");
       return;
     }
 
@@ -398,8 +398,8 @@ function SubscriptionPlan() {
               onClick={() => navigate(-1)}>
               Back
             </button>
-            <h2 className="fw-bold mb-1">Choose Your Plan</h2>
-            <p className="text-muted mb-0">
+            <h4 className="fw-bold mb-1">Choose Your Plan</h4>
+            <p className="text-muted small mb-0">
               Select the best plan for your Restaurant POS
             </p>
           </div>

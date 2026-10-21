@@ -11,7 +11,6 @@ import {
     FaCartPlus, FaThLarge,
     FaBoxes
 } from "react-icons/fa";
-
 import { SUPER_ADMIN_ROUTE, SUB_ADMIN_ROUTE, COMMON_ROUTE } from "../Constant/RoutesConstant";
 import { ROLES } from "../Constant/CommonConstant";
 
@@ -35,42 +34,15 @@ export const sidebarConfig = [
     {
         title: "Restaurants",
         icon: FaUtensils,
+        path: SUPER_ADMIN_ROUTE.RESTAURANTSLIST,
         roles: [ROLES.SUPER_ADMIN],
-
-        children: [
-            {
-                title: "Restaurant List",
-                icon: FaClipboardList,
-                path: SUPER_ADMIN_ROUTE.RESTAURANTSLIST,
-            },
-
-            {
-                title: "Add Restaurant",
-                icon: FaPlusCircle,
-                path: SUPER_ADMIN_ROUTE.RESTAURANTSADD,
-            },
-        ],
-
     },
     // Owner
     {
         title: "Owner",
         icon: FaUtensils,
+        path: SUPER_ADMIN_ROUTE.OWNERLIST,
         roles: [ROLES.SUPER_ADMIN],
-
-        children: [
-            {
-                title: "Owner List",
-                icon: FaClipboardList,
-                path: SUPER_ADMIN_ROUTE.OWNERLIST,
-            },
-
-            {
-                title: "Add Owner",
-                icon: FaPlusCircle,
-                path: SUPER_ADMIN_ROUTE.OWNERADD,
-            },
-        ],
     },
 
     // ========================OWNER=========================

@@ -2,12 +2,20 @@ import React, { useEffect, useState } from "react";
 import {
   FaMoneyBillWave, FaClipboardList, FaChair, FaUsers, FaClock, FaCheckCircle, FaUtensils,
   FaStore, FaUserTie, FaUserFriends, FaListAlt, FaFileInvoiceDollar,
+  FaPlus,
 } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import { ROLES } from "../Constant/CommonConstant";
-import { getDashboard } from "../services/dashboardService";
+import { getDailyOrders, getDashboard, getMonthlyOrders, getMonthlyRevenue, getOrderTypeDistribution, getTopSellingItems } from "../services/dashboardService";
+import RevenueChart from "../components/charts/RevenueChart";
+import OrdersChart from "../components/charts/OrdersChart";
+import TopSellingItemsChart from "../components/charts/TopSellingItemsChart";
+import OrderTypeChart from "../components/charts/OrderTypeChart";
+import { SUB_ADMIN_ROUTE } from "../Constant/RoutesConstant";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const CURRENT_ROLE = user?.role;
   const [loading, setLoading] = useState(true);
@@ -32,6 +40,89 @@ const Dashboard = () => {
     pendingBills: 0,
     recentOrders: [],
   });
+
+  const [revenueData, setRevenueData] = useState([]);
+  const [selectedYear, setSelectedYear] = useState(
+    new Date().getFullYear()
+  );
+  const [ordersData, setOrdersData] = useState([]);
+  const [orderView, setOrderView] = useState("daily");
+  const [topSellingItems, setTopSellingItems] = useState([]);
+  const [orderTypeData, setOrderTypeData] = useState([]);
+
+  const fetchMonthlyRevenue = async () => {
+    try {
+      const response = await getMonthlyRevenue(selectedYear);
+      setRevenueData(response.data);
+    } catch (error) {
+      console.error("Error fetching monthly revenue:", error);
+    }
+  };
+
+  const fetchTopSellingItems = async () => {
+    try {
+      const response = await getTopSellingItems();
+      if (response.success) {
+        setTopSellingItems(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching top selling items:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (CURRENT_ROLE === ROLES.OWNER) {
+      fetchMonthlyRevenue();
+    }
+  }, [selectedYear, CURRENT_ROLE]);
+
+  useEffect(() => {
+    if (CURRENT_ROLE !== ROLES.OWNER) return;
+
+    const fetchOrders = async () => {
+      try {
+        const response =
+          orderView === "daily"
+            ? await getDailyOrders()
+            : await getMonthlyOrders();
+
+        if (response.success) {
+          setOrdersData(response.data);
+        }
+
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
+    };
+
+    fetchOrders();
+
+  }, [CURRENT_ROLE, orderView]);
+
+  useEffect(() => {
+    if (CURRENT_ROLE === ROLES.OWNER) {
+      fetchTopSellingItems();
+    }
+  }, [CURRENT_ROLE]);
+
+  useEffect(() => {
+    if (CURRENT_ROLE !== ROLES.OWNER) return;
+
+    const fetchOrderTypes = async () => {
+      try {
+        const response = await getOrderTypeDistribution();
+
+        if (response.success) {
+          setOrderTypeData(response.data);
+        }
+
+      } catch (error) {
+        console.error("Error fetching order types:", error);
+      }
+    };
+
+    fetchOrderTypes();
+  }, [CURRENT_ROLE]);
 
   useEffect(() => {
     if (CURRENT_ROLE) {
@@ -124,14 +215,23 @@ const Dashboard = () => {
   return (
     <div className="container-fluid bg-light min-vh-100 p-3 p-md-4">
       {/* ================= HEADER ================= */}
-      <div className="mb-4">
-        <h4 className="fw-bold mb-1">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h4 className="fw-bold mb-1">
           {getDashboardTitle()}
         </h4>
 
         <p className="text-muted small mb-0">
           Overview of today's restaurant activity
         </p>
+        </div>
+
+        <button
+          className="btn btn-success"
+          onClick={() => navigate(SUB_ADMIN_ROUTE.ORDER_ADD)}>
+          <FaPlus className="me-2" />
+          Add Order
+        </button>
       </div>
 
       {/* ================= SUPER ADMIN =================== */}
@@ -181,20 +281,20 @@ const Dashboard = () => {
               color="primary"
             />
 
-            <Card
+            {/* <Card
               title="Total Revenue"
               value={`₹${dashboard.revenue.toLocaleString(
                 "en-IN")}`}
               icon={<FaMoneyBillWave />}
               color="success"
-            />
+            /> */}
 
-            <Card
+            {/* <Card
               title="Available Tables"
               value={dashboard.availableTables}
               icon={<FaChair />}
               color="warning"
-            />
+            /> */}
 
             <Card
               title="Total Staff"
@@ -217,20 +317,56 @@ const Dashboard = () => {
               color="secondary"
             />
 
-            <Card
+            {/* <Card
               title="Waiting Customers"
               value={dashboard.waitingCustomers}
               icon={<FaUsers />}
               color="warning"
-            />
+            /> */}
 
-            <Card
+            {/* <Card
               title="Total Bills"
               value={dashboard.totalBills}
               icon={<FaFileInvoiceDollar />}
               color="success"
-            />
+            /> */}
           </div>
+
+          <div className="row g-3 mt-1">
+
+            <div className="col-12 col-lg-6">
+              <RevenueChart
+                data={revenueData}
+                selectedYear={selectedYear}
+                setSelectedYear={setSelectedYear}
+              />
+            </div>
+
+            {/* Orders Overview */}
+            <div className="col-12 col-lg-6">
+              <OrdersChart
+                data={ordersData}
+                orderView={orderView}
+                setOrderView={setOrderView}
+              />
+            </div>
+          </div>
+
+          <div className="row g-3 mt-1">
+
+            <div className="col-12 col-lg-6">
+              <TopSellingItemsChart
+                data={topSellingItems}
+              />
+            </div>
+
+            <div className="col-12 col-lg-6">
+              <OrderTypeChart
+                data={orderTypeData}
+              />
+            </div>
+          </div>
+
           <DashboardBottom
             dashboard={dashboard}
           />
