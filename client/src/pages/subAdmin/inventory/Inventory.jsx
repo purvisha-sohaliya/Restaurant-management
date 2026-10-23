@@ -5,6 +5,7 @@ import { createRecipe, deleteRecipe, getRecipes, updateRecipe } from "../../../s
 import { toast } from "react-toastify";
 import { getMenuItems } from "../../../services/menuItemService";
 
+
 const Inventory = () => {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(false);
